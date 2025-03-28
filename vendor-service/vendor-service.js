@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config(); // For .env support
+console.log("🌐 MONGO_URI:", process.env.MONGO_URI);
+
 
 const app = express();
 const port = 4003;
