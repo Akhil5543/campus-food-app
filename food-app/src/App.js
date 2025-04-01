@@ -1,9 +1,9 @@
 // src/App.js
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
+import vendorData from "./static-data/vendors.json"; // static vendor data
 
 function App() {
   const [vendors, setVendors] = useState([]);
@@ -15,13 +15,8 @@ function App() {
   const [showReceipt, setShowReceipt] = useState(false);
   const [lastPayment, setLastPayment] = useState(null);
 
-  const token = localStorage.getItem("token") || "";
-
   useEffect(() => {
-    axios
-      .get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
-      .then((res) => setVendors([res.data]))
-      .catch((err) => console.error("Error fetching vendor:", err));
+    setVendors(vendorData);
   }, []);
 
   const addItem = (item) => {
@@ -56,71 +51,32 @@ function App() {
       0
     );
 
-    axios
-      .post(
-        "http://localhost:4001/orders",
-        {
-          restaurantId: "65f122b4c2d12a0012f986bd",
-          items: selectedItems,
-          totalAmount,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log("✔️ Full res.data structure 👀:", res.data);
-        const orderData = res?.data;
-        const orderId = res.data.order._id;
+    const fakeOrderId = `order_${Date.now()}`;
+    const newOrder = {
+      _id: fakeOrderId,
+      createdAt: new Date().toISOString(),
+      totalAmount,
+      items: selectedItems,
+    };
 
-      
-        if (!orderId) {
-          console.error("❌ Order ID not found. Full response:", res);
-          throw new Error("Order ID not found in response");
-        }
-      
+    setOrders((prev) => [...prev, newOrder]);
+    setSelectedItems([]);
+    setShowPaymentModal(false);
+    setLastPayment({
+      order_id: fakeOrderId,
+      amount: totalAmount,
+      method: paymentMethod.toLowerCase().replace(" ", "_"),
+      status: "paid",
+    });
+    setShowReceipt(true);
 
-        const paymentPayload = {
-          user_id: "mdasari1",
-          order_id: orderId,
-          amount: totalAmount,
-          method: paymentMethod.toLowerCase().replace(" ", "_"),
-          status: "paid",
-        };
-
-        console.log("💳 Sending payment payload:", paymentPayload);
-
-        axios.post("http://localhost:4005/payments", paymentPayload)
-          .then((paymentRes) => {
-            setSelectedItems([]);
-            setShowPaymentModal(false);
-            setLastPayment(paymentRes.data.payment);
-            setShowReceipt(true);
-            setTimeout(() => {
-              setShowReceipt(false);
-              setView("orders");
-              fetchOrders();
-            }, 3000); // 3 seconds
-          })
-          .catch((err) => {
-            console.error("💥 Payment failed:", err.response?.data || err.message);
-            alert("Payment failed: " + (err.response?.data?.message || err.message));
-          });
-      })
-      .catch((err) => {
-        console.error("❌ Order placement failed:", err.response?.data || err.message);
-        alert("Failed to place order");
-      });
+    setTimeout(() => {
+      setShowReceipt(false);
+      setView("orders");
+    }, 3000);
   };
 
-  const fetchOrders = () => {
-    axios
-      .get("http://localhost:4001/orders")
-      .then((res) => setOrders(res.data))
-      .catch((err) => console.error("Error fetching orders:", err));
-  };
+  const fetchOrders = () => {};
 
   const renderReceiptModal = () => (
     <Modal show={showReceipt} onHide={() => setShowReceipt(false)} centered>
