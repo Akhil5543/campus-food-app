@@ -1,0 +1,13 @@
+[
+    {
+      "_id": "1",
+      "name": "Chick-fil-A",
+      "address": "Admin Block",
+      "menu": [
+        { "name": "Chicken Nuggets", "price": 10 },
+        { "name": "Spicy Chicken Sandwich", "price": 8 },
+        { "name": "Fruit Bowl", "price": 4 }
+      ]
+    }
+  ]
+  
