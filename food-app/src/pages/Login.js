@@ -1,68 +1,80 @@
+// src/pages/Login.js
 import React, { useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
       const res = await axios.post("http://localhost:4006/login", { email, password });
-
-      // Save token to localStorage
       localStorage.setItem("token", res.data.token);
-
-      // Decode the token to get role
       const decoded = jwtDecode(res.data.token);
-
-      // Navigate based on role
       if (decoded.role === "student") {
         navigate("/campus-food-app");
       } else if (decoded.role === "restaurant") {
         navigate("/restaurant-dashboard");
       }
     } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Login failed");
+      alert("Login failed: " + (err.response?.data?.message || err.message));
     }
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2 className="text-center mb-4">Login</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Email</label>
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card shadow p-4" style={{ width: "100%", maxWidth: "400px" }}>
+        <div className="d-flex justify-content-center mb-3">
+          <div
+            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+            style={{ width: 80, height: 80, fontSize: 24, fontWeight: "bold" }}
+          >
+            CE
+          </div>
+        </div>
+        <h3 className="text-center mb-2">Welcome Back!</h3>
+        <p className="text-center text-muted mb-3">Order from your favorite campus spots</p>
+
+        <form onSubmit={handleSubmit}>
           <input
             type="email"
-            className="form-control"
+            className="form-control my-2"
+            placeholder="Student Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="mb-3">
-          <label>Password</label>
           <input
             type="password"
-            className="form-control"
+            className="form-control my-2"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Login
-        </button>
-      </form>
+          <button className="btn btn-primary w-100 mt-2" type="submit">
+            Login
+          </button>
+        </form>
+
+        <p className="text-center mt-3" style={{ fontSize: "0.9rem" }}>
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/signup")}
+            style={{ color: "#4c6ef5", cursor: "pointer" }}
+          >
+            Sign Up
+          </span>
+        </p>
+
+        <p className="text-center text-muted mt-4" style={{ fontSize: "0.8rem" }}>
+          Campus ID Single Sign-On Available
+        </p>
+      </div>
     </div>
   );
 };
