@@ -8,13 +8,21 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 4006;
-const pool = new Pool({ connectionString: process.env.PG_URI });
+
+// ✅ Render PostgreSQL connection with SSL
+const pool = new Pool({
+  connectionString: process.env.PG_URI,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
 app.use(express.json());
 
-// Sign Up
+// 🔐 Signup Endpoint
 app.post("/signup", async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -38,7 +46,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Login
+// 🔑 Login Endpoint
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -51,16 +59,22 @@ app.post("/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
-    res.json({ message: "Login successful", token, user: { id: user.id, name: user.name, role: user.role } });
+    res.json({
+      message: "Login successful",
+      token,
+      user: { id: user.id, name: user.name, role: user.role },
+    });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Login failed", error: err.message });
   }
 });
 
-// Start server
+// 🚀 Start the Server
 app.listen(PORT, () => {
   console.log(`🚀 Auth service running at http://localhost:${PORT}`);
 });
