@@ -1,4 +1,3 @@
-// auth-service.js
 const express = require("express");
 const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
@@ -10,7 +9,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 4006;
 
-// ✅ Render PostgreSQL connection with SSL
+// ✅ PostgreSQL connection (Render-compatible with SSL)
 const pool = new Pool({
   connectionString: process.env.PG_URI,
   ssl: {
@@ -25,7 +24,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-// 📧 Function to send verification email
+// 📧 Send email with 6-digit code
 const sendVerificationEmail = async (email, code) => {
   const msg = {
     to: email,
@@ -43,7 +42,7 @@ const sendVerificationEmail = async (email, code) => {
   }
 };
 
-// 🔐 Signup Endpoint with email verification
+// 📝 Signup Route
 app.post("/signup", async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -79,8 +78,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-
-// ✅ Email Verification Endpoint
+// ✅ Email Verification Route
 app.post("/verify", async (req, res) => {
   const { email, code } = req.body;
 
@@ -104,7 +102,7 @@ app.post("/verify", async (req, res) => {
   }
 });
 
-// 🔑 Login Endpoint (with role check)
+// 🔐 Login Route
 app.post("/login", async (req, res) => {
   const { email, password, role } = req.body;
 
@@ -140,7 +138,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// 🚀 Start the Server
+// 🚀 Start Server (uses dynamic port for Render)
 app.listen(PORT, () => {
   console.log(`🚀 Auth service running at http://localhost:${PORT}`);
 });
