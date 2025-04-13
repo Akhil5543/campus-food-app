@@ -5,13 +5,14 @@
   "main": "index.js",
   "homepage": "https://akhil5543.github.io/campus-food-app",
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
-  },
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
+}
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/akhil5543/campus-food-app.git"
