@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
@@ -19,6 +20,7 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -27,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
 const orderSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
   restaurantId: String,
   userId: String,
   items: [
@@ -37,10 +40,12 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   totalAmount: Number,
+
   status: {
     type: String,
     default: "Received",
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -48,6 +53,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 const Order = mongoose.model("Order", orderSchema, "orders");
+
 
 // ✅ PLACE NEW ORDER (with userId safely included)
 app.post("/orders", async (req, res) => {
@@ -62,19 +68,59 @@ app.post("/orders", async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-    res.status(201).json({ message: "Order placed successfully", order: savedOrder });
+    console.log("✅ Order Saved:", savedOrder);
+    res
+      .status(201)
+      .json({ message: "Order placed successfully", order: savedOrder });
   } catch (err) {
-    res.status(500).json({ message: "Failed to place order", error: err });
+
+    console.error("❌ Failed to place order:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to place order", error: err.message });
   }
 });
 
-// ✅ GET ALL ORDERS
+// GET: Fetch all orders (admin/debug route)
 app.get("/orders", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch orders", error: err });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch orders", error: err.message });
+  }
+});
+
+// GET: Fetch orders for a specific user (secured endpoint)
+app.get("/orders/user/:userId", async (req, res) => {
+  try {
+    // Extract the token from the header
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Missing token" });
+
+    // Verify the token using your JWT secret
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const authenticatedUserId = decoded.id;
+
+    // Compare token user ID with the URL parameter to enforce security
+    if (authenticatedUserId !== req.params.userId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to view these orders" });
+    }
+
+    // Use the authenticated user’s ID to fetch orders
+    const orders = await Order.find({ userId: authenticatedUserId }).sort({
+      createdAt: -1,
+    });
+    res.json({ orders });
+  } catch (err) {
+    console.error("❌ Failed to fetch user orders:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch user orders", error: err.message });
   }
 });
 

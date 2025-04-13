@@ -79,6 +79,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+
 // ✅ Email Verification Endpoint
 app.post("/verify", async (req, res) => {
   const { email, code } = req.body;

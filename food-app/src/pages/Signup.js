@@ -52,6 +52,7 @@ const Signup = () => {
       else navigate("/restaurant-dashboard");
     } catch (err) {
       setError("Verification failed. Please check your code.");
+
     }
   };
 
