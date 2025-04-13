@@ -1,54 +1,47 @@
 import React from "react";
 import "./MyOrders.css";
 
+const getVendorLogo = (name) => {
+  if (!name) return "/images/default-logo.png";
+  const formatted = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+  return `/images/${formatted}.png`;
+};
 
 const MyOrders = ({ orders }) => {
   return (
-    <div className="myorders-container">
-      <h3 className="myorders-title">Past Orders</h3>
-      {orders.map((order) => {
-        const restaurantName = order.restaurantName || "Unknown Restaurant";
-        const restaurantImageUrl =
-          order.restaurantImage || "/images/restaurant-placeholder.jpg";
-
-        return (
-          <div className="order-card" key={order._id}>
-            <div className="order-header">
+    <div className="orders-view">
+      <h2>Past Orders</h2>
+      {orders.length === 0 ? (
+        <p>No past orders found.</p>
+      ) : (
+        orders.map((order, index) => (
+          <div key={index} className="order-card">
+            <div className="restaurant-info">
               <img
-                src={restaurantImageUrl}
-                alt={restaurantName}
-                className="order-restaurant-image"
+                src={getVendorLogo(order.restaurantName)}
+                alt={order.restaurantName}
+                className="restaurant-image"
+                onError={(e) => (e.target.src = "/images/default-logo.png")}
               />
-              <div className="order-header-details">
-                <h4 className="restaurant-name">{restaurantName}</h4>
+              <div>
+                <strong>{order.restaurantName}</strong>
                 <div className="order-meta">
-                  <span>
-                    {order.items.length} item
-                    {order.items.length > 1 ? "s" : ""} for $
-                    {order.totalAmount?.toFixed(2)} •{" "}
-                    {new Date(order.createdAt).toLocaleString()}
-                  </span>
+                  {order.items.length} item{order.items.length > 1 ? "s" : ""} for $
+                  {order.totalAmount.toFixed(2)} ·{" "}
+                  {new Date(order.createdAt).toLocaleString()}
                 </div>
-              </div>
-              <div className="order-actions">
-                <button className="order-action-btn">View receipt</button>
-                <button className="order-action-btn">Request invoice</button>
               </div>
             </div>
-            <div className="order-items">
-              {order.items.map((item, index) => (
-                <div className="order-item" key={index}>
-                  <div className="item-name">{item.name}</div>
-                  {/* Add extra details if you want, e.g., sauce, toppings, etc. */}
-                </div>
+            <ul className="ordered-items">
+              {order.items.map((item, idx) => (
+                <li key={idx}>
+                  {item.quantity} × {item.name}
+                </li>
               ))}
-            </div>
-            <div className="order-rate">
-              <button className="rate-order-btn">Rate your order</button>
-            </div>
+            </ul>
           </div>
-        );
-      })}
+        ))
+      )}
     </div>
   );
 };

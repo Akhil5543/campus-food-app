@@ -23,6 +23,17 @@ mongoose.connect(process.env.MONGO_URI, {
 const vendorSchema = new mongoose.Schema({}, { strict: false });
 const Vendor = mongoose.model("Vendor", vendorSchema, "vendors");
 
+// ✅ GET all vendors
+app.get("/vendors", async (req, res) => {
+  try {
+    const vendors = await Vendor.find({});
+    res.json(vendors);
+  } catch (err) {
+    console.error("❌ Error fetching vendors:", err);
+    res.status(500).json({ message: "Failed to fetch vendors", error: err });
+  }
+});
+
 // GET vendor by ID
 app.get("/vendor/:id", async (req, res) => {
   try {

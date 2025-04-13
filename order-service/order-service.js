@@ -23,6 +23,7 @@ mongoose
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   restaurantId: String,
+  restaurantName: String, // ✅ Added this
   items: [
     {
       name: String,
@@ -47,11 +48,12 @@ app.post("/orders", async (req, res) => {
     if (!token) return res.status(401).json({ message: "Missing token" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id; // Ensure this matches your auth-service token structure
+    const userId = decoded.id;
 
     const newOrder = new Order({
       userId,
       restaurantId: req.body.restaurantId,
+      restaurantName: req.body.restaurantName, // ✅ Save restaurant name
       items: req.body.items,
       totalAmount: req.body.totalAmount,
       status: "Received",
@@ -59,61 +61,44 @@ app.post("/orders", async (req, res) => {
 
     const savedOrder = await newOrder.save();
     console.log("✅ Order Saved:", savedOrder);
-    res
-      .status(201)
-      .json({ message: "Order placed successfully", order: savedOrder });
+    res.status(201).json({ message: "Order placed successfully", order: savedOrder });
   } catch (err) {
     console.error("❌ Failed to place order:", err);
-    res
-      .status(500)
-      .json({ message: "Failed to place order", error: err.message });
+    res.status(500).json({ message: "Failed to place order", error: err.message });
   }
 });
 
-// GET: Fetch all orders (admin/debug route)
+// GET: Fetch all orders (debug/admin)
 app.get("/orders", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch orders", error: err.message });
+    res.status(500).json({ message: "Failed to fetch orders", error: err.message });
   }
 });
 
-// GET: Fetch orders for a specific user (secured endpoint)
+// GET: Fetch user-specific orders
 app.get("/orders/user/:userId", async (req, res) => {
   try {
-    // Extract the token from the header
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Missing token" });
 
-    // Verify the token using your JWT secret
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const authenticatedUserId = decoded.id;
 
-    // Compare token user ID with the URL parameter to enforce security
     if (authenticatedUserId !== req.params.userId) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to view these orders" });
+      return res.status(403).json({ message: "Not authorized to view these orders" });
     }
 
-    // Use the authenticated user’s ID to fetch orders
-    const orders = await Order.find({ userId: authenticatedUserId }).sort({
-      createdAt: -1,
-    });
+    const orders = await Order.find({ userId: authenticatedUserId }).sort({ createdAt: -1 });
     res.json({ orders });
   } catch (err) {
     console.error("❌ Failed to fetch user orders:", err);
-    res
-      .status(500)
-      .json({ message: "Failed to fetch user orders", error: err.message });
+    res.status(500).json({ message: "Failed to fetch user orders", error: err.message });
   }
 });
 
-// Server Start
 app.listen(PORT, () => {
   console.log(`🚀 Order service running at http://localhost:${PORT}`);
 });
