@@ -15,7 +15,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* ✅ Fix for mobile button overflow */
+  flex-wrap: wrap; /* Allow wrapping if needed on mobile */
   background: #000;
   color: #f1c40f;
   padding: 20px 32px;
@@ -27,7 +27,7 @@ body, html {
 .header-buttons {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* 🟡 Keep horizontal layout on desktop */
 }
 
 .header-buttons button {
@@ -505,10 +505,9 @@ body, html {
   font-size: 15px;
 }
 
-/* ✅ Mobile Responsiveness */
+/* 📱 Mobile Responsive Fix */
 @media (max-width: 600px) {
   .header-buttons {
-    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
