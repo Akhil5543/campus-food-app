@@ -500,3 +500,35 @@ body, html {
 
 }
 
+/* 🔔 Notification Tab Styling */
+.notifications-section {
+  padding: 24px;
+}
+
+.notifications-section h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #222;
+}
+
+.notification-item {
+  background-color: #fff9db;
+  border-left: 6px solid #f1c40f;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.notification-item p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.notification-item strong {
+  font-weight: 600;
+  color: #000;
+}
+
