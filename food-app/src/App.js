@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import StudentHome from "./pages/StudentHome";
@@ -19,6 +20,7 @@ function App() {
   const [lastPayment, setLastPayment] = useState(null);
 
   const token = localStorage.getItem("token") || "";
+  const decodedToken = token ? jwtDecode(token) : null;
 
   useEffect(() => {
     axios
@@ -43,7 +45,7 @@ function App() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ Fixed backticks
+            Authorization: `Bearer ${token}`,
           },
         }
       )
@@ -52,7 +54,7 @@ function App() {
         if (!orderId) throw new Error("Order ID not found");
 
         const paymentPayload = {
-          user_id: "mdasari1",
+          user_id: decodedToken?.id || "unknown_user",
           order_id: orderId,
           amount: totalAmount,
           method: paymentMethod.toLowerCase().replace(" ", "_"),
@@ -91,7 +93,9 @@ function App() {
   const renderReceiptModal = () => (
     <Modal show={showReceipt} onHide={() => setShowReceipt(false)} centered>
       <Modal.Header closeButton>
-        <Modal.Title>✅ Payment Successful</Modal.Title>
+        <Modal.Title>
+          <span role="img" aria-label="checkmark">✅</span> Payment Successful
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p><strong>Order ID:</strong> {lastPayment?.order_id}</p>
@@ -143,7 +147,7 @@ function App() {
         />
       </Routes>
 
-      {/* Show receipt modal globally */}
+      {/* Global Receipt Modal */}
       {renderReceiptModal()}
     </Router>
   );

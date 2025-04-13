@@ -1,0 +1,151 @@
+/* Restaurant Dashboard Styling */
+.restaurant-dashboard {
+  padding: 30px 5%;
+  max-width: 1000px;
+  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff8e1;
+}
+
+.header h2 {
+  color: #ffcc00;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+.menu-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.menu-list li {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffcc00;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.item-form input {
+  padding: 12px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.item-form button {
+  background-color: #ffcc00;
+  color: #fff;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.order-card {
+  background-color: #fffde7;
+  border-left: 5px solid #fbc02d;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.order-card .status {
+  font-weight: bold;
+  color: #ff9800;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.button-group .btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-group .btn.yellow {
+  background-color: #ffeb3b;
+  color: #333;
+}
+
+.button-group .btn.yellow:hover {
+  background-color: #fdd835;
+}
+
+.button-group .btn.black {
+  background-color: #000;
+  color: #fff;
+}
+
+.button-group .btn.black:hover {
+  background-color: #333;
+}
+
+.current-orders-container {
+  margin-top: 30px;
+}
+
+.current-orders-container h3 {
+  color: #ffcc00;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.current-orders-container .order-card {
+  margin-bottom: 20px;
+}
+
+.add-item-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-item-section input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.add-item-section button {
+  background-color: #ffcc00;
+  color: #fff;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
