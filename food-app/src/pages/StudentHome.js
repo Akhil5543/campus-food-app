@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -17,7 +18,10 @@ const StudentHome = () => {
   const [paymentMethod, setPaymentMethod] = useState("Campus Card");
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [lastPayment, setLastPayment] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const socket = io("https://order-service-k4v1.onrender.com");
   const [searchTerm, setSearchTerm] = useState("");
+
 
   const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -62,6 +66,20 @@ const StudentHome = () => {
         .catch((err) => console.error("Error fetching order history:", err));
     }
   }, [studentId, token]);
+  useEffect(() => {
+    socket.on("orderStatusUpdated", (data) => {
+      setNotifications((prev) => [
+        ...prev,
+        `Order #${data.orderId} status changed to ${data.status}`,
+      ]);
+    });
+
+    return () => {
+      socket.off("orderStatusUpdated");
+    };
+  }, []);
+
+
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -209,6 +227,7 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
+          <button onClick={() => setView("notifications")}>🔔 Notifications {notifications.length > 0 && `(${notifications.length})`}</button>
           <button onClick={toggleCart}>
             Cart 🛒 {selectedItems.reduce((sum, i) => sum + i.quantity, 0)}
           </button>
@@ -303,6 +322,22 @@ const StudentHome = () => {
       )}
 
       {view === "orders" && <MyOrders orders={orderHistory} />}
+      {view === "notifications" && (
+        <div className="notifications-view">
+          <h3>🔔 Notifications</h3>
+          {notifications.length === 0 ? (
+           <p>No new notifications.<p>
+          ) : (
+            <ul>
+              {notifications.map((note, index) => (
+                <li key={index} className="notification-item">{note}<li>
+              ))}
+            <ul>
+          )}
+        <div>
+      )}
+
+
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
         <div className="cart-header">
