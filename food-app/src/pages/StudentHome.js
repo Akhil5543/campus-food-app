@@ -49,13 +49,13 @@ const StudentHome = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4003/vendors")
+      .get("https://vendor-service-wnkw.onrender.com/vendors")
       .then((res) => setVendors(res.data))
       .catch((err) => console.error("Error fetching vendors:", err));
 
     if (studentId) {
       axios
-        .get(`http://localhost:4001/orders/user/${studentId}`, {
+        .get(`https://order-service-k4v1.onrender.com/orders/user/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setOrderHistory(res.data.orders))
@@ -135,7 +135,7 @@ const StudentHome = () => {
 
     const orderPromises = Object.values(grouped).map((orderData) =>
       axios
-        .post("http://localhost:4001/orders", orderData, {
+        .post("https://order-service-k4v1.onrender.com/orders", orderData, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -147,7 +147,7 @@ const StudentHome = () => {
             method: paymentMethod.toLowerCase().replace(" ", "_"),
             status: "paid",
           };
-          return axios.post("http://localhost:4005/payments", paymentPayload);
+          return axios.post("https://payment-service-fgt8.onrender.com/payments", paymentPayload);
         })
     );
 
@@ -176,7 +176,7 @@ const StudentHome = () => {
         setView("restaurants");
 
         axios
-          .get(`http://localhost:4001/orders/user/${studentId}`, {
+          .get(`https://order-service-k4v1.onrender.com/orders/user/${studentId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => setOrderHistory(res.data.orders))
