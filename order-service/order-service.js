@@ -17,7 +17,12 @@ const io = new Server(server, {
   }
 });
 
-app.use(cors());
+const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json());
 
 // MongoDB Connection
