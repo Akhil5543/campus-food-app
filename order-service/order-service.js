@@ -7,7 +7,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
-const PORT = process.env.PORT || 4002;
+const PORT = process.env.PORT || 4001;
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -31,9 +31,7 @@ mongoose.connect(process.env.MONGO_URI, {
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   restaurantId: String,
-
-  restaurantName: String, // ✅ Added this
-
+  restaurantName: String,
   items: [
     {
       name: String,
@@ -42,12 +40,10 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   totalAmount: Number,
-
   status: {
     type: String,
     default: "Received",
   },
-
   createdAt: {
     type: Date,
     default: Date.now,
@@ -56,64 +52,48 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema, "orders");
 
-
-// ✅ PLACE NEW ORDER (with userId safely included)
+// ✅ PLACE NEW ORDER
 app.post("/orders", async (req, res) => {
   try {
-
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Missing token" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-
+    const userId = decoded.id?.toString(); // 🔧 Ensure it's stored as a string
 
     const newOrder = new Order({
-      restaurantId,
       userId,
-
       restaurantId: req.body.restaurantId,
-      restaurantName: req.body.restaurantName, // ✅ Save restaurant name
+      restaurantName: req.body.restaurantName,
       items: req.body.items,
       totalAmount: req.body.totalAmount,
       status: "Received",
-
     });
 
     const savedOrder = await newOrder.save();
     console.log("✅ Order Saved:", savedOrder);
+
     res.status(201).json({ message: "Order placed successfully", order: savedOrder });
   } catch (err) {
-
-    console.error("❌ Failed to place order:", err);
+    console.error("❌ Failed to place order:", err.message);
     res.status(500).json({ message: "Failed to place order", error: err.message });
   }
 });
 
-// GET: Fetch all orders (debug/admin)
-app.get("/orders", async (req, res) => {
-  try {
-    const orders = await Order.find().sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch orders", error: err.message });
-  }
-});
-
-// GET: Fetch user-specific orders
+// ✅ GET user-specific orders
 app.get("/orders/user/:userId", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Missing token" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const authenticatedUserId = decoded.id;
+    const authenticatedUserId = decoded.id?.toString(); // ✅ Ensure string comparison
 
-    if (authenticatedUserId !== req.params.userId) {
+    if (authenticatedUserId !== req.params.userId.toString()) {
       return res.status(403).json({ message: "Not authorized to view these orders" });
     }
 
-    const orders = await Order.find({ userId: authenticatedUserId }).sort({ createdAt: -1 });
+    const orders = await Order.find({ userId: req.params.userId.toString() }).sort({ createdAt: -1 });
     res.json({ orders });
   } catch (err) {
     console.error("❌ Failed to fetch user orders:", err);
@@ -121,30 +101,17 @@ app.get("/orders/user/:userId", async (req, res) => {
   }
 });
 
-
-// ✅ GET ORDERS BY VENDOR
+// ✅ GET vendor orders
 app.get("/orders/vendor/:vendorId", async (req, res) => {
-  const { vendorId } = req.params;
   try {
-    const orders = await Order.find({ restaurantId: vendorId }).sort({ createdAt: -1 });
+    const orders = await Order.find({ restaurantId: req.params.vendorId }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch vendor orders", error: err });
   }
 });
 
-// ✅ GET ORDERS BY USER
-app.get("/orders/user/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-    res.json({ orders });
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch user orders", error: err });
-  }
-});
-
-// ✅ UPDATE ORDER STATUS
+// ✅ Update order status
 app.patch("/orders/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
@@ -169,7 +136,7 @@ app.patch("/orders/:id/status", async (req, res) => {
   }
 });
 
-// 🔁 Socket for real-time vendor refresh
+// 🔁 Socket.io: Notify vendors
 io.on("connection", (socket) => {
   socket.on("newOrderPlaced", () => {
     io.emit("refreshVendorOrders");
@@ -178,5 +145,4 @@ io.on("connection", (socket) => {
 
 server.listen(PORT, () => {
   console.log(`🚀 Order service running on http://localhost:${PORT}`);
-
 });
