@@ -3,23 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
+  "homepage": "https://akhil5543.github.io/campus-food-app",
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nazeemuddin12/campus-food-app.git"
+    "url": "git+https://github.com/akhil5543/campus-food-app.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Nazeemuddin12/campus-food-app/issues"
+    "url": "https://github.com/akhil5543/campus-food-app/issues"
   },
-  "homepage": ".",
   "description": "",
   "dependencies": {
     "axios": "^1.8.4",
@@ -32,6 +34,9 @@
     "react-scripts": "^3.0.1",
     "socket.io-client": "^4.8.1",
     "web-vitals": "^4.2.4"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   },
   "browserslist": {
     "production": [
