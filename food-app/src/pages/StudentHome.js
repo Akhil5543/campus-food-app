@@ -120,6 +120,7 @@ const StudentHome = () => {
           restaurantId,
           items: selectedItems,
           totalAmount,
+          userId: studentId,
         },
         {
           headers: { Authorization: `Bearer ${token}` },

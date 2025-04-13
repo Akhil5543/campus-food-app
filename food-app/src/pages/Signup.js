@@ -13,6 +13,8 @@ const Signup = () => {
     role: "student",
   });
   const [error, setError] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,7 +25,19 @@ const Signup = () => {
     setError("");
 
     try {
-      await axios.post("http://localhost:4006/signup", formData);
+      const res = await axios.post("http://localhost:4006/signup", formData);
+      setEmailSent(true);
+    } catch (err) {
+      setError("Signup failed. Please try again.");
+    }
+  };
+
+  const handleVerification = async () => {
+    try {
+      await axios.post("http://localhost:4006/verify", {
+        email: formData.email,
+        code: verificationCode,
+      });
 
       const res = await axios.post("http://localhost:4006/login", {
         email: formData.email,
@@ -37,7 +51,8 @@ const Signup = () => {
       if (decoded.role === "student") navigate("/campus-food-app");
       else navigate("/restaurant-dashboard");
     } catch (err) {
-      setError("Signup failed. Please try again.");
+      setError("Verification failed. Please check your code.");
+
     }
   };
 
@@ -47,36 +62,55 @@ const Signup = () => {
       <h2 className="auth-header">Create Your Account</h2>
       <p className="auth-subtext">Start your campus food journey with us</p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="auth-input"
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="auth-input"
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="auth-input"
-        />
-        <select name="role" value={formData.role} onChange={handleChange} className="auth-input">
-          <option value="student">Student</option>
-          <option value="restaurant">Restaurant Owner</option>
-        </select>
-        <button type="submit" className="auth-button">Sign Up</button>
-      </form>
+      {!emailSent ? (
+        <form onSubmit={handleSubmit}>
+          <input
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="auth-input"
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="auth-input"
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="auth-input"
+          />
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="auth-input"
+          >
+            <option value="student">Student</option>
+            <option value="restaurant">Restaurant Owner</option>
+          </select>
+          <button type="submit" className="auth-button">Sign Up</button>
+        </form>
+      ) : (
+        <div>
+          <p>We sent a 6-digit code to <strong>{formData.email}</strong>. Enter it below to verify your account.</p>
+          <input
+            type="text"
+            placeholder="Enter verification code"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            className="auth-input"
+          />
+          <button onClick={handleVerification} className="auth-button">Verify Email</button>
+        </div>
+      )}
 
       {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
 
