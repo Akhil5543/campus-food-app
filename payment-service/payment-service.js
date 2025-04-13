@@ -7,7 +7,12 @@ const app = express();
 const PORT = process.env.PORT || 4005;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json());
 
 // ✅ PostgreSQL connection for Render (SSL required)
