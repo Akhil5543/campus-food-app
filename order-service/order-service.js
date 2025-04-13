@@ -20,9 +20,17 @@ const io = new Server(server, {
 const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PATCH"],
   credentials: true,
 }));
+
 app.use(express.json());
 
 // MongoDB Connection
