@@ -209,6 +209,7 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
+          <button onClick={() => setView("notifications")}>Notifications</button>
           <button onClick={toggleCart}>
             Cart 🛒 {selectedItems.reduce((sum, i) => sum + i.quantity, 0)}
           </button>
