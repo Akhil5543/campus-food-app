@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./RestaurantDashboard.css";
 
-const socket = io("http://localhost:4002");
+const socket = io("http://localhost:4001");
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const RestaurantDashboard = () => {
   const fetchOrders = async () => {
     try {
       if (!vendor?._id) return;
-      const res = await axios.get(`http://localhost:4002/orders/vendor/${vendor._id}`);
+      const res = await axios.get(`http://localhost:4001/orders/vendor/${vendor._id}`);
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -86,14 +86,15 @@ const RestaurantDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (vendor) {
+    if (vendor && vendor._id) {
       fetchOrders();
     }
   }, [vendor]);
+  
 
   useEffect(() => {
     socket.on("refreshVendorOrders", fetchOrders);
-    return () => socket.off("refreshVendorOrders");
+    return () => socket.off("refreshVendorOrders", fetchOrders);
   }, []);
 
   return (

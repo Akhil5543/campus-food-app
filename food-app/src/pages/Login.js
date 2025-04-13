@@ -8,6 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student"); // default to student
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -15,7 +16,12 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:4006/login", { email, password });
+      const res = await axios.post("http://localhost:4006/login", {
+        email,
+        password,
+        role,
+      });
+
       const token = res.data.token;
       localStorage.setItem("token", token);
 
@@ -48,6 +54,14 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
         />
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="auth-input"
+        >
+          <option value="student">Student</option>
+          <option value="restaurant">Restaurant Owner</option>
+        </select>
         <button type="submit" className="auth-button">Login</button>
       </form>
 
