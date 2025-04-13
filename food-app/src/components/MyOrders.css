@@ -1,105 +1,62 @@
-.myorders-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .myorders-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  
-  .order-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 16px;
-  }
-  
-  .order-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .order-restaurant-image {
-    width: 70px;
-    height: 70px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-right: 12px;
-  }
-  
-  .order-header-details {
-    flex: 1;
-  }
-  
-  .restaurant-name {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin: 0 0 4px 0;
-  }
-  
-  .order-meta {
-    color: #666;
-    font-size: 0.9rem;
-  }
-  
-  .order-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-left: auto;
-  }
-  
-  .order-action-btn {
-    background: none;
-    border: none;
-    color: #008080;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
-  }
-  
-  .order-action-btn:hover {
-    color: #005757;
-  }
-  
-  .order-items {
-    padding-left: 82px;
-    margin-bottom: 12px;
-  }
-  
-  .order-item {
-    margin: 8px 0;
-  }
-  
-  .item-name {
-    font-weight: 500;
-    font-size: 1rem;
-  }
-  
-  .order-rate {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .rate-order-btn {
-    background-color: #fff;
-    border: 1px solid #008080;
-    color: #008080;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  
-  .rate-order-btn:hover {
-    background-color: #008080;
-    color: #fff;
-  }
-  
+.my-orders-container {
+  padding: 20px;
+  background-color: #fff8e5;
+}
+
+.order-card {
+  background-color: white;
+  border-radius: 10px;
+  border-left: 6px solid #f1c40f;
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.order-restaurant-logo {
+  width: 80px;
+  height: auto;
+  object-fit: contain;
+}
+
+.restaurant-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.order-meta {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.order-links a {
+  color: #007bff;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.order-items {
+  margin-top: 15px;
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+}
+
+.item-qty {
+  font-weight: bold;
+  width: 20px;
+}
+
+.item-name {
+  font-weight: 500;
+}
