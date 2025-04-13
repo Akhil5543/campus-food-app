@@ -271,7 +271,7 @@ const StudentHome = () => {
                             </div>
                             {existing ? (
                               <div className="cart-controls">
-                                <button onClick={(e) => removeItem(e, item)}>
+                                <button onClick={(e) => removeItem(e, { ...item, vendorName: vendor.name })}>
                                   -
                                 </button>
                                 <span>{existing.quantity}</span>
