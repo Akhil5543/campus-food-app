@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./RestaurantDashboard.css";
 
-const socket = io("http://localhost:4001");
+const socket = io("https://order-service-vgej.onrender.com");
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const RestaurantDashboard = () => {
 
   const fetchVendor = async () => {
     try {
-      const res = await axios.get(`http://localhost:4003/vendor/owner/${ownerId}`);
+      const res = await axios.get(`https://vendor-service-wnkw.onrender.com/vendor/owner/${ownerId}`);
       setVendor(res.data);
     } catch (err) {
       console.error("Error fetching vendor:", err);
@@ -36,7 +36,7 @@ const RestaurantDashboard = () => {
   const fetchOrders = async () => {
     try {
       if (!vendor?._id) return;
-      const res = await axios.get(`http://localhost:4001/orders/vendor/${vendor._id}`);
+      const res = await axios.get(`https://order-service-vgej.onrender.com/orders/vendor/${vendor._id}`);
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -45,8 +45,8 @@ const RestaurantDashboard = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      await axios.patch(`http://localhost:4002/orders/${orderId}/status`, {
-        status: newStatus,
+      await axios.patch(`https://order-service-vgej.onrender.com/orders/${orderId}/status`, {
+        status: newStatus
       });
       fetchOrders();
     } catch (err) {
@@ -56,9 +56,10 @@ const RestaurantDashboard = () => {
 
   const markItemOutOfStock = async (itemId) => {
     try {
-      await axios.put(`http://localhost:4003/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
+      await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
         outOfStock: true,
       });
+
       fetchVendor(); // Refresh the menu to reflect the changes
     } catch (err) {
       console.error("Error marking item as out of stock:", err);
@@ -68,7 +69,7 @@ const RestaurantDashboard = () => {
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
     try {
-      await axios.post(`http://localhost:4003/vendor/${vendor._id}/menu`, newItem);
+      await axios.post(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu`, newItem);
       setNewItem({ name: "", price: "", description: "" });
       fetchVendor();
     } catch (err) {
