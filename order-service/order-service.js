@@ -152,6 +152,7 @@ app.patch("/orders/:id/status", async (req, res) => {
   }
 });
 
+
 // 🔁 Socket.io: Notify vendors
 io.on("connection", (socket) => {
   socket.on("newOrderPlaced", () => {
