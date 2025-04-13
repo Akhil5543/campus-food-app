@@ -132,6 +132,7 @@ const StudentHome = () => {
       return acc;
     }, {});
 
+
     const orderPromises = Object.values(grouped).map((orderData) =>
       axios
         .post("http://localhost:4001/orders", orderData, {
