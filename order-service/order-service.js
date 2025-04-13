@@ -17,7 +17,10 @@ const io = new Server(server, {
   }
 });
 
-const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
+const allowedOrigins = [
+  "https://campus-food-app.vercel.app",
+  "https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"
+];
 
 app.use(cors({
   origin: (origin, callback) => {
