@@ -8,7 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student"); // default to student
+  const [role, setRole] = useState("student");
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -16,7 +16,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:4006/login", {
+      const res = await axios.post("https://auth-service-fgt8.onrender.com/login", {
         email,
         password,
         role,
