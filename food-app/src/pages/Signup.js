@@ -25,7 +25,7 @@ const Signup = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:4006/signup", formData);
+      const res = await axios.post("https://auth-service-fgt8.onrender.com/signup", formData);
       setEmailSent(true);
     } catch (err) {
       setError("Signup failed. Please try again.");
@@ -34,14 +34,15 @@ const Signup = () => {
 
   const handleVerification = async () => {
     try {
-      await axios.post("http://localhost:4006/verify", {
+      await axios.post("https://auth-service-fgt8.onrender.com/verify", {
         email: formData.email,
         code: verificationCode,
       });
 
-      const res = await axios.post("http://localhost:4006/login", {
+      const res = await axios.post("https://auth-service-fgt8.onrender.com/login", {
         email: formData.email,
         password: formData.password,
+        role: formData.role,
       });
 
       const token = res.data.token;
@@ -52,7 +53,6 @@ const Signup = () => {
       else navigate("/restaurant-dashboard");
     } catch (err) {
       setError("Verification failed. Please check your code.");
-
     }
   };
 
