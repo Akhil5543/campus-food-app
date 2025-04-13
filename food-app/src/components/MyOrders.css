@@ -1,0 +1,105 @@
+.myorders-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .myorders-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 16px;
+  }
+  
+  .order-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .order-restaurant-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 12px;
+  }
+  
+  .order-header-details {
+    flex: 1;
+  }
+  
+  .restaurant-name {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+  }
+  
+  .order-meta {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .order-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: auto;
+  }
+  
+  .order-action-btn {
+    background: none;
+    border: none;
+    color: #008080;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+  
+  .order-action-btn:hover {
+    color: #005757;
+  }
+  
+  .order-items {
+    padding-left: 82px;
+    margin-bottom: 12px;
+  }
+  
+  .order-item {
+    margin: 8px 0;
+  }
+  
+  .item-name {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  
+  .order-rate {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .rate-order-btn {
+    background-color: #fff;
+    border: 1px solid #008080;
+    color: #008080;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .rate-order-btn:hover {
+    background-color: #008080;
+    color: #fff;
+  }
+  
