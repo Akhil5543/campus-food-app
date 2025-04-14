@@ -27,16 +27,21 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    console.log("🔍 Incoming Origin:", origin);
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+  origin: (origin, callback) => {
+    console.log("Incoming Origin:", origin);
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
       callback(null, true);
     } else {
-      callback(new Error("❌ Not allowed by CORS: " + origin));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,
+  credentials: true
 }));
+
 
 app.options("*", cors()); 
 
