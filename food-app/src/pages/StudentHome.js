@@ -86,12 +86,15 @@ const StudentHome = () => {
   socket.on("orderStatusUpdated", (data) => {
     setNotifications((prev) => [
       ...prev,
-      { message: `Your order ${data.orderId} is now ${data.status}` },
+      `Your order ${data.orderId} is now ${data.status}`,
     ]);
   });
 
-  return () => socket.disconnect();
+  return () => {
+    socket.disconnect();
+  };
 }, []);
+
 
 
   const toggleMenu = (e, id) => {
