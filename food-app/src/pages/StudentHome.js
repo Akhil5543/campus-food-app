@@ -7,7 +7,6 @@ import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import { io } from "socket.io-client";
 
-
 const StudentHome = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
