@@ -21,7 +21,6 @@ const StudentHome = () => {
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [lastPayment, setLastPayment] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const socket = io("https://order-service-k4v1.onrender.com");
   const [searchTerm, setSearchTerm] = useState("");
 
 
@@ -342,15 +341,15 @@ const StudentHome = () => {
         <div className="notifications-view">
           <h3>🔔 Notifications</h3>
           {notifications.length === 0 ? (
-           <p>No new notifications.<p>
+           <p>No new notifications.</p>
           ) : (
             <ul>
               {notifications.map((note, index) => (
-                <li key={index} className="notification-item">{note}<li>
+                <li key={index} className="notification-item">{note}</li>
               ))}
-            <ul>
+       </ul>
           )}
-        <div>
+       </div>
       )}
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
