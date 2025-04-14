@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
+import { io } from "socket.io-client";
+
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -79,6 +81,20 @@ const StudentHome = () => {
     };
   }, []);
 
+
+
+  useEffect(() => {
+  const socket = io("https://order-service-k4v1.onrender.com");
+
+  socket.on("orderStatusUpdated", (data) => {
+    setNotifications((prev) => [
+      ...prev,
+      { message: `Your order ${data.orderId} is now ${data.status}` },
+    ]);
+  });
+
+  return () => socket.disconnect();
+}, []);
 
 
   const toggleMenu = (e, id) => {
@@ -289,7 +305,7 @@ const StudentHome = () => {
                             </div>
                             {existing ? (
                               <div className="cart-controls">
-                                <button onClick={(e) => removeItem(e, item)}>
+                                <button onClick={(e) => removeItem(e, { ...item, vendorName: vendor.name })}>
                                   -
                                 </button>
                                 <span>{existing.quantity}</span>
@@ -336,8 +352,6 @@ const StudentHome = () => {
           )}
         <div>
       )}
-
-
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
         <div className="cart-header">
