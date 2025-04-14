@@ -532,3 +532,48 @@ body, html {
   color: #000;
 }
 
+.empty-cart-modern {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-cart-icon {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.empty-cart-modern h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #222;
+}
+
+.empty-cart-modern p {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 20px;
+  max-width: 300px;
+}
+
+.start-shopping-btn {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-shopping-btn:hover {
+  background-color: #222;
+}
+
+
