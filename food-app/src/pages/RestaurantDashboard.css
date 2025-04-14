@@ -149,3 +149,28 @@
   cursor: pointer;
 }
 
+.mark-out-of-stock-btn {
+  background-color: #f1c40f; 
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 16px;
+}
+
+.mark-out-of-stock-btn:hover {
+  background-color: #d4ac0d;
+}
+
+.mark-out-of-stock-btn.disabled {
+  background-color: #e74c3c; 
+  color: #fff;
+}
+
+.mark-out-of-stock-btn.disabled:hover {
+  background-color: #c0392b;
+}
+
