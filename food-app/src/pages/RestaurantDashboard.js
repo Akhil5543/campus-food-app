@@ -54,17 +54,18 @@ const RestaurantDashboard = () => {
     }
   };
 
-  const markItemOutOfStock = async (itemId) => {
+  const toggleItemStock = async (itemId, currentStatus) => {
     try {
       await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
-        outOfStock: true,
+        outOfStock: !currentStatus,
       });
 
       fetchVendor(); // Refresh the menu to reflect the changes
     } catch (err) {
-      console.error("Error marking item as out of stock:", err);
+      console.error("Error updating item stock status:", err);
     }
   };
+
 
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
@@ -111,10 +112,11 @@ const RestaurantDashboard = () => {
         {vendor?.menu?.map((item, index) => (
           <li key={index}>
             <strong>{item.name}</strong>: ${item.price} – {item.description}
-            <button 
-              className="mark-out-of-stock-btn" 
-              onClick={() => markItemOutOfStock(item._id)}>
-                {item.outOfStock ? "Out of Stock" : "Mark Out of Stock"}
+            <button
+              className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
+              onClick={() => toggleItemStock(item._id, item.outOfStock)}
+            >
+              {item.outOfStock ? "Out of Stock" : "In Stock"}
             </button>
           </li>
         ))}
