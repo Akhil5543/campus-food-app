@@ -12,8 +12,12 @@ const PORT = process.env.PORT || 4001;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PATCH"]
+    origin: [
+      "https://campus-food-app.vercel.app",
+      "https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"
+    ],
+    methods: ["GET", "POST", "PATCH"],
+    credentials: true
   }
 });
 
@@ -24,6 +28,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
+   console.log("Incoming Origin:", origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -33,6 +38,7 @@ app.use(cors({
   methods: ["GET", "POST", "PATCH"],
   credentials: true,
 }));
+app.options("*", cors()); 
 
 app.use(express.json());
 
