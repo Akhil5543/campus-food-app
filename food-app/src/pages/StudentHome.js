@@ -349,8 +349,26 @@ const StudentHome = () => {
 
         <div className="cart-items">
           {selectedItems.length === 0 ? (
-            <p className="empty-cart-message">Your cart is currently empty.</p>
+            <div className="empty-cart-modern">
+              <img
+                src="/images/empty-cart.png"
+                alt="Empty Cart"
+                className="empty-cart-icon"
+              />
+              <h3>Add items to start a cart</h3>
+              <p>Once you add items from a restaurant or store, your cart will appear here.</p>
+              <button
+                className="start-shopping-btn"
+                onClick={() => {
+                  setCartVisible(false);
+                  setView("restaurants");
+                }}
+              >
+                Start shopping
+              </button>
+            </div>
           ) : (
+
             Object.entries(
               selectedItems.reduce((grouped, item) => {
                 if (!grouped[item.vendorName]) {
