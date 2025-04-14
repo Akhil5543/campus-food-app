@@ -324,15 +324,15 @@ const StudentHome = () => {
       {view === "notifications" && (
         <div className="notifications-view">
           {notifications.length === 0 ? (
-            <p className="no-notifications">You have no new notifications.<p>
+            <p className="no-notifications">You have no new notifications.</p>
           ) : (
             notifications.map((note, index) => (
               <div key={index} className="notification-item">
                 {note.message}
-              <div>
+              </div>
             ))
           )}
-        <div>
+        </div>
       )}
 
 
