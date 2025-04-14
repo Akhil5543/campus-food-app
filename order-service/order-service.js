@@ -42,7 +42,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// Preflight support for all routes
 app.options("*", cors());
 
 app.use(express.json());
