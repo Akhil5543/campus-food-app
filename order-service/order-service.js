@@ -43,6 +43,7 @@ app.use(cors({
 }));
 
 app.options("*", cors());
+console.log("🚨 CORS middleware is running...");
 
 app.use(express.json());
 
