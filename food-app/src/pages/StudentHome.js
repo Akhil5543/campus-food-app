@@ -65,21 +65,7 @@ const StudentHome = () => {
         .catch((err) => console.error("Error fetching order history:", err));
     }
   }, [studentId, token]);
-  useEffect(() => {
-    socket.on("orderStatusUpdated", (data) => {
-      setNotifications((prev) => [
-        ...prev,
-        `Order #${data.orderId} status changed to ${data.status}`,
-      ]);
-    });
-
-    return () => {
-      socket.off("orderStatusUpdated");
-    };
-  }, []);
-
-
-
+ 
   useEffect(() => {
   const socket = io("https://order-service-k4v1.onrender.com");
 
@@ -94,7 +80,6 @@ const StudentHome = () => {
     socket.disconnect();
   };
 }, []);
-
 
 
   const toggleMenu = (e, id) => {
