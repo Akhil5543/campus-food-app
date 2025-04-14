@@ -28,7 +28,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    console.log("Incoming Origin:", origin);
+    console.log("🌐 Incoming Origin:", origin);
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
@@ -36,14 +36,14 @@ app.use(cors({
     ) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("❌ Not allowed by CORS: " + origin));
     }
   },
-  credentials: true
+  credentials: true,
 }));
 
-
-app.options("*", cors()); 
+// Preflight support for all routes
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -172,7 +172,7 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Order service running on http://localhost:${PORT}`);
+  console.log(`🚀 Order service running on port ${PORT}`);
 });
 
 
