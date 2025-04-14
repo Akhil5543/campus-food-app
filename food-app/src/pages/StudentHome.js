@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
-import { io } from "socket.io-client";
-
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -67,32 +65,20 @@ const StudentHome = () => {
         .catch((err) => console.error("Error fetching order history:", err));
     }
   }, [studentId, token]);
-  useEffect(() => {
-    socket.on("orderStatusUpdated", (data) => {
-      setNotifications((prev) => [
-        ...prev,
-        `Order #${data.orderId} status changed to ${data.status}`,
-      ]);
-    });
-
-    return () => {
-      socket.off("orderStatusUpdated");
-    };
-  }, []);
-
-
-
+ 
   useEffect(() => {
   const socket = io("https://order-service-k4v1.onrender.com");
 
   socket.on("orderStatusUpdated", (data) => {
     setNotifications((prev) => [
       ...prev,
-      { message: `Your order ${data.orderId} is now ${data.status}` },
+      `Your order ${data.orderId} is now ${data.status}`,
     ]);
   });
 
-  return () => socket.disconnect();
+  return () => {
+    socket.disconnect();
+  };
 }, []);
 
 
