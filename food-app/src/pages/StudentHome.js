@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
+import { io } from "socket.io-client";
+
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ const StudentHome = () => {
   const [paymentMethod, setPaymentMethod] = useState("Campus Card");
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [lastPayment, setLastPayment] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const token = localStorage.getItem("token") || "";
@@ -62,6 +65,20 @@ const StudentHome = () => {
         .catch((err) => console.error("Error fetching order history:", err));
     }
   }, [studentId, token]);
+
+  useEffect(() => {
+  const socket = io("https://order-service-k4v1.onrender.com");
+
+  socket.on("orderStatusUpdated", (data) => {
+    setNotifications((prev) => [
+      ...prev,
+      { message: `Your order ${data.orderId} is now ${data.status}` },
+    ]);
+  });
+
+  return () => socket.disconnect();
+}, []);
+
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -304,6 +321,20 @@ const StudentHome = () => {
       )}
 
       {view === "orders" && <MyOrders orders={orderHistory} />}
+      {view === "notifications" && (
+        <div className="notifications-view">
+          {notifications.length === 0 ? (
+            <p className="no-notifications">You have no new notifications.<p>
+          ) : (
+            notifications.map((note, index) => (
+              <div key={index} className="notification-item">
+                {note.message}
+              <div>
+            ))
+          )}
+        <div>
+      )}
+
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
         <div className="cart-header">
