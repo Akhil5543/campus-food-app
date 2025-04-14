@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
-import { io } from "socket.io-client";
 
 const StudentHome = () => {
   const navigate = useNavigate();
