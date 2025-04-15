@@ -59,7 +59,7 @@ const StudentHome = () => {
 
     if (studentId) {
       axios
-        .get(`https://order-service-k4v1.onrender.com/orders/user/${studentId}`, {
+        .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setOrderHistory(res.data.orders))
@@ -68,7 +68,7 @@ const StudentHome = () => {
   }, [studentId, token]);
  
   useEffect(() => {
-  const socket = io("https://order-service-k4v1.onrender.com");
+  const socket = io("https://order-service-vgej.onrender.com");
 
   socket.on("orderStatusUpdated", (data) => {
     setNotifications((prev) => [
