@@ -154,7 +154,9 @@ app.patch("/orders/:id/status", async (req, res) => {
 
     io.emit("orderStatusUpdated", {
       orderId: updatedOrder._id,
-      status: updatedOrder.status
+      status: updatedOrder.status,
+      vendorName: updatedOrder.restaurantName,
+      createdAt: updatedOrder.createdAt
     });
 
     res.status(200).json(updatedOrder);
