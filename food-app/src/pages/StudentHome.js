@@ -251,9 +251,16 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
-          <button onClick={() => setView("notifications")}>
-            🔔 Notifications {notifications.length > 0 && `(${notifications.length})`}
+          <button
+            onClick={() => setView("notifications")}
+            className="notification-icon-button"
+          >
+            <span role="img" aria-label="Notifications">🔔</span>
+            {notifications.length > 0 && (
+              <span className="notification-count">{notifications.length}</span>
+            )}
           </button>
+
           <button onClick={toggleCart}>
             Cart 🛒 {selectedItems.reduce((sum, i) => sum + i.quantity, 0)}
           </button>
