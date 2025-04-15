@@ -251,9 +251,6 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
-          <button onClick={() => setView("favorites")}>
-            Favorites {favorites.length > 0 && `(${favorites.length})`}
-          </button>
           <button onClick={() => setView("notifications")}>
             🔔 Notifications {notifications.length > 0 && `(${notifications.length})`}
           </button>
@@ -349,51 +346,6 @@ const StudentHome = () => {
               ))}
           </div>
         </>
-      )}
-
-      {/* Favorites view */}
-      {view === "favorites" && (
-        <div className="favorites-view">
-          <h3>Your Favorites</h3>
-          {favorites.length === 0 ? (
-            <p>You haven't bookmarked any restaurants yet.</p>
-          ) : (
-            <div className="popular-restaurants">
-              {favorites.map((restaurant) => (
-                <div
-                  key={restaurant._id}
-                  className="restaurant-card"
-                  onClick={(e) => toggleMenu(e, restaurant._id)}
-                >
-                  <div className="restaurant-content">
-                    <img
-                      className="restaurant-image"
-                      src={getVendorLogo(restaurant.name)}
-                      alt={restaurant.name}
-                    />
-                    <div>
-                      <h5 className="restaurant-name">
-                        {restaurant.name}
-                        <span className="rating-badge">4.7</span>
-                      </h5>
-                      <div className="text-muted">{restaurant.address}</div>
-                    </div>
-                    {/* FAVORITES: Favorite icon in favorites view */}
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(restaurant);
-                      }}
-                      style={{ cursor: "pointer", fontSize: "24px", marginLeft: "auto" }}
-                    >
-                      {favorites.some((fav) => fav._id === restaurant._id) ? "💖" : "🤍"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       )}
 
       {view === "orders" && <MyOrders orders={orderHistory} />}
