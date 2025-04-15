@@ -20,8 +20,8 @@ const StudentHome = () => {
   const [lastPayment, setLastPayment] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  // FAVORITES: Add favorites state
   const [favorites, setFavorites] = useState([]);
+  const [favoritesDrawerVisible, setFavoritesDrawerVisible] = useState(false);
 
   const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -548,6 +548,50 @@ const StudentHome = () => {
             </p>
             <p><strong>Status:</strong> {lastPayment?.status}</p>
             <button onClick={() => setShowReceiptModal(false)}>Close</button>
+          </div>
+        </div>
+      )}
+      {/* Floating Favorites Button */}
+      <div 
+        className="floating-favorites-button"
+        onClick={() => setFavoritesDrawerVisible(true)}
+      >
+        <span role="img" aria-label="Favorites">💖</span>
+      </div>
+      {/* Favorites Drawer */}
+      {favoritesDrawerVisible && (
+        <div className="favorites-drawer">
+          <div className="drawer-header">
+            <h3>My Favorites</h3>
+            <button onClick={() => setFavoritesDrawerVisible(false)}>×</button>
+          </div>
+          <div className="drawer-content">
+            {favorites.length === 0 ? (
+              <p>No favorites yet.</p>
+            ) : (
+              favorites.map((fav) => (
+                <div key={fav._id} className="drawer-item">
+                  <img 
+                    src={getVendorLogo(fav.name)} 
+                    alt={fav.name} 
+                    className="drawer-image" 
+                  />
+                  <div className="drawer-info">
+                    <h4>{fav.name}</h4>
+                    <p>{fav.address}</p>
+                    <button onClick={() => navigate(`/restaurant/${fav._id}`)}>
+                      Reorder
+                    </button>
+                  </div>
+                  <span
+                    className="drawer-remove"
+                    onClick={() => toggleFavorite(fav)}
+                  >
+                    Remove
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
