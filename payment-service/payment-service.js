@@ -9,8 +9,16 @@ const PORT = process.env.PORT || 4005;
 // Middleware
 const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
 
+// ✅ CORS Configuration
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error("❌ CORS blocked for origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());

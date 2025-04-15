@@ -6,7 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 
-
 const StudentHome = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
@@ -21,7 +20,8 @@ const StudentHome = () => {
   const [lastPayment, setLastPayment] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesDrawerVisible, setFavoritesDrawerVisible] = useState(false);
 
   const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -42,6 +42,19 @@ const StudentHome = () => {
     return `${process.env.PUBLIC_URL}/images/${formatted}.png`;
   };
 
+  // FAVORITES: Load favorites from local storage on mount
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favoriteRestaurants");
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+  }, []);
+
+  // FAVORITES: Save favorites to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("favoriteRestaurants", JSON.stringify(favorites));
+  }, [favorites]);
+
   useEffect(() => {
     const savedCart = localStorage.getItem("cartItems");
     if (savedCart) setSelectedItems(JSON.parse(savedCart));
@@ -59,7 +72,7 @@ const StudentHome = () => {
 
     if (studentId) {
       axios
-        .get(`https://order-service-k4v1.onrender.com/orders/user/${studentId}`, {
+        .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setOrderHistory(res.data.orders))
@@ -68,20 +81,19 @@ const StudentHome = () => {
   }, [studentId, token]);
  
   useEffect(() => {
-  const socket = io("https://order-service-k4v1.onrender.com");
+    const socket = io("https://order-service-vgej.onrender.com");
 
-  socket.on("orderStatusUpdated", (data) => {
-    setNotifications((prev) => [
-      ...prev,
-      `Your order ${data.orderId} is now ${data.status}`,
-    ]);
-  });
+    socket.on("orderStatusUpdated", (data) => {
+      setNotifications((prev) => [
+        ...prev,
+        `Your order ${data.orderId} is now ${data.status}`,
+      ]);
+    });
 
-  return () => {
-    socket.disconnect();
-  };
-}, []);
-
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -138,11 +150,22 @@ const StudentHome = () => {
     0
   );
 
+  // FAVORITES: Toggle favorite for a restaurant (vendor)
+  const toggleFavorite = (restaurant) => {
+    const isFavorite = favorites.some((fav) => fav._id === restaurant._id);
+    if (isFavorite) {
+      setFavorites(favorites.filter((fav) => fav._id !== restaurant._id));
+    } else {
+      setFavorites([...favorites, restaurant]);
+    }
+  };
+
   const placeOrder = () => {
     const grouped = selectedItems.reduce((acc, item) => {
       if (!acc[item.vendorId]) {
         acc[item.vendorId] = {
           restaurantId: item.vendorId,
+          restaurantName: item.vendorName,
           items: [],
           totalAmount: 0,
         };
@@ -152,10 +175,9 @@ const StudentHome = () => {
       return acc;
     }, {});
 
-
     const orderPromises = Object.values(grouped).map((orderData) =>
       axios
-        .post("https://order-service-k4v1.onrender.com/orders", orderData, {
+        .post("https://order-service-vgej.onrender.com/orders", orderData, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -167,7 +189,7 @@ const StudentHome = () => {
             method: paymentMethod.toLowerCase().replace(" ", "_"),
             status: "paid",
           };
-          return axios.post("https://payment-service-fgt8.onrender.com/payments", paymentPayload);
+          return axios.post("https://campus-food-app.onrender.com/payments", paymentPayload);
         })
     );
 
@@ -196,7 +218,7 @@ const StudentHome = () => {
         setView("restaurants");
 
         axios
-          .get(`https://order-service-k4v1.onrender.com/orders/user/${studentId}`, {
+          .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => setOrderHistory(res.data.orders))
@@ -229,7 +251,16 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
-          <button onClick={() => setView("notifications")}>🔔 Notifications {notifications.length > 0 && `(${notifications.length})`}</button>
+          <button
+            onClick={() => setView("notifications")}
+            className="notification-icon-button"
+          >
+            <span role="img" aria-label="Notifications">🔔</span>
+            {notifications.length > 0 && (
+              <span className="notification-count">{notifications.length}</span>
+            )}
+          </button>
+
           <button onClick={toggleCart}>
             Cart 🛒 {selectedItems.reduce((sum, i) => sum + i.quantity, 0)}
           </button>
@@ -239,6 +270,7 @@ const StudentHome = () => {
         </div>
       </div>
 
+      {/* Restaurants view */}
       {view === "restaurants" && (
         <>
           <div className="search-bar">
@@ -274,6 +306,16 @@ const StudentHome = () => {
                       </h5>
                       <div className="text-muted">{vendor.address}</div>
                     </div>
+                    {/* FAVORITES: Favorite icon on restaurant cards */}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(vendor);
+                      }}
+                      style={{ cursor: "pointer", fontSize: "24px", marginLeft: "auto" }}
+                    >
+                      {favorites.some((fav) => fav._id === vendor._id) ? "💖" : "🤍"}
+                    </span>
                   </div>
                   {expandedRestaurantId === vendor._id && (
                     <div className="menu-items mt-3">
@@ -292,25 +334,15 @@ const StudentHome = () => {
                             {existing ? (
                               <div className="cart-controls">
                                 <button onClick={(e) => removeItem(e, { ...item, vendorName: vendor.name })}>
-                                  -
+                                  −
                                 </button>
                                 <span>{existing.quantity}</span>
-                                <button
-                                  onClick={(e) =>
-                                    addItem(e, item, vendor.name)
-                                  }
-                                >
+                                <button onClick={(e) => addItem(e, item, vendor.name)}>
                                   +
                                 </button>
                               </div>
                             ) : (
-                              <button
-                                onClick={(e) =>
-                                  addItem(e, item, vendor.name)
-                                }
-                              >
-                                +
-                              </button>
+                              <button onClick={(e) => addItem(e, item, vendor.name)}>+</button>
                             )}
                           </div>
                         );
@@ -328,15 +360,15 @@ const StudentHome = () => {
         <div className="notifications-view">
           <h3>🔔 Notifications</h3>
           {notifications.length === 0 ? (
-           <p>No new notifications.</p>
+            <p>No new notifications.</p>
           ) : (
             <ul>
               {notifications.map((note, index) => (
                 <li key={index} className="notification-item">{note}</li>
               ))}
-       </ul>
+            </ul>
           )}
-       </div>
+        </div>
       )}
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
@@ -368,7 +400,6 @@ const StudentHome = () => {
               </button>
             </div>
           ) : (
-
             Object.entries(
               selectedItems.reduce((grouped, item) => {
                 if (!grouped[item.vendorName]) {
@@ -476,6 +507,50 @@ const StudentHome = () => {
             </p>
             <p><strong>Status:</strong> {lastPayment?.status}</p>
             <button onClick={() => setShowReceiptModal(false)}>Close</button>
+          </div>
+        </div>
+      )}
+      {/* Floating Favorites Button */}
+      <div 
+        className="floating-favorites-button"
+        onClick={() => setFavoritesDrawerVisible(true)}
+      >
+        <span role="img" aria-label="Favorites">💖</span>
+      </div>
+      {/* Favorites Drawer */}
+      {favoritesDrawerVisible && (
+        <div className="favorites-drawer">
+          <div className="drawer-header">
+            <h3>My Favorites</h3>
+            <button onClick={() => setFavoritesDrawerVisible(false)}>×</button>
+          </div>
+          <div className="drawer-content">
+            {favorites.length === 0 ? (
+              <p>No favorites yet.</p>
+            ) : (
+              favorites.map((fav) => (
+                <div key={fav._id} className="drawer-item">
+                  <img 
+                    src={getVendorLogo(fav.name)} 
+                    alt={fav.name} 
+                    className="drawer-image" 
+                  />
+                  <div className="drawer-info">
+                    <h4>{fav.name}</h4>
+                    <p>{fav.address}</p>
+                    <button onClick={() => navigate(`/restaurant/${fav._id}`)}>
+                      Reorder
+                    </button>
+                  </div>
+                  <span
+                    className="drawer-remove"
+                    onClick={() => toggleFavorite(fav)}
+                  >
+                    Remove
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}

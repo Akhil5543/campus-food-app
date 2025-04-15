@@ -54,17 +54,18 @@ const RestaurantDashboard = () => {
     }
   };
 
-  const markItemOutOfStock = async (itemId) => {
+  const toggleItemStock = async (itemId, currentStatus) => {
     try {
       await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
-        outOfStock: true,
+        outOfStock: !currentStatus,
       });
 
       fetchVendor(); // Refresh the menu to reflect the changes
     } catch (err) {
-      console.error("Error marking item as out of stock:", err);
+      console.error("Error updating item stock status:", err);
     }
   };
+
 
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
@@ -111,10 +112,11 @@ const RestaurantDashboard = () => {
         {vendor?.menu?.map((item, index) => (
           <li key={index}>
             <strong>{item.name}</strong>: ${item.price} – {item.description}
-            <button 
-              className="mark-out-of-stock-btn" 
-              onClick={() => markItemOutOfStock(item._id)}>
-                {item.outOfStock ? "Out of Stock" : "Mark Out of Stock"}
+            <button
+              className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
+              onClick={() => toggleItemStock(item._id, item.outOfStock)}
+            >
+              {item.outOfStock ? "Out of Stock" : "In Stock"}
             </button>
           </li>
         ))}
@@ -143,30 +145,45 @@ const RestaurantDashboard = () => {
       </div>
 
       <h3>📦 Current Orders</h3>
-      {orders.length === 0 ? (
-        <p>No orders yet.</p>
-      ) : (
-        orders.map((order) => (
-          <div key={order._id} className="order-card">
-            <p><strong>Order #{order._id}</strong></p>
-            <p>Status: <span className="status">{order.status}</span></p>
-            <p>Total: ${order.totalAmount}</p>
-            <ul>
-              {order.items.map((item, idx) => (
-                <li key={idx}>{item.name} × {item.quantity}</li>
-              ))}
-            </ul>
-            <div className="button-group">
-              <button className="btn yellow" onClick={() => updateOrderStatus(order._id, "Preparing")}>
-                Getting Ready
-              </button>
-              <button className="btn black" onClick={() => updateOrderStatus(order._id, "Delivered")}>
-                Order Delivered
-              </button>
-            </div>
+{orders.length === 0 ? (
+  <p>No orders yet.</p>
+) : (
+  Object.entries(
+    orders.reduce((grouped, order) => {
+      const date = new Date(order.createdAt || order.date || order._id.substring(0, 8)).toISOString().split("T")[0];
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(order);
+      return grouped;
+    }, {})
+  ).map(([date, ordersOnDate]) => (
+    <div key={date}>
+      <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
+        {new Date(date).toDateString()}
+      </h4>
+      {ordersOnDate.map((order, index) => (
+        <div key={order._id} className="order-card">
+          <p><strong>Order {index + 1}</strong> — #{order._id}</p>
+          <p>Status: <span className="status">{order.status}</span></p>
+          <p>Total: ${order.totalAmount}</p>
+          <ul>
+            {order.items.map((item, idx) => (
+              <li key={idx}>{item.name} × {item.quantity}</li>
+            ))}
+          </ul>
+          <div className="button-group">
+            <button className="btn yellow" onClick={() => updateOrderStatus(order._id, "Preparing")}>
+              Getting Ready
+            </button>
+            <button className="btn black" onClick={() => updateOrderStatus(order._id, "Delivered")}>
+              Order Delivered
+            </button>
           </div>
-        ))
-      )}
+        </div>
+      ))}
+    </div>
+  ))
+)}
+
     </div>
   );
 };
