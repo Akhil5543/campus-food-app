@@ -143,6 +143,7 @@ const StudentHome = () => {
       if (!acc[item.vendorId]) {
         acc[item.vendorId] = {
           restaurantId: item.vendorId,
+          restaurantName: item.vendorName,
           items: [],
           totalAmount: 0,
         };
