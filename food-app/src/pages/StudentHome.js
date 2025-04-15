@@ -168,7 +168,7 @@ const StudentHome = () => {
             method: paymentMethod.toLowerCase().replace(" ", "_"),
             status: "paid",
           };
-          return axios.post("https://payment-service-fgt8.onrender.com/payments", paymentPayload);
+          return axios.post("https://campus-food-app.onrender.com/payments", paymentPayload);
         })
     );
 
