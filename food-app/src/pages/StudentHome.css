@@ -686,11 +686,14 @@ body, html {
   background-color: #f1c40f;
   color: #000;
   border: none;
-  padding: 10px 16px;
+  padding: 10px 14px;
   font-size: 18px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.2s ease-in-out;
 }
 
