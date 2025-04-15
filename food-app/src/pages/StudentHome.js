@@ -81,19 +81,30 @@ const StudentHome = () => {
   }, [studentId, token]);
  
   useEffect(() => {
-    const socket = io("https://order-service-vgej.onrender.com");
+  const socket = io("https://order-service-vgej.onrender.com");
 
-    socket.on("orderStatusUpdated", (data) => {
-      setNotifications((prev) => [
-        ...prev,
-        `Your order ${data.orderId} is now ${data.status}`,
-      ]);
+  socket.on("orderStatusUpdated", (data) => {
+    const { orderId, status, vendorName, createdAt } = data;
+
+    const today = new Date().toLocaleDateString();
+    const matchingOrders = orderHistory.filter((order) => {
+      return new Date(order.createdAt).toLocaleDateString() === today;
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+    const index = matchingOrders.findIndex((order) => order._id === orderId);
+    const orderLabel = index !== -1 ? `Order ${index + 1}` : `Order`;
+
+    setNotifications((prev) => [
+      ...prev,
+      `${orderLabel} from ${vendorName} is now ${status}`,
+    ]);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, [orderHistory]);
+
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
