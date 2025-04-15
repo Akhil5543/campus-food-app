@@ -155,7 +155,7 @@ const StudentHome = () => {
 
     const orderPromises = Object.values(grouped).map((orderData) =>
       axios
-        .post("https://order-service-k4v1.onrender.com/orders", orderData, {
+        .post("https://order-service-vgej.onrender.com/orders", orderData, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
