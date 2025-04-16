@@ -12,6 +12,8 @@ const RestaurantDashboard = () => {
   const [vendor, setVendor] = useState(null);
   const [orders, setOrders] = useState([]);
   const [newItem, setNewItem] = useState({ name: "", price: "", description: "" });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("menu");
 
   const token = localStorage.getItem("token");
   let ownerId = null;
@@ -59,13 +61,11 @@ const RestaurantDashboard = () => {
       await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
         outOfStock: !currentStatus,
       });
-
-      fetchVendor(); // Refresh the menu to reflect the changes
+      fetchVendor();
     } catch (err) {
       console.error("Error updating item stock status:", err);
     }
   };
-
 
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
@@ -92,7 +92,6 @@ const RestaurantDashboard = () => {
       fetchOrders();
     }
   }, [vendor]);
-  
 
   useEffect(() => {
     socket.on("refreshVendorOrders", fetchOrders);
@@ -100,93 +99,109 @@ const RestaurantDashboard = () => {
   }, []);
 
   return (
-    <div className="restaurant-dashboard">
-      <div className="header">
-        <h2>🍟 Welcome, {vendor?.name}</h2>
-        <p>Manage your menu and view customer orders in real time.</p>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
-      </div>
-
-      <h3>📋 Your Menu</h3>
-      <ul className="menu-list">
-        {vendor?.menu?.map((item, index) => (
-          <li key={index}>
-            <strong>{item.name}</strong>: ${item.price} – {item.description}
-            <button
-              className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
-              onClick={() => toggleItemStock(item._id, item.outOfStock)}
-            >
-              {item.outOfStock ? "Out of Stock" : "In Stock"}
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <div className="item-form">
-        <input
-          type="text"
-          placeholder="Item Name"
-          value={newItem.name}
-          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={newItem.price}
-          onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={newItem.description}
-          onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-        />
-        <button onClick={handleAddItem}>Add Item</button>
-      </div>
-
-      <h3>📦 Current Orders</h3>
-{orders.length === 0 ? (
-  <p>No orders yet.</p>
-) : (
-  Object.entries(
-    orders.reduce((grouped, order) => {
-      const date = new Date(order.createdAt || order.date || order._id.substring(0, 8)).toISOString().split("T")[0];
-      if (!grouped[date]) grouped[date] = [];
-      grouped[date].push(order);
-      return grouped;
-    }, {})
-  ).map(([date, ordersOnDate]) => (
-    <div key={date}>
-      <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
-        {new Date(date).toDateString()}
-      </h4>
-      {ordersOnDate.map((order, index) => (
-        <div key={order._id} className="order-card">
-          <p><strong>Order {index + 1}</strong> — #{order._id}</p>
-          <p>Status: <span className="status">{order.status}</span></p>
-          <p>Total: ${order.totalAmount}</p>
-          <ul>
-            {order.items.map((item, idx) => (
-              <li key={idx}>{item.name} × {item.quantity}</li>
-            ))}
-          </ul>
-          <div className="button-group">
-            <button className="btn yellow" onClick={() => updateOrderStatus(order._id, "Preparing")}>
-              Getting Ready
-            </button>
-            <button className="btn black" onClick={() => updateOrderStatus(order._id, "Delivered")}>
-              Order Delivered
-            </button>
-          </div>
+    <div className="dashboard-container">
+      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
+        <div className="sidebar-links">
+          <button onClick={() => setActiveTab("menu")}>🍔 Menu</button>
+          <button onClick={() => setActiveTab("orders")}>📦 Orders</button>
+          <button onClick={handleLogout}>🔓 Logout</button>
         </div>
-      ))}
-    </div>
-  ))
-)}
+      </div>
 
+      <div className="main-content">
+        <div className="header">
+          <h2>🍟 Welcome, {vendor?.name}</h2>
+          <p>Manage your menu and view customer orders in real time.</p>
+        </div>
+
+        {activeTab === "menu" && (
+          <>
+            <h3>📋 Your Menu</h3>
+            <ul className="menu-list">
+              {vendor?.menu?.map((item, index) => (
+                <li key={index}>
+                  <strong>{item.name}</strong>: ${item.price} – {item.description}
+                  <button
+                    className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
+                    onClick={() => toggleItemStock(item._id, item.outOfStock)}
+                  >
+                    {item.outOfStock ? "Out of Stock" : "In Stock"}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="item-form">
+              <input
+                type="text"
+                placeholder="Item Name"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                value={newItem.price}
+                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newItem.description}
+                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+              />
+              <button onClick={handleAddItem}>Add Item</button>
+            </div>
+          </>
+        )}
+
+        {activeTab === "orders" && (
+          <>
+            <h3>📦 Current Orders</h3>
+            {orders.length === 0 ? (
+              <p>No orders yet.</p>
+            ) : (
+              Object.entries(
+                orders.reduce((grouped, order) => {
+                  const date = new Date(order.createdAt || order.date || order._id.substring(0, 8)).toISOString().split("T")[0];
+                  if (!grouped[date]) grouped[date] = [];
+                  grouped[date].push(order);
+                  return grouped;
+                }, {})
+              ).map(([date, ordersOnDate]) => (
+                <div key={date}>
+                  <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
+                    {new Date(date).toDateString()}
+                  </h4>
+                  {ordersOnDate.map((order, index) => (
+                    <div key={order._id} className="order-card">
+                      <p><strong>Order {index + 1}</strong> — #{order._id}</p>
+                      <p>Status: <span className="status">{order.status}</span></p>
+                      <p>Total: ${order.totalAmount}</p>
+                      <ul>
+                        {order.items.map((item, idx) => (
+                          <li key={idx}>{item.name} × {item.quantity}</li>
+                        ))}
+                      </ul>
+                      <div className="button-group">
+                        <button className="btn yellow" onClick={() => updateOrderStatus(order._id, "Preparing")}>
+                          Getting Ready
+                        </button>
+                        <button className="btn black" onClick={() => updateOrderStatus(order._id, "Delivered")}>
+                          Order Delivered
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
 
 export default RestaurantDashboard;
-
