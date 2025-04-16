@@ -100,7 +100,7 @@ const RestaurantDashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+      <div className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
         <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
         {sidebarOpen && (
           <div className="sidebar-links">
