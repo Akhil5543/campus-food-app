@@ -213,7 +213,8 @@
   text-align: left;
   cursor: pointer;
   font-weight: 600;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .sidebar-links button:hover {
@@ -255,6 +256,29 @@
     padding: 20px;
     margin-left: 0;
   }
+/* === Collapsible Sidebar for All Screens === */
+.sidebar.collapsed {
+  width: 60px;
+  padding: 20px 10px;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .sidebar-links {
+  display: none;
+}
+
+.sidebar.collapsed .hamburger {
+  display: block;
+  font-size: 24px;
+  color: #fff;
+  background-color: #000;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  margin: auto;
+}
+
 }
 
 

@@ -102,12 +102,15 @@ const RestaurantDashboard = () => {
     <div className="dashboard-container">
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
-        <div className="sidebar-links">
-          <button onClick={() => setActiveTab("menu")}>🍔 Menu</button>
-          <button onClick={() => setActiveTab("orders")}>📦 Orders</button>
-          <button onClick={handleLogout}>🔓 Logout</button>
-        </div>
+        {sidebarOpen && (
+          <div className="sidebar-links">
+            <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
+            <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
+            <button onClick={handleLogout}>🔓 Logout</button>
+          </div>
+        )}
       </div>
+
 
       <div className="main-content">
         <div className="header">
