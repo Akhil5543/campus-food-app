@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ const RestaurantDashboard = () => {
   const [newItem, setNewItem] = useState({ name: "", price: "", description: "" });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("menu");
+  const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
   let ownerId = null;
@@ -97,10 +98,24 @@ const RestaurantDashboard = () => {
     socket.on("refreshVendorOrders", fetchOrders);
     return () => socket.off("refreshVendorOrders", fetchOrders);
   }, []);
+  
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (sidebarOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+      setSidebarOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [sidebarOpen]);
+
 
   return (
     <div className="dashboard-container">
-      <div className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
+      <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
         <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
 
         <div className="sidebar-links" style={{ display: sidebarOpen ? "flex" : "none" }}>
