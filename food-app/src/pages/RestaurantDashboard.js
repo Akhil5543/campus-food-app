@@ -116,7 +116,10 @@ const RestaurantDashboard = () => {
   return (
     <div className="dashboard-container">
       <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
-        <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
+        {!sidebarOpen && (
+          <div className="hamburger" onClick={() => setSidebarOpen(true)}>☰</div>
+        )}
+
 
         <div className="sidebar-links" style={{ display: sidebarOpen ? "flex" : "none" }}>
           <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
