@@ -137,12 +137,7 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed", error: err.message });
   }
 });
-
-// 🚀 Start Server (uses dynamic port for Render)
-app.listen(PORT, () => {
-  console.log(`🚀 Auth service running at http://localhost:${PORT}`);
-});
-
+//added by ARG
 app.post("/reset-password", async (req, res) => {
   const { email, code, newPassword } = req.body;
 
@@ -200,6 +195,15 @@ app.post("/forgot-password", async (req, res) => {
     res.status(500).json({ message: "Failed to send reset code" });
   }
 });
+
+//ARG
+
+// 🚀 Start Server (uses dynamic port for Render)
+app.listen(PORT, () => {
+  console.log(`🚀 Auth service running at http://localhost:${PORT}`);
+});
+
+
 
 
 
