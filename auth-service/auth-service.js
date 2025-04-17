@@ -142,3 +142,64 @@ app.post("/login", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Auth service running at http://localhost:${PORT}`);
 });
+
+app.post("/reset-password", async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  try {
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+
+    if (!user.rows.length || user.rows[0].reset_code !== code) {
+      return res.status(400).json({ message: "Invalid code or email" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query(
+      "UPDATE users SET password = $1, reset_code = NULL WHERE email = $2",
+      [hashedPassword, email]
+    );
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// 🔁 Forgot Password - Send Reset Code via Email
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await pool.query("UPDATE users SET reset_code = $1 WHERE email = $2", [resetCode, email]);
+
+    // Send email with the reset code
+    const msg = {
+      to: email,
+      from: FROM_EMAIL,
+      subject: "Password Reset Code - Campus Food App",
+      text: `Your reset code is: ${resetCode}`,
+      html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+    };
+
+    await sgMail.send(msg);
+
+    res.status(200).json({ message: "Reset code sent to your email." });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Failed to send reset code" });
+  }
+});
+
+
+
