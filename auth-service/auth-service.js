@@ -137,7 +137,41 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed", error: err.message });
   }
 });
-//added by ARG
+
+// 🔁 Forgot Password - Send Reset Code via Email
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await pool.query("UPDATE users SET reset_code = $1 WHERE email = $2", [resetCode, email]);
+
+    const msg = {
+      to: email,
+      from: FROM_EMAIL,
+      subject: "Password Reset Code - Campus Food App",
+      text: `Your reset code is: ${resetCode}`,
+      html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+    };
+
+    await sgMail.send(msg);
+
+    res.status(200).json({ message: "Reset code sent to your email." });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Failed to send reset code" });
+  }
+});
+
+// ✅ Reset Password
 app.post("/reset-password", async (req, res) => {
   const { email, code, newPassword } = req.body;
 
@@ -162,48 +196,7 @@ app.post("/reset-password", async (req, res) => {
   }
 });
 
-// 🔁 Forgot Password - Send Reset Code via Email
-app.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    const user = userResult.rows[0];
-
-    if (!user) {
-      return res.status(404).json({ message: "Email not found" });
-    }
-
-    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await pool.query("UPDATE users SET reset_code = $1 WHERE email = $2", [resetCode, email]);
-
-    // Send email with the reset code
-    const msg = {
-      to: email,
-      from: FROM_EMAIL,
-      subject: "Password Reset Code - Campus Food App",
-      text: `Your reset code is: ${resetCode}`,
-      html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
-    };
-
-    await sgMail.send(msg);
-
-    res.status(200).json({ message: "Reset code sent to your email." });
-  } catch (err) {
-    console.error("Forgot password error:", err);
-    res.status(500).json({ message: "Failed to send reset code" });
-  }
-});
-
-//ARG
-
-// 🚀 Start Server (uses dynamic port for Render)
+// 🚀 Start Server — LAST LINE!
 app.listen(PORT, () => {
   console.log(`🚀 Auth service running at http://localhost:${PORT}`);
 });
-
-
-
-
-
