@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import StudentHome from "./pages/StudentHome";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -113,6 +114,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Student Dashboard */}
         <Route
