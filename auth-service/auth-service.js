@@ -103,40 +103,40 @@ app.post("/verify", async (req, res) => {
 });
 
 // 🔐 Login Route
-app.post("/login", async (req, res) => {
-  const { email, password, role } = req.body;
+// app.post("/login", async (req, res) => {
+//   const { email, password, role } = req.body;
 
-  try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1 AND role = $2", [email, role]);
-    const user = result.rows[0];
+//   try {
+//     const result = await pool.query("SELECT * FROM users WHERE email = $1 AND role = $2", [email, role]);
+//     const user = result.rows[0];
 
-    if (!user) return res.status(404).json({ message: "User not found or role mismatch" });
-    if (!user.is_verified) return res.status(403).json({ message: "Please verify your email first." });
+//     if (!user) return res.status(404).json({ message: "User not found or role mismatch" });
+//     if (!user.is_verified) return res.status(403).json({ message: "Please verify your email first." });
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid credentials" });
+//     const match = await bcrypt.compare(password, user.password);
+//     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-        name: user.name,
-        ownerId: user.role === "restaurant" ? user.name.toLowerCase() : null,
-      },
-      JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+//     const token = jwt.sign(
+//       {
+//         id: user.id,
+//         role: user.role,
+//         name: user.name,
+//         ownerId: user.role === "restaurant" ? user.name.toLowerCase() : null,
+//       },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
 
-    res.json({
-      message: "Login successful",
-      token,
-      user: { id: user.id, name: user.name, role: user.role },
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ message: "Login failed", error: err.message });
-  }
-});
+//     res.json({
+//       message: "Login successful",
+//       token,
+//       user: { id: user.id, name: user.name, role: user.role },
+//     });
+//   } catch (err) {
+//     console.error("Login error:", err);
+//     res.status(500).json({ message: "Login failed", error: err.message });
+//   }
+// });
 
 // 🔁 Forgot Password - Send Reset Code via Email
 app.post("/forgot-password", async (req, res) => {
