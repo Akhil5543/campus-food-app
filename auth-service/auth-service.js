@@ -171,30 +171,30 @@ app.post("/forgot-password", async (req, res) => {
   }
 });
 
-// ✅ Reset Password
-app.post("/reset-password", async (req, res) => {
-  const { email, code, newPassword } = req.body;
+// // ✅ Reset Password
+// app.post("/reset-password", async (req, res) => {
+//   const { email, code, newPassword } = req.body;
 
-  try {
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+//   try {
+//     const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
-    if (!user.rows.length || user.rows[0].reset_code !== code) {
-      return res.status(400).json({ message: "Invalid code or email" });
-    }
+//     if (!user.rows.length || user.rows[0].reset_code !== code) {
+//       return res.status(400).json({ message: "Invalid code or email" });
+//     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+//     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await pool.query(
-      "UPDATE users SET password = $1, reset_code = NULL WHERE email = $2",
-      [hashedPassword, email]
-    );
+//     await pool.query(
+//       "UPDATE users SET password = $1, reset_code = NULL WHERE email = $2",
+//       [hashedPassword, email]
+//     );
 
-    res.status(200).json({ message: "Password reset successful" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
-  }
-});
+//     res.status(200).json({ message: "Password reset successful" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Something went wrong" });
+//   }
+// });
 
 // 🚀 Start Server — LAST LINE!
 app.listen(PORT, () => {
