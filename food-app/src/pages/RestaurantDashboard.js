@@ -115,21 +115,18 @@ const RestaurantDashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
-        {!sidebarOpen && (
-          <div className="hamburger" onClick={() => setSidebarOpen(true)}>☰</div>
-        )}
-
-
-        <div className="sidebar-links" style={{ display: sidebarOpen ? "flex" : "none" }}>
-          <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
-          <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
-          <button onClick={handleLogout}>🔓 Logout</button>
-        </div>
+    {!sidebarOpen && (
+      <div className="hamburger" onClick={() => setSidebarOpen(true)}>☰</div>
+    )}
+  
+    <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
+      <div className="sidebar-links" style={{ display: sidebarOpen ? "flex" : "none" }}>
+        <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
+        <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
+        <button onClick={handleLogout}>🔓 Logout</button>
       </div>
-
-
-
+    </div>
+     
       <div className="main-content">
         <div className="header">
           <h2>🍟 Welcome, {vendor?.name}</h2>
