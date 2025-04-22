@@ -25,12 +25,12 @@ function App() {
   const token = localStorage.getItem("token") || "";
   const decodedToken = token ? jwtDecode(token) : null;
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
-      .then((res) => setVendors([res.data]))
-      .catch((err) => console.error("Error fetching vendor:", err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
+  //     .then((res) => setVendors([res.data]))
+  //     .catch((err) => console.error("Error fetching vendor:", err));
+  // }, []);
 
   const placeOrder = () => {
     const totalAmount = selectedItems.reduce(
