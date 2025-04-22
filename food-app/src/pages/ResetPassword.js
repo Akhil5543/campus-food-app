@@ -17,7 +17,7 @@ const ResetPassword = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:4006/reset-password", {
+      const res = await axios.post("https://auth-service-fgt8.onrender.com/reset-password", {
         email,
         code,
         newPassword,
