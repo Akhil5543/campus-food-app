@@ -27,8 +27,7 @@ function App() {
 
   useEffect(() => {
     axios
-      //.get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
-      .get("https://vendor-service-wnkw.onrender.com/vendors")
+      .get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
       .then((res) => setVendors([res.data]))
       .catch((err) => console.error("Error fetching vendor:", err));
   }, []);
