@@ -195,14 +195,12 @@ const capitalizeWords = (str) => {
                 orders
                   .filter(order => {
                     const date = new Date(order.createdAt);
-                    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-                    const localDateString = localDate.toISOString().split('T')[0];
+                    const localDateString = date.toISOString().split('T')[0];
                     return !selectedDate || localDateString === selectedDate;
                   })
                   .reduce((grouped, order) => {
                     const date = new Date(order.createdAt);
-                    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-                    const localDateString = localDate.toISOString().split('T')[0];
+                    const localDateString = date.toISOString().split('T')[0];
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
