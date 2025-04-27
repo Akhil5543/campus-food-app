@@ -131,15 +131,15 @@ const RestaurantDashboard = () => {
 const capitalizeWords = (str) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
-  {showPopup && newOrderInfo && (
-  <div className="popup-notification">
-    🔔 New Order Received: {newOrderInfo.items.map(item => item.name).join(", ")} (${newOrderInfo.totalAmount})
-  </div>
-)}
-
 
   return (
     <div className="dashboard-container">
+    
+    {showPopup && newOrderInfo && (
+      <div className="popup-notification">
+        🔔 New Order Received: {newOrderInfo.items.map(item => item.name).join(", ")} (${newOrderInfo.totalAmount})
+      </div>
+    )}
     <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
   
     <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
