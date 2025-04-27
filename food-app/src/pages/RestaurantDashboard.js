@@ -194,22 +194,26 @@ const capitalizeWords = (str) => {
               Object.entries(
                 orders
                   .filter(order => {
-                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
-                    const localDateString = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    const date = new Date(order.createdAt);
+                    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    const localDateString = localDate.toISOString().split('T')[0];
                     return !selectedDate || localDateString === selectedDate;
                   })
                   .reduce((grouped, order) => {
-                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
-                    const localDateString = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    const date = new Date(order.createdAt);
+                    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    const localDateString = localDate.toISOString().split('T')[0];
+                    
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
+                    
                     return grouped;
                   }, {})
               )
               .map(([date, ordersOnDate]) => (
                 <div key={date}>
                   <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
-                    {new Date(date).toDateString()}
+                    {new Date(date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                   </h4>
                   {ordersOnDate.map((order, index) => (
                     <div key={order._id} className="order-card">
