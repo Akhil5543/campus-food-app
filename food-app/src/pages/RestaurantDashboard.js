@@ -17,6 +17,7 @@ const RestaurantDashboard = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [newOrderInfo, setNewOrderInfo] = useState(null);
+  const [selectedOrders, setSelectedOrders] = useState([]);
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -110,7 +111,33 @@ const calculateEarnings = () => {
 
   return { todaySales, weekSales, monthSales };
 };
+const handleSelectAll = () => {
+  if (selectedOrders.length === orders.length) {
+    setSelectedOrders([]); // Deselect all
+  } else {
+    setSelectedOrders(orders.map((order) => order._id)); // Select all
+  }
+};
 
+const handleSelectOrder = (orderId) => {
+  setSelectedOrders((prev) =>
+    prev.includes(orderId) ? prev.filter((id) => id !== orderId) : [...prev, orderId]
+  );
+};
+
+const handleBulkUpdate = async (newStatus) => {
+  try {
+    await Promise.all(
+      selectedOrders.map((orderId) =>
+        axios.patch(`https://order-service-vgej.onrender.com/orders/${orderId}/status`, { status: newStatus })
+      )
+    );
+    setSelectedOrders([]);
+    fetchOrders();
+  } catch (err) {
+    console.error("Error bulk updating orders:", err);
+  }
+};
 
 
   const handleLogout = () => {
@@ -239,6 +266,21 @@ const capitalizeWords = (str) => {
               className="date-filter-input"
             />
           </div>
+          {selectedOrders.length > 0 && (
+            <div style={{ marginBottom: "20px", display: "flex", gap: "10px",alignItems: "center" }}>
+              <button onClick={handleSelectAll} className="btn">
+                {selectedOrders.length === orders.length ? "Deselect All" : "Select All"}
+              </button>
+              <button onClick={() => handleBulkUpdate("Preparing")} className="btn yellow">
+                Mark Selected as Preparing
+              </button>
+              <button onClick={() => handleBulkUpdate("Delivered")} className="btn black">
+                Mark Selected as Delivered
+              </button>
+           </div>
+          )}
+
+
             <h3>📦 Current Orders</h3>
             {orders.length === 0 ? (
               <p>No orders yet.</p>
@@ -267,6 +309,12 @@ const capitalizeWords = (str) => {
                   </h4>
                   {ordersOnDate.map((order, index) => (
                     <div key={order._id} className="order-card">
+                      <input
+                        type="checkbox"
+                        checked={selectedOrders.includes(order._id)}
+                        onChange={() => handleSelectOrder(order._id)}
+                        style={{ marginBottom: "10px" }}
+                      />
                       <p><strong>Order {index + 1}</strong> — #{order._id}</p>
                       <p>Status: <span className="status">{order.status}</span></p>
                       <p>Total: ${order.totalAmount}</p>
