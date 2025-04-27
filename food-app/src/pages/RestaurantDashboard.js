@@ -196,13 +196,13 @@ const capitalizeWords = (str) => {
                   .filter(order => {
                     const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
                     const utcDateString = date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
-                    return !selectedDate || localDateString === selectedDate;
+                    return !selectedDate || utcDateString === selectedDate;
                   })
                   .reduce((grouped, order) => {
                     const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
                     const utcDateString = date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
-                    if (!grouped[localDateString]) grouped[localDateString] = [];
-                    grouped[localDateString].push(order);
+                    if (!grouped[utcDateString]) grouped[utcDateString] = [];
+                    grouped[utcDateString].push(order);
                     return grouped;
                   }, {})
               )
