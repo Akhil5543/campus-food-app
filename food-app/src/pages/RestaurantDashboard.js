@@ -193,7 +193,8 @@ const capitalizeWords = (str) => {
             ) : (
               Object.entries(
                 orders.reduce((grouped, order) => {
-                  const date = new Date(order.createdAt || order.date || order._id.substring(0, 8)).toISOString().split("T")[0];
+                  const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
+                  const localDateString = date.toLocaleDateString('en-CA');
                   if (!grouped[date]) grouped[date] = [];
                   grouped[date].push(order);
                   return grouped;
