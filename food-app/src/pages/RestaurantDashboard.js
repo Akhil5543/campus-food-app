@@ -20,6 +20,7 @@ const RestaurantDashboard = () => {
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [expandedOrders, setExpandedOrders] = useState([]);
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -191,6 +192,12 @@ const handleBulkUpdate = async (newStatus) => {
 const capitalizeWords = (str) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
+const toggleExpandOrder = (orderId) => {
+  setExpandedOrders(prev =>
+    prev.includes(orderId) ? prev.filter(id => id !== orderId) : [...prev, orderId]
+  );
+};
+
 
   return (
     <div className="dashboard-container">
@@ -346,14 +353,23 @@ const capitalizeWords = (str) => {
                         onChange={() => handleSelectOrder(order._id)}
                         style={{ marginBottom: "10px" }}
                       />
-                      <p><strong>Order {index + 1}</strong> — #{order._id}</p>
+                      <p
+                        onClick={() => toggleExpandOrder(order._id)} 
+                        style={{ fontWeight: "bold", cursor: "pointer" }}
+                      >
+                        Order {index + 1} — #{order._id}
+                      </p>
+                      <p><strong>Customer:</strong> {order.customerName || "N/A"}</p>
                       <p>Status: <span className="status">{order.status}</span></p>
                       <p>Total: ${order.totalAmount}</p>
-                      <ul>
+                      {expandedOrders.includes(order._id) && (
+                        <ul>
                         {order.items.map((item, idx) => (
                           <li key={idx}>{item.name} × {item.quantity}</li>
                         ))}
                       </ul>
+                      )}
+
                       <div className="button-group">
                         <button className="btn yellow" onClick={() => updateOrderStatus(order._id, "Preparing")}>
                           Getting Ready
