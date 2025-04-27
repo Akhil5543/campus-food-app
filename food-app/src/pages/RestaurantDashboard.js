@@ -14,6 +14,7 @@ const RestaurantDashboard = () => {
   const [newItem, setNewItem] = useState({ name: "", price: "", description: "" });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("menu");
+  const [selectedDate, setSelectedDate] = useState('');
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -178,6 +179,14 @@ const capitalizeWords = (str) => {
 
         {activeTab === "orders" && (
           <>
+          <div style={{ marginBottom: "20px" }}>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+            />
+          </div>
             <h3>📦 Current Orders</h3>
             {orders.length === 0 ? (
               <p>No orders yet.</p>
@@ -189,7 +198,9 @@ const capitalizeWords = (str) => {
                   grouped[date].push(order);
                   return grouped;
                 }, {})
-              ).map(([date, ordersOnDate]) => (
+              )
+              .filter(([date]) => !selectedDate || date === selectedDate)
+              .map(([date, ordersOnDate]) => (
                 <div key={date}>
                   <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
                     {new Date(date).toDateString()}
