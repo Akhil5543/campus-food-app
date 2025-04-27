@@ -14,6 +14,7 @@ const RestaurantDashboard = () => {
   const [newItem, setNewItem] = useState({ name: "", price: "", description: "" });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("menu");
+  const [selectedDate, setSelectedDate] = useState('');
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -178,18 +179,34 @@ const capitalizeWords = (str) => {
 
         {activeTab === "orders" && (
           <>
+          <div style={{ marginBottom: "20px" }}>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="date-filter-input"
+            />
+          </div>
             <h3>📦 Current Orders</h3>
             {orders.length === 0 ? (
               <p>No orders yet.</p>
             ) : (
               Object.entries(
-                orders.reduce((grouped, order) => {
-                  const date = new Date(order.createdAt || order.date || order._id.substring(0, 8)).toISOString().split("T")[0];
-                  if (!grouped[date]) grouped[date] = [];
-                  grouped[date].push(order);
-                  return grouped;
-                }, {})
-              ).map(([date, ordersOnDate]) => (
+                orders
+                  .filter(order => {
+                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
+                    const localDateString = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    return !selectedDate || localDateString === selectedDate;
+                  })
+                  .reduce((grouped, order) => {
+                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
+                    const localDateString = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    if (!grouped[localDateString]) grouped[localDateString] = [];
+                    grouped[localDateString].push(order);
+                    return grouped;
+                  }, {})
+              )
+              .map(([date, ordersOnDate]) => (
                 <div key={date}>
                   <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
                     {new Date(date).toDateString()}
