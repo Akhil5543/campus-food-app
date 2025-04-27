@@ -195,7 +195,7 @@ const capitalizeWords = (str) => {
                 orders
                   .filter(order => {
                     const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
-                    const localDateString = date.toLocaleDateString('en-CA');
+                    const utcDateString = date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
                     return !selectedDate || localDateString === selectedDate;
                   })
                   .reduce((grouped, order) => {
