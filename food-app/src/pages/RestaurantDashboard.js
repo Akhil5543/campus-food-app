@@ -19,6 +19,7 @@ const RestaurantDashboard = () => {
   const [newOrderInfo, setNewOrderInfo] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('All');
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -276,6 +277,19 @@ const capitalizeWords = (str) => {
               className="search-filter-input"
             />
           </div>
+          <div style={{ marginBottom: "20px" }}>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="status-filter-input"
+            >
+              <option value="All">All Orders</option>
+              <option value="Preparing">Preparing</option>
+              <option value="Delivered">Delivered</option>
+           </select>
+          </div>
+
+
 
           {selectedOrders.length > 0 && (
             <div style={{ marginBottom: "20px", display: "flex", gap: "10px",alignItems: "center" }}>
@@ -305,7 +319,9 @@ const capitalizeWords = (str) => {
                         const matchesSearch =
                           order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                        return matchesDate && matchesSearch;
+                        const matchesStatus =
+                          selectedStatus === "All" || order.status === selectedStatus;
+                        return matchesDate && matchesSearch && matchesStatus;
                   })
                   .reduce((grouped, order) => {
                     const date = new Date(order.createdAt);
