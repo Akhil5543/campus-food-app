@@ -214,6 +214,13 @@
   position: relative;
 }
 
+.sidebar-links button.active {
+  background-color: #ffcc00;
+  color: #000;
+  border-radius: 6px;
+  padding: 10px;
+}
+
 .sidebar-links button:hover {
   color: #ffcc00;
 }

@@ -112,6 +112,10 @@ const RestaurantDashboard = () => {
   };
 }, [sidebarOpen]);
 
+const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
 
   return (
     <div className="dashboard-container">
@@ -137,7 +141,7 @@ const RestaurantDashboard = () => {
             <ul className="menu-list">
               {vendor?.menu?.map((item, index) => (
                 <li key={index}>
-                  <strong>{item.name}</strong>: ${item.price} – {item.description}
+                  <strong>{capitalizeWords(item.name)}</strong>: ${item.price} – {item.description}
                   <button
                     className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
                     onClick={() => toggleItemStock(item._id, item.outOfStock)}
