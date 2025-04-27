@@ -115,19 +115,17 @@ const RestaurantDashboard = () => {
 
   return (
     <div className="dashboard-container">
-    {!sidebarOpen && (
-      <div className="hamburger" onClick={() => setSidebarOpen(true)}>☰</div>
-    )}
+    <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
   
     <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
-      <div className="sidebar-links" style={{ display: sidebarOpen ? "flex" : "none" }}>
+      <div className="sidebar-links">
         <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
         <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
         <button onClick={handleLogout}>🔓 Logout</button>
       </div>
     </div>
      
-      <div className="main-content">
+      <div className={`main-content ${sidebarOpen ? "shifted" : ""}`}>
         <div className="header">
           <h2>🍟 Welcome, {vendor?.name}</h2>
           <p>Manage your menu and view customer orders in real time.</p>
