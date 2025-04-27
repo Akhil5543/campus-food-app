@@ -15,6 +15,8 @@ const RestaurantDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("menu");
   const [selectedDate, setSelectedDate] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [newOrderInfo, setNewOrderInfo] = useState(null);
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -97,7 +99,20 @@ const RestaurantDashboard = () => {
 
   useEffect(() => {
     socket.on("refreshVendorOrders", fetchOrders);
-    return () => socket.off("refreshVendorOrders", fetchOrders);
+    socket.on("newOrderReceived", (order) => {
+    setNewOrderInfo(order);
+    setShowPopup(true);
+
+    setTimeout(() => {
+      setShowPopup(false);
+      setNewOrderInfo(null);
+    }, 5000);
+  });
+    return () => {
+      socket.off("refreshVendorOrders", fetchOrders);
+      socket.off("newOrderReceived");
+    };
+
   }, []);
   
   useEffect(() => {
@@ -116,6 +131,11 @@ const RestaurantDashboard = () => {
 const capitalizeWords = (str) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
+  {showPopup && newOrderInfo && (
+  <div className="popup-notification">
+    🔔 New Order Received: {newOrderInfo.items.map(item => item.name).join(", ")} (${newOrderInfo.totalAmount})
+  </div>
+)}
 
 
   return (
