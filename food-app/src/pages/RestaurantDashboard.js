@@ -184,7 +184,7 @@ const capitalizeWords = (str) => {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+              className="date-filter-input"
             />
           </div>
             <h3>📦 Current Orders</h3>
