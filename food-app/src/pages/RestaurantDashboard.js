@@ -81,6 +81,37 @@ const RestaurantDashboard = () => {
       console.error("Error adding item:", err);
     }
   };
+  
+const calculateEarnings = () => {
+  const today = new Date();
+  const todayDate = today.toISOString().split('T')[0];
+
+  let todaySales = 0;
+  let weekSales = 0;
+  let monthSales = 0;
+
+  orders.forEach(order => {
+    const orderDate = new Date(order.createdAt);
+    const localOrderDate = new Date(orderDate.getTime() - orderDate.getTimezoneOffset() * 60000);
+    const orderDateString = localOrderDate.toISOString().split('T')[0];
+
+    const daysDifference = (today - localOrderDate) / (1000 * 60 * 60 * 24);
+
+    if (orderDateString === todayDate) {
+      todaySales += order.totalAmount;
+    }
+    if (daysDifference <= 7) {
+      weekSales += order.totalAmount;
+    }
+    if (daysDifference <= 30) {
+      monthSales += order.totalAmount;
+    }
+  });
+
+  return { todaySales, weekSales, monthSales };
+};
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -146,6 +177,7 @@ const capitalizeWords = (str) => {
       <div className="sidebar-links">
         <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
         <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
+        <button className={activeTab === "sales" ? "active" : ""} onClick={() => setActiveTab("sales")}>📈 Sales</button>
         <button onClick={handleLogout}>🔓 Logout</button>
       </div>
     </div>
@@ -258,6 +290,33 @@ const capitalizeWords = (str) => {
             )}
           </>
         )}
+       {activeTab === "sales" && (
+       <>
+    <h3>📈 Sales Dashboard</h3>
+    <div className="sales-dashboard">
+      {(() => {
+        const { todaySales, weekSales, monthSales } = calculateEarnings();
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div className="sales-card">
+              <h4>Today's Earnings</h4>
+              <p>${todaySales.toFixed(2)}</p>
+            </div>
+            <div className="sales-card">
+              <h4>This Week's Earnings</h4>
+              <p>${weekSales.toFixed(2)}</p>
+            </div>
+            <div className="sales-card">
+              <h4>This Month's Earnings</h4>
+              <p>${monthSales.toFixed(2)}</p>
+            </div>
+          </div>
+          );
+          })()}
+          </div>
+          </>
+        )}
+
       </div>
     </div>
   );
