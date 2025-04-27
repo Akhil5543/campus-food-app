@@ -192,15 +192,20 @@ const capitalizeWords = (str) => {
               <p>No orders yet.</p>
             ) : (
               Object.entries(
-                orders.reduce((grouped, order) => {
-                  const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
-                  const localDateString = date.toLocaleDateString('en-CA');
-                  if (!grouped[date]) grouped[date] = [];
-                  grouped[date].push(order);
-                  return grouped;
-                }, {})
+                orders
+                  .filter(order => {
+                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
+                    const localDateString = date.toLocaleDateString('en-CA');
+                    return !selectedDate || localDateString === selectedDate;
+                  })
+                  .reduce((grouped, order) => {
+                    const date = new Date(order.createdAt || order.date || order._id.substring(0, 8));
+                    const localDateString = date.toLocaleDateString('en-CA');
+                    if (!grouped[localDateString]) grouped[localDateString] = [];
+                    grouped[localDateString].push(order);
+                    return grouped;
+                  }, {})
               )
-              .filter(([date]) => !selectedDate || date === selectedDate)
               .map(([date, ordersOnDate]) => (
                 <div key={date}>
                   <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
