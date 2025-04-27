@@ -18,6 +18,7 @@ const RestaurantDashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [newOrderInfo, setNewOrderInfo] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -266,6 +267,16 @@ const capitalizeWords = (str) => {
               className="date-filter-input"
             />
           </div>
+          <div style={{ marginBottom: "20px" }}>
+            <input
+              type="text"
+              placeholder="Search by Order ID or Customer Name"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-filter-input"
+            />
+          </div>
+
           {selectedOrders.length > 0 && (
             <div style={{ marginBottom: "20px", display: "flex", gap: "10px",alignItems: "center" }}>
               <button onClick={handleSelectAll} className="btn">
@@ -288,9 +299,13 @@ const capitalizeWords = (str) => {
               Object.entries(
                 orders
                   .filter(order => {
-                    const date = new Date(order.createdAt);
-                    const localDateString = date.toISOString().split('T')[0];
-                    return !selectedDate || localDateString === selectedDate;
+                        const date = new Date(order.createdAt);
+                        const localDateString = date.toISOString().split('T')[0];
+                        const matchesDate = !selectedDate || localDateString === selectedDate;
+                        const matchesSearch =
+                          order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                        return matchesDate && matchesSearch;
                   })
                   .reduce((grouped, order) => {
                     const date = new Date(order.createdAt);
