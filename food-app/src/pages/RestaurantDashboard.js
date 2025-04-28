@@ -215,6 +215,9 @@ const toggleExpandOrder = (orderId) => {
 
 
   return (
+    <>
+    <div className="background-image"></div>
+    <div className="app-overlay">
     <div className="dashboard-container">
     
     {showPopup && newOrderInfo && (
@@ -438,6 +441,8 @@ const toggleExpandOrder = (orderId) => {
 
       </div>
     </div>
+   </div> {/* Close app-overlay */}
+   </>
   );
 };
 
