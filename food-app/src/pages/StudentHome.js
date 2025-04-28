@@ -347,10 +347,29 @@ const StudentHome = () => {
                         return (
                           <div key={item.name} className="menu-item">
                             <div className="item-info">
-                              <div className="item-name">{item.name}</div>
+                              <div className="item-name">
+                                {item.name}
+                                {item.todaysSpecial && (
+                                  <span className="special-badge"> ⭐ Special</span>
+                                )}
+                             </div>
                               <div className="item-price">${item.price}</div>
                             </div>
-                            {existing ? (
+                            {item.outOfStock ? (
+                              <button disabled style={{
+                                backgroundColor: '#ccc',
+                                color: '#666',
+                                cursor: 'not-allowed',
+                                width: 'auto',
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                border: 'none'
+                              }}>
+                                Out of Stock
+                              </button>
+                            ) : existing ? (
                               <div className="cart-controls">
                                 <button onClick={(e) => removeItem(e, { ...item, vendorName: vendor.name })}>
                                   −
@@ -359,10 +378,11 @@ const StudentHome = () => {
                                 <button onClick={(e) => addItem(e, item, vendor.name)}>
                                   +
                                 </button>
-                              </div>
+                                </div>
                             ) : (
-                              <button onClick={(e) => addItem(e, item, vendor.name)}>+</button>
+                                <button onClick={(e) => addItem(e, item, vendor.name)}>+</button>
                             )}
+
                           </div>
                         );
                       })}
