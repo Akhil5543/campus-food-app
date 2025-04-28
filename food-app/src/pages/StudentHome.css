@@ -1,9 +1,10 @@
 body {
   background-image: url('/images/umbc-logo.png');
-  background-size: center;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-attachment: scroll;
 }
 .app-overlay {
   position: relative;
