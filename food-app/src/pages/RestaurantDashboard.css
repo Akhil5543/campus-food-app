@@ -33,7 +33,6 @@
   max-width: 1000px;
   margin: auto;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #fff8e1;
 }
 
 .header h2 {
@@ -208,7 +207,6 @@
   display: flex;
   font-family: 'Segoe UI', sans-serif;
   min-height: 100vh;
-  background-color: #fff8e1;
 }
 
 .sidebar {
