@@ -100,6 +100,26 @@ app.put("/vendor/:id/menu/:itemId/out-of-stock", async (req, res) => {
     res.status(500).json({ message: "Error marking item out of stock", error: err });
   }
 });
+// PUT /vendor/:id/menu/:itemId/todays-special - Toggle Today's Special
+app.put("/vendor/:id/menu/:itemId/todays-special", async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id);
+    if (!vendor) return res.status(404).json({ message: "Vendor not found" });
+
+    const itemIndex = vendor.menu.findIndex(item => item._id.toString() === req.params.itemId);
+    if (itemIndex === -1) return res.status(404).json({ message: "Menu item not found" });
+
+    // Toggle today's special status
+    vendor.menu[itemIndex].todaysSpecial = req.body.todaysSpecial;
+    vendor.markModified("menu");
+    await vendor.save();
+
+    res.status(200).json({ message: "✅ Item's Today's Special status updated", menu: vendor.menu });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating Today's Special", error: err });
+  }
+});
+
 
 // Start server
 app.listen(port, () => {
