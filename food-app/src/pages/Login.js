@@ -35,8 +35,6 @@ const Login = () => {
 
   return (
     <div className="login-page">
-    <div className="background-overlay"></div>
-    
     <div className="auth-container">
       <div className="auth-logo">UM</div>
       <h2 className="auth-header">Welcome Back!</h2>
@@ -79,6 +77,7 @@ const Login = () => {
 
       <div className="auth-note">UMBC Campus SSO coming soon</div>
     </div>
+  </div> 
   );
 };
 
