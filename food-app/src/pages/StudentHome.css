@@ -15,8 +15,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 250, 240, 0.3); /* slight white tint */
-  z-index: 0;
+  background: rgba(255, 250, 240, 0.6); /* a bit stronger opacity */
+  backdrop-filter: blur(2px);
 }
 
 /* Global Reset */
@@ -29,7 +29,6 @@ body, html {
 
 .student-dashboard {
   padding-bottom: 120px;
-  background-color: #fffaf0;
 }
 
 .dashboard-header {
@@ -94,17 +93,18 @@ body, html {
 }
 
 .restaurant-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease-in-out;
   border-left: 6px solid #f1c40f;
+  backdrop-filter: blur(4px);
 }
 
 .restaurant-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: scale(1.02);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
 .restaurant-content {
