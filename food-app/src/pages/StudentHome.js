@@ -347,7 +347,12 @@ const StudentHome = () => {
                         return (
                           <div key={item.name} className="menu-item">
                             <div className="item-info">
-                              <div className="item-name">{item.name}</div>
+                              <div className="item-name">
+                                {item.name}
+                                {item.todaysSpecial && (
+                                  <span className="special-badge"> ⭐ Special</span>
+                                )}
+                             </div>
                               <div className="item-price">${item.price}</div>
                             </div>
                             {existing ? (
