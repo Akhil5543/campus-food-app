@@ -127,6 +127,40 @@ app.put("/vendor/:id/menu/:itemId/todays-special", async (req, res) => {
   }
 });
 
+const runRepair = async () => {
+  const vendors = await Vendor.find({});
+  for (const vendor of vendors) {
+    let modified = false;
+
+    if (vendor.menu && Array.isArray(vendor.menu)) {
+      vendor.menu.forEach(item => {
+        if (!item._id) {
+          item._id = new mongoose.Types.ObjectId();
+          modified = true;
+        }
+        if (item.outOfStock === undefined) {
+          item.outOfStock = false;
+          modified = true;
+        }
+        if (item.todaysSpecial === undefined) {
+          item.todaysSpecial = false;
+          modified = true;
+        }
+      });
+
+      if (modified) {
+        vendor.markModified("menu");
+        await vendor.save();
+        console.log(`✅ Vendor ${vendor._id} menu repaired`);
+      }
+    }
+  }
+
+  console.log("🎉 Repair script completed!");
+};
+
+runRepair(); // Add this temporary line
+
 
 // Start server
 app.listen(port, () => {
