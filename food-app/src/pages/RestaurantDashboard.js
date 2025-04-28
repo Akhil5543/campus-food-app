@@ -65,15 +65,18 @@ const RestaurantDashboard = () => {
   };
 
   const toggleItemStock = async (itemId, currentStatus) => {
-    try {
-      await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`, {
-        outOfStock: !currentStatus,
-      });
-      fetchVendor();
-    } catch (err) {
-      console.error("Error updating item stock status:", err);
-    }
-  };
+  try {
+    const endpoint = currentStatus
+      ? `https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/in-stock`
+      : `https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/out-of-stock`;
+
+    await axios.put(endpoint);
+    fetchVendor();
+  } catch (err) {
+    console.error("Error updating item stock status:", err);
+  }
+};
+
 
   const toggleTodaysSpecial = async (itemId, currentSpecialStatus) => {
   try {
