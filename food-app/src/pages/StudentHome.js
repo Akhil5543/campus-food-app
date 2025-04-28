@@ -597,6 +597,8 @@ const StudentHome = () => {
         </div>
       )}
     </div>
+    </div>
+    </>
   );
 };
 
