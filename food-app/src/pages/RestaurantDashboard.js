@@ -75,6 +75,18 @@ const RestaurantDashboard = () => {
     }
   };
 
+  const toggleTodaysSpecial = async (itemId, currentSpecialStatus) => {
+  try {
+    await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/todays-special`, {
+      todaysSpecial: !currentSpecialStatus,
+    });
+    fetchVendor(); // Refresh menu after toggling
+  } catch (err) {
+    console.error("Error toggling Today's Special status:", err);
+  }
+};
+
+
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
     try {
@@ -230,12 +242,21 @@ const toggleExpandOrder = (orderId) => {
             <ul className="menu-list">
               {vendor?.menu?.map((item, index) => (
                 <li key={index}>
-                  <strong>{capitalizeWords(item.name)}</strong>: ${item.price} – {item.description}
+                  <strong>
+                {capitalizeWords(item.name)}
+                {item.todaysSpecial && <span className="special-badge">⭐</span>}
+                </strong>: ${item.price} – {item.description}
                   <button
                     className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
                     onClick={() => toggleItemStock(item._id, item.outOfStock)}
                   >
                     {item.outOfStock ? "Out of Stock" : "In Stock"}
+                  </button>
+                  <button
+                    className="special-btn"
+                    onClick={() => toggleTodaysSpecial(item._id, item.todaysSpecial)}
+                  >
+                    {item.todaysSpecial ? "Unmark Special" : "Mark Special"}
                   </button>
                 </li>
               ))}
