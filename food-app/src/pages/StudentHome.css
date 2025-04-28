@@ -8,6 +8,10 @@ body {
   opacity: 0.9;
   z-index: -1;
 }
+.app-overlay {
+  position: relative;
+  z-index: 1;
+}
 /* Global Reset */
 body, html {
   margin: 0;
