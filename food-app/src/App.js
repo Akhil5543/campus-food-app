@@ -8,6 +8,8 @@ import Signup from "./pages/Signup";
 import StudentHome from "./pages/StudentHome";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 
 function App() {
@@ -25,7 +27,8 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
+      //.get("http://localhost:4003/vendor/67e5e60abf07321dec19fff6")
+      .get("https://vendor-service-wnkw.onrender.com/vendors")
       .then((res) => setVendors([res.data]))
       .catch((err) => console.error("Error fetching vendor:", err));
   }, []);
@@ -113,6 +116,8 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Student Dashboard */}
         <Route

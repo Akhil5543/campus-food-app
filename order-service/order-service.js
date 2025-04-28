@@ -59,6 +59,7 @@ const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   restaurantId: String,
   restaurantName: String,
+  customerName: String,
   items: [
     {
       name: String,
@@ -92,6 +93,7 @@ app.post("/orders", async (req, res) => {
       userId,
       restaurantId: req.body.restaurantId,
       restaurantName: req.body.restaurantName,
+      customerName: req.body.customerName,
       items: req.body.items,
       totalAmount: req.body.totalAmount,
       status: "Received",

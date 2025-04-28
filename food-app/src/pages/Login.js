@@ -54,6 +54,9 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
         />
+        <a href="/forgot-password" className="forgot-password-link">
+        Forgot Password?
+        </a>    
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
