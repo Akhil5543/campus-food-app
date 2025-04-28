@@ -71,7 +71,14 @@ app.post("/vendor/:id/menu", async (req, res) => {
 
     if (!vendor.menu) vendor.menu = [];
 
-    vendor.menu.push({ name, price, description });
+    vendor.menu.push({ 
+       _id: new mongoose.Types.ObjectId(),   
+       name,
+       price,
+       description,
+       outOfStock: false,                    
+       todaysSpecial: false
+    });
     vendor.markModified("menu");
     await vendor.save();
 
