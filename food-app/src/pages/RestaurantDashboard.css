@@ -412,3 +412,20 @@
   outline: none;
 }
 
+
+.order-card ul {
+  margin-top: 10px;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.order-card p[style*="cursor: pointer"] {
+  color: #333;
+  transition: color 0.3s;
+}
+
+.order-card p[style*="cursor: pointer"]:hover {
+  color: #ffcc00;
+}
+
+
