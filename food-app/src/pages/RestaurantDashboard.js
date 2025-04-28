@@ -141,7 +141,16 @@ const handleBulkUpdate = async (newStatus) => {
     console.error("Error bulk updating orders:", err);
   }
 };
-
+  const toggleTodaysSpecial = async (itemId, currentSpecialStatus) => {
+  try {
+    await axios.put(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemId}/todays-special`, {
+      todaysSpecial: !currentSpecialStatus,
+    });
+    fetchVendor(); // Refresh vendor info after update
+  } catch (err) {
+    console.error("Error toggling Today's Special status:", err);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -229,13 +238,22 @@ const toggleExpandOrder = (orderId) => {
             <h3>📋 Your Menu</h3>
             <ul className="menu-list">
               {vendor?.menu?.map((item, index) => (
-                <li key={index}>
-                  <strong>{capitalizeWords(item.name)}</strong>: ${item.price} – {item.description}
+                <li key={item._id || index}>
+                  <strong>
+                    {capitalizeWords(item.name)}
+                    {item.todaysSpecial && <span className="special-badge">⭐</span>}
+                  </strong>: ${item.price} – {item.description}
                   <button
                     className={`mark-out-of-stock-btn ${item.outOfStock ? "disabled" : ""}`}
                     onClick={() => toggleItemStock(item._id, item.outOfStock)}
                   >
                     {item.outOfStock ? "Out of Stock" : "In Stock"}
+                  </button>
+                  <button
+                    className="special-btn"
+                    onClick={() => toggleTodaysSpecial(item._id, item.todaysSpecial)}
+                  >
+                     {item.todaysSpecial ? "Unmark Special" : "Mark Special"}
                   </button>
                 </li>
               ))}
