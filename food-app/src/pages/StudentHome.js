@@ -262,6 +262,9 @@ const StudentHome = () => {
   };
 
   return (
+    <>
+    <div className="background-image"></div>
+    <div className="app-overlay">
     <div className="student-dashboard">
       <div className="dashboard-header">
         <div className="header-title">
