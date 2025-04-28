@@ -191,8 +191,13 @@ const StudentHome = () => {
 
     const orderPromises = Object.values(grouped).map((orderData) =>
       axios
-        .post("https://order-service-vgej.onrender.com/orders", orderData, {
-          headers: { Authorization: `Bearer ${token}` },
+        .post("https://order-service-vgej.onrender.com/orders",
+              {
+                ...orderData, 
+              customerName: studentName,
+              },
+              {
+                headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
           const orderId = res.data.order._id;
