@@ -8,8 +8,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 250, 240, 0.6); /* a bit stronger opacity */
+  background: rgba(255, 250, 240, 0.6);
   backdrop-filter: blur(2px);
+  z-index: -1;
 }
 .dashboard-background {
   position: fixed;
@@ -31,7 +32,7 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fffaf0;
+  background-color: transparent;
   overflow: hidden;
 }
 .login-page {
