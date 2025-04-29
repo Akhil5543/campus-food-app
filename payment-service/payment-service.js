@@ -1,12 +1,15 @@
 const express = require("express");
 const { Pool } = require("pg");
 const cors = require("cors");
+const Stripe = require("stripe");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 4005;
 
-// ✅ Define CORS Options First
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // ✅ Stripe initialized
+
+// ✅ Define CORS Options
 const allowedOrigins = [
   "https://campus-food-app.vercel.app",
   "https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"
@@ -14,10 +17,7 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (
-      !origin ||
-      origin.includes("vercel.app") 
-    ) {
+    if (!origin || origin.includes("vercel.app")) {
       callback(null, true);
     } else {
       console.error("❌ CORS blocked for origin:", origin);
@@ -27,29 +27,45 @@ const corsOptions = {
   credentials: true,
 };
 
-
-// ✅ Apply CORS Middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-
 app.use(express.json());
 
-// ✅ PostgreSQL connection for Render (SSL required)
+// ✅ PostgreSQL connection
 const pool = new Pool({
   connectionString: process.env.PG_URI,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
-// 💳 Payment Endpoint
+// ✅ New API: Create Stripe Payment Intent
+app.post("/create-payment-intent", async (req, res) => {
+  const { amount } = req.body;
+
+  if (!amount) {
+    return res.status(400).json({ message: "Amount is required" });
+  }
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe needs cents
+      currency: "usd",
+      payment_method_types: ["card"],
+    });
+
+    return res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.error("❌ Stripe PaymentIntent Error:", error.message);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ✅ Existing API: Record Payment in DB
 app.post("/payments", async (req, res) => {
   const { user_id, order_id, amount, method, status } = req.body;
 
-  console.log("📥 Incoming Payment Request:", req.body);
-
   if (!user_id || !order_id || !amount || !method || !status) {
-    console.error("❌ Missing required payment fields", { user_id, order_id, amount, method, status });
     return res.status(400).json({ message: "Missing payment details" });
   }
 
@@ -57,31 +73,22 @@ app.post("/payments", async (req, res) => {
     const query = `
       INSERT INTO payments (user_id, order_id, amount, method, status, created_at)
       VALUES ($1, $2, $3, $4, $5, NOW())
-      RETURNING *
+      RETURNING *;
     `;
     const values = [user_id, order_id, amount, method, status];
-
-    console.log("🧾 Running Query:", query);
-    console.log("📊 With Values:", values);
-
     const result = await pool.query(query, values);
-
-    console.log("✅ Payment saved successfully:", result.rows[0]);
 
     return res.status(201).json({
       message: "✅ Payment recorded successfully",
       payment: result.rows[0],
     });
   } catch (error) {
-    console.error("❌ Payment insertion error:", error.message);
-    return res.status(500).json({
-      message: "❌ Failed to record payment",
-      error: error.message,
-    });
+    console.error("❌ PostgreSQL Insert Error:", error.message);
+    return res.status(500).json({ error: error.message });
   }
 });
 
-// 🚀 Start the Server
+// 🚀 Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Payment service live on port ${PORT}`);
+  console.log(`🚀 Payment service running on port ${PORT}`);
 });
