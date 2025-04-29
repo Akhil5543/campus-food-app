@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
+import Checkout from "./Checkout";
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -629,20 +630,19 @@ const saveFavoriteOrder = async () => {
 
       {showPaymentModal && (
         <div className="modal-overlay">
-          <div className="modal-box">
-            <h4>Select Payment Method</h4>
-            <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-              <option>Campus Card</option>
-              <option>Credit Card</option>
-              <option>Cash</option>
-            </select>
-            <div className="modal-actions">
-              <button onClick={() => setShowPaymentModal(false)}>Cancel</button>
-              <button onClick={placeOrder}>Confirm & Pay</button>
-            </div>
-          </div>
-        </div>
-      )}
+         <div className="modal-box">
+           <h4>Pay with Card</h4>
+           <Checkout
+             amount={subtotal}
+             onSuccess={(paymentIntent) => {
+               setShowPaymentModal(false);
+               placeOrder();
+             }}
+           />
+         </div>
+       </div>
+       )}
+
 
       {showReceiptModal && (
         <div className="modal-overlay">
