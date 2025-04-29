@@ -407,9 +407,13 @@ const StudentHome = () => {
               <img src="/images/bell-icon.png" alt="No Notifications" />
               <h2>No New Notifications</h2>
               <p>You're all caught up!</p>
-              <button className="refresh-btn" onClick={() => window.location.reload()}>
-                Refresh
+              <button 
+                className="refresh-btn"
+                onClick={() => setNotifications([])}
+              >
+               Refresh
               </button>
+
             </div>
           ) : (
             <ul style={{ listStyle: "none", padding: 0 }}>
