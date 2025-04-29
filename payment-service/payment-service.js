@@ -14,7 +14,10 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (
+      !origin ||
+      origin.includes("vercel.app") 
+    ) {
       callback(null, true);
     } else {
       console.error("❌ CORS blocked for origin:", origin);
@@ -23,6 +26,7 @@ const corsOptions = {
   },
   credentials: true,
 };
+
 
 // ✅ Apply CORS Middleware
 app.use(cors(corsOptions));
