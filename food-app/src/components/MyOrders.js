@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // ✅ Added navigate for redirect
 import "./MyOrders.css";
 
 const getVendorLogo = (name) => {
@@ -12,6 +13,7 @@ const getVendorLogo = (name) => {
 const MyOrders = ({ orders }) => {
   const [savedOrders, setSavedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate(); // ✅ initialize navigate
 
   const token = localStorage.getItem("token") || "";
   let studentId = "";
@@ -45,28 +47,30 @@ const MyOrders = ({ orders }) => {
       alert("❌ Failed to save favorite.");
     }
   };
+
+  // ✅ Corrected Reorder Items
   const reorderItems = () => {
-  if (!selectedOrder) return;
+    if (!selectedOrder) return;
 
-  // Get existing cart from localStorage (or empty array)
-  const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Add all items from the selected order
-  const updatedCart = [
-    ...existingCart,
-    ...selectedOrder.items.map(item => ({
-      ...item,
-      quantity: item.quantity,
-    })),
-  ];
+    const updatedCart = [
+      ...existingCart,
+      ...selectedOrder.items.map(item => ({
+        restaurantId: selectedOrder.restaurantId,
+        restaurantName: selectedOrder.restaurantName,
+        itemId: item.itemId || item._id || "",
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    ];
 
-  localStorage.setItem("cart", JSON.stringify(updatedCart));
-  
-  alert("✅ Items added to your cart!");
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-  // Optional: Redirect to cart page after reorder
-  // navigate("/cart");
-};
+    alert("✅ Items added to your cart!");
+    navigate("/cart"); // ✅ After reorder, move user to Cart page
+  };
 
   const calculateSubtotal = (items) => {
     return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -108,7 +112,7 @@ const MyOrders = ({ orders }) => {
             <button
               className="favorite-btn"
               onClick={(e) => {
-                e.stopPropagation(); // prevent card click when clicking button
+                e.stopPropagation();
                 saveOrderAsFavorite(order);
               }}
               disabled={savedOrders.includes(order._id)}
@@ -139,8 +143,8 @@ const MyOrders = ({ orders }) => {
               <p>Tax: ${(calculateSubtotal(selectedOrder.items) * 0.08).toFixed(2)}</p>
               <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
             </div>
-            <button className="reorder-btn" onClick={reorderItems}>🔁 Reorder</button>
 
+            <button className="reorder-btn" onClick={reorderItems}>🔁 Reorder</button>
           </div>
         </div>
       )}
