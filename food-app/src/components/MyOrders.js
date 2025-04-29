@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./MyOrders.css";
 
@@ -9,6 +9,8 @@ const getVendorLogo = (name) => {
 };
 
 const MyOrders = ({ orders }) => {
+  const [savedOrders, setSavedOrders] = useState([]); // 💡 Track which orders are saved
+
   const saveOrderAsFavorite = async (order) => {
     try {
       await axios.post("https://order-service-vgej.onrender.com/favorite-order", {
@@ -23,6 +25,7 @@ const MyOrders = ({ orders }) => {
         })),
       });
       alert("✅ Order saved as Favorite!");
+      setSavedOrders((prev) => [...prev, order._id]); // 🎯 mark this order as saved
     } catch (error) {
       console.error("Error saving favorite:", error);
       alert("❌ Failed to save favorite.");
@@ -53,6 +56,7 @@ const MyOrders = ({ orders }) => {
                 </div>
               </div>
             </div>
+
             <ul className="ordered-items">
               {order.items.map((item, idx) => (
                 <li key={idx}>
@@ -61,9 +65,14 @@ const MyOrders = ({ orders }) => {
               ))}
             </ul>
 
-            <button className="favorite-btn" onClick={() => saveOrderAsFavorite(order)}>
-              ❤️ Save to Favorites
+            <button
+              className="favorite-btn"
+              onClick={() => saveOrderAsFavorite(order)}
+              disabled={savedOrders.includes(order._id)} // disable if already saved
+            >
+              {savedOrders.includes(order._id) ? "✅ Saved" : "❤️ Save to Favorites"}
             </button>
+
           </div>
         ))
       )}
