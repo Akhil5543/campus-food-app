@@ -4,7 +4,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  filter: blur(2px);
+  filter: blur(1.5px);
   opacity: 0.9;
   position: fixed;
   top: 0;
