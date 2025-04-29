@@ -6,11 +6,13 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 4005;
 
-// Middleware
-const allowedOrigins = ["https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"];
+// ✅ Define CORS Options First
+const allowedOrigins = [
+  "https://campus-food-app.vercel.app",
+  "https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"
+];
 
-// ✅ CORS Configuration
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -20,10 +22,13 @@ app.use(cors({
     }
   },
   credentials: true,
-}));
-app.options("*", cors()); 
-app.use(express.json());
+};
 
+// ✅ Apply CORS Middleware
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+app.use(express.json());
 
 // ✅ PostgreSQL connection for Render (SSL required)
 const pool = new Pool({
