@@ -28,7 +28,6 @@
   z-index: 0;
 }
 
-/* Global Reset */
 body, html {
   height: 100%;
   margin: 0;
@@ -49,7 +48,6 @@ body, html {
   justify-content: center;
   align-items: center;
 }
-
 .student-dashboard {
   padding-bottom: 120px;
 }
@@ -406,7 +404,6 @@ body, html {
   background: #d4ac0d;
 }
 
-/* Themed Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -499,7 +496,6 @@ body, html {
   }
 }
 
-/* Receipt Modal Close Button Styling */
 .modal-box button {
   margin-top: 20px;
   background: #f1c40f;
@@ -518,7 +514,6 @@ body, html {
   background-color: #d4ac0d;
 }
 
-/* My Orders Section */
 .orders-view {
   padding: 24px;
 }
@@ -545,7 +540,6 @@ body, html {
 
 }
 
-/* 🔔 Notification Tab Styling */
 .notifications-section {
   padding: 24px;
 }
@@ -620,7 +614,6 @@ body, html {
 .start-shopping-btn:hover {
   background-color: #d4ac0d;
 }
-/* Floating Favorites Button */
 .floating-favorites-button {
   position: fixed;
   bottom: 20px;
@@ -638,7 +631,6 @@ body, html {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Favorites Drawer */
 .favorites-drawer {
   position: fixed;
   top: 0;
@@ -843,5 +835,25 @@ body, html {
   transform: scale(1.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
+.empty-favorites {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #222;
+}
+
+.empty-favorites img {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.empty-favorites p {
+  font-size: 16px;
+  font-weight: 500;
+}
+
 
 
