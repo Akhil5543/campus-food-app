@@ -161,6 +161,22 @@ app.post("/favorite-order", async (req, res) => {
   }
 });
 
+// ✅ DELETE favorite order
+app.delete("/favorite-order/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedFavorite = await FavoriteOrder.findByIdAndDelete(id);
+
+    if (!deletedFavorite) {
+      return res.status(404).json({ message: "Favorite order not found" });
+    }
+
+    res.status(200).json({ message: "Favorite order deleted successfully" });
+  } catch (err) {
+    console.error("❌ Failed to delete favorite order:", err.message);
+    res.status(500).json({ message: "Failed to delete favorite order", error: err.message });
+  }
+});
 
 // ✅ GET user-specific orders
 app.get("/orders/user/:userId", async (req, res) => {
