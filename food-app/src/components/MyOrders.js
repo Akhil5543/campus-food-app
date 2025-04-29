@@ -13,6 +13,7 @@ const MyOrders = ({ orders, setCartVisible }) => {
   const [savedOrders, setSavedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  // Decode token to get studentId
   const token = localStorage.getItem("token") || "";
   let studentId = "";
 
@@ -25,6 +26,7 @@ const MyOrders = ({ orders, setCartVisible }) => {
     }
   }
 
+  // Save order as favorite
   const saveOrderAsFavorite = async (order) => {
     try {
       await axios.post("https://order-service-vgej.onrender.com/favorite-order", {
@@ -46,6 +48,7 @@ const MyOrders = ({ orders, setCartVisible }) => {
     }
   };
 
+  // Handle reorder
   const reorderItems = (order) => {
     if (!order) return;
 
@@ -62,19 +65,23 @@ const MyOrders = ({ orders, setCartVisible }) => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     alert("✅ Items added to your cart!");
 
+    // ✅ Open cart sidebar
     if (typeof setCartVisible === "function") {
       setCartVisible(true);
     }
   };
 
+  // Calculate subtotal
   const calculateSubtotal = (items) => {
     return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
+  // Open modal
   const openOrderDetails = (order) => {
     setSelectedOrder(order);
   };
 
+  // Close modal
   const closeOrderDetails = () => {
     setSelectedOrder(null);
   };
@@ -86,7 +93,11 @@ const MyOrders = ({ orders, setCartVisible }) => {
         <p>No past orders found.</p>
       ) : (
         orders.map((order, index) => (
-          <div key={index} className="order-card" onClick={() => openOrderDetails(order)}>
+          <div
+            key={index}
+            className="order-card"
+            onClick={() => openOrderDetails(order)}
+          >
             <div className="restaurant-info">
               <img
                 src={getVendorLogo(order.restaurantName)}
@@ -107,7 +118,7 @@ const MyOrders = ({ orders, setCartVisible }) => {
             <button
               className="favorite-btn"
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // prevent opening modal when clicking save button
                 saveOrderAsFavorite(order);
               }}
               disabled={savedOrders.includes(order._id)}
@@ -118,6 +129,7 @@ const MyOrders = ({ orders, setCartVisible }) => {
         ))
       )}
 
+      {/* Modal for viewing a single past order details */}
       {selectedOrder && (
         <div className="order-modal">
           <div className="order-modal-content">
@@ -139,8 +151,13 @@ const MyOrders = ({ orders, setCartVisible }) => {
               <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
             </div>
 
-            {/* Updated reorder button */}
-            <button className="reorder-btn" onClick={() => reorderItems(selectedOrder)}>🔁 Reorder</button>
+            {/* Reorder Button inside Modal */}
+            <button
+              className="reorder-btn"
+              onClick={() => reorderItems(selectedOrder)}
+            >
+              🔁 Reorder
+            </button>
           </div>
         </div>
       )}
