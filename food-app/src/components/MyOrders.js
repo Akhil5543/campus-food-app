@@ -9,7 +9,7 @@ const getVendorLogo = (name) => {
   return `/images/${formatted}.png`;
 };
 
-const MyOrders = ({ orders, setCartVisible }) => {
+const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
   const [savedOrders, setSavedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -69,6 +69,9 @@ const MyOrders = ({ orders, setCartVisible }) => {
     if (typeof setCartVisible === "function") {
       setCartVisible(true);
     }
+    if (typeof updateSelectedItems === "function") {
+  updateSelectedItems(updatedCart);
+}
   };
 
   // Calculate subtotal
