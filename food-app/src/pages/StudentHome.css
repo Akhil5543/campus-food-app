@@ -222,7 +222,6 @@ body, html {
   color: #000;
 }
 
-/* Uber-style Cart View */
 .cart-view {
   position: fixed;
   top: 0;
@@ -237,6 +236,7 @@ body, html {
   z-index: 999;
   display: flex;
   flex-direction: column;
+  background: #fff8e1;
 }
 
 .cart-view.show {
@@ -577,7 +577,7 @@ body, html {
 
 .empty-cart-modern {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -590,10 +590,10 @@ body, html {
 }
 
 .empty-cart-modern h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #222;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #000;
 }
 
 .empty-cart-modern p {
@@ -604,19 +604,19 @@ body, html {
 }
 
 .start-shopping-btn {
-  background-color: #000;
-  color: #fff;
+  background-color: #f1c40f;
+  color: #000;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 25px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .start-shopping-btn:hover {
-  background-color: #222;
+  background-color: #d4ac0d;
 }
 /* Floating Favorites Button */
 .floating-favorites-button {
