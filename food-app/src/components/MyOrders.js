@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom"; // ✅ Added navigate for redirect
 import "./MyOrders.css";
 
 const getVendorLogo = (name) => {
@@ -10,10 +9,9 @@ const getVendorLogo = (name) => {
   return `/images/${formatted}.png`;
 };
 
-const MyOrders = ({ orders }) => {
+const MyOrders = ({ orders, setCartVisible }) => {
   const [savedOrders, setSavedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const navigate = useNavigate(); // ✅ initialize navigate
 
   const token = localStorage.getItem("token") || "";
   let studentId = "";
@@ -48,28 +46,25 @@ const MyOrders = ({ orders }) => {
     }
   };
 
-  // ✅ Corrected Reorder Items
-  const reorderItems = () => {
-    if (!selectedOrder) return;
+  const reorderItems = (order) => {
+    if (!order) return;
 
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const updatedCart = [
       ...existingCart,
-      ...selectedOrder.items.map(item => ({
-        restaurantId: selectedOrder.restaurantId,
-        restaurantName: selectedOrder.restaurantName,
-        itemId: item.itemId || item._id || "",
-        name: item.name,
-        price: item.price,
+      ...order.items.map(item => ({
+        ...item,
         quantity: item.quantity,
       })),
     ];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-
     alert("✅ Items added to your cart!");
-    navigate("/cart"); // ✅ After reorder, move user to Cart page
+
+    if (typeof setCartVisible === "function") {
+      setCartVisible(true);
+    }
   };
 
   const calculateSubtotal = (items) => {
@@ -144,7 +139,8 @@ const MyOrders = ({ orders }) => {
               <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
             </div>
 
-            <button className="reorder-btn" onClick={reorderItems}>🔁 Reorder</button>
+            {/* Updated reorder button */}
+            <button className="reorder-btn" onClick={() => reorderItems(selectedOrder)}>🔁 Reorder</button>
           </div>
         </div>
       )}
