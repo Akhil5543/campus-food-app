@@ -595,9 +595,10 @@ const StudentHome = () => {
                   <div className="drawer-info">
                     <h4>{fav.name}</h4>
                     <p>{fav.address}</p>
-                    <button onClick={() => navigate(`/restaurant/${fav._id}`)}>
-                      Reorder
+                    <button className="reorder-btn" onClick={() => navigate(`/restaurant/${fav._id}`)}>
+                    🔁 Reorder
                     </button>
+
                   </div>
                   <span
                     className="drawer-remove"
