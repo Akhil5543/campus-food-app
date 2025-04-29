@@ -451,20 +451,33 @@ const saveFavoriteOrder = async () => {
                     🔁 Reorder
                   </button>
                   <button
-                    style={{ marginTop: "5px", backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px" }}
-                    onClick={() => {
-                      if (window.confirm("Are you sure you want to delete this favorite order?")) {
-                        axios.delete(`https://order-service-vgej.onrender.com/favorite-order/${fav._id}`)
-                          .then(() => {
-                            setFavoriteOrders(prev => prev.filter(f => f._id !== fav._id));
-                            alert("Favorite order deleted successfully.");
-                          })
-                          .catch((err) => console.error("Error deleting favorite order:", err));
+                    style={{
+                      marginTop: "5px",
+                      backgroundColor: "#ff4d4d",
+                      color: "white",
+                      border: "none",
+                      padding: "6px 10px",
+                      borderRadius: "6px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                    }}
+                    onClick={async () => {
+                      const confirmed = window.confirm("Are you sure you want to delete this favorite order?");
+                      if (!confirmed) return;
+
+                      try {
+                        await axios.delete(`https://order-service-vgej.onrender.com/favorite-order/${fav._id}`);
+                        setFavoriteOrders(prev => prev.filter(f => f._id !== fav._id));
+                        window.alert("🗑️ Favorite order deleted!");
+                      } catch (error) {
+                        console.error("Error deleting favorite order:", error);
+                        window.alert("❌ Failed to delete favorite order. Please try again.");
                       }
                     }}
-                 >
-                  🗑️ Delete
-                </button>
+                  >
+                    🗑️ Delete
+                  </button>
+
                 </li>
               ))}
             </ul>
