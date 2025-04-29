@@ -419,7 +419,14 @@ const saveFavoriteOrder = async () => {
         </>
       )}
 
-      {view === "orders" && <MyOrders orders={orderHistory} />}
+      {view === "orders" && (
+        <MyOrders
+          orders={orderHistory}
+          setCartVisible={setCartVisible}
+          updateSelectedItems={setSelectedItems} 
+       />
+     )}
+
       {view === "favoriteOrders" && (
         <div className="favorite-orders-section">
           <h3>❤️ Favorite Orders</h3>
