@@ -1,6 +1,8 @@
 .app-overlay {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 .background-overlay {
   position: fixed;
@@ -33,7 +35,7 @@ body, html {
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: transparent;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 .login-page {
   background-image: url('/images/umbc-logo.png');
