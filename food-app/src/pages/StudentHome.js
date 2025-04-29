@@ -583,7 +583,10 @@ const StudentHome = () => {
           </div>
           <div className="drawer-content">
             {favorites.length === 0 ? (
+              <div className="empty-favorites">
+              <img src="/images/broken-heart.png" alt="No favorites" />
               <p>No favorites yet.</p>
+              </div>
             ) : (
               favorites.map((fav) => (
                 <div key={fav._id} className="drawer-item">
