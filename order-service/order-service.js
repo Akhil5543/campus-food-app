@@ -80,6 +80,22 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema, "orders");
 
+const favoriteOrderSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  vendorId: { type: String, required: true },
+  vendorName: { type: String, required: true },
+  items: [
+    {
+      itemId: String,
+      name: String,
+      price: Number,
+      quantity: Number,
+    },
+  ],
+}, { timestamps: true });
+
+const FavoriteOrder = mongoose.model("FavoriteOrder", favoriteOrderSchema, "favorite_orders");
+
 // ✅ PLACE NEW ORDER
 app.post("/orders", async (req, res) => {
   try {
@@ -108,6 +124,43 @@ app.post("/orders", async (req, res) => {
     res.status(500).json({ message: "Failed to place order", error: err.message });
   }
 });
+// ✅ GET favorite orders by userId
+app.get("/favorite-order/user/:userId", async (req, res) => {
+  try {
+    const favorites = await FavoriteOrder.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.status(200).json({ favorites });
+  } catch (err) {
+    console.error("❌ Failed to fetch favorite orders:", err.message);
+    res.status(500).json({ message: "Failed to fetch favorite orders", error: err.message });
+  }
+});
+
+// ✅ SAVE favorite order
+app.post("/favorite-order", async (req, res) => {
+  try {
+    const { userId, vendorId, vendorName, items } = req.body;
+
+    if (!userId || !vendorId || !vendorName || !items) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const newFavorite = new FavoriteOrder({
+      userId,
+      vendorId,
+      vendorName,
+      items,
+    });
+
+    const savedFavorite = await newFavorite.save();
+    console.log("✅ Favorite Order Saved:", savedFavorite);
+
+    res.status(201).json({ message: "Favorite order saved successfully", favorite: savedFavorite });
+  } catch (err) {
+    console.error("❌ Failed to save favorite order:", err.message);
+    res.status(500).json({ message: "Failed to save favorite order", error: err.message });
+  }
+});
+
 
 // ✅ GET user-specific orders
 app.get("/orders/user/:userId", async (req, res) => {
