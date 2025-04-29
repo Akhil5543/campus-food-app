@@ -59,10 +59,12 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
       ...order.items.map(item => ({
         ...item,
         quantity: item.quantity,
+        vendorName: order.restaurantName,
+        vendorId: order.restaurantId,
       })),
     ];
 
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
     alert("✅ Items added to your cart!");
 
     // ✅ Open cart sidebar
@@ -72,6 +74,7 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
     if (typeof updateSelectedItems === "function") {
   updateSelectedItems(updatedCart);
 }
+    setSelectedOrder(null);
   };
 
   // Calculate subtotal
