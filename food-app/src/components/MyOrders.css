@@ -29,7 +29,11 @@
   font-size: 1.2rem;
   font-weight: 600;
 }
-
+.favorite-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
 .order-meta {
   font-size: 0.9rem;
   color: #444;
