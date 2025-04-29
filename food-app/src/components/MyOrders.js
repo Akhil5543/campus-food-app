@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import "./MyOrders.css";
 
 const getVendorLogo = (name) => {
@@ -8,6 +9,26 @@ const getVendorLogo = (name) => {
 };
 
 const MyOrders = ({ orders }) => {
+  const saveOrderAsFavorite = async (order) => {
+    try {
+      await axios.post("https://order-service-vgej.onrender.com/favorite-order", {
+        userId: order.userId,
+        vendorId: order.restaurantId,
+        vendorName: order.restaurantName,
+        items: order.items.map((item) => ({
+          itemId: item._id || "",
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      });
+      alert("✅ Order saved as Favorite!");
+    } catch (error) {
+      console.error("Error saving favorite:", error);
+      alert("❌ Failed to save favorite.");
+    }
+  };
+
   return (
     <div className="orders-view">
       <h2>Past Orders</h2>
@@ -39,6 +60,10 @@ const MyOrders = ({ orders }) => {
                 </li>
               ))}
             </ul>
+
+            <button className="favorite-btn" onClick={() => saveOrderAsFavorite(order)}>
+              ❤️ Save to Favorites
+            </button>
           </div>
         ))
       )}
@@ -46,6 +71,4 @@ const MyOrders = ({ orders }) => {
   );
 };
 
-
 export default MyOrders;
-
