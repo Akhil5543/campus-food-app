@@ -400,19 +400,29 @@ const StudentHome = () => {
 
       {view === "orders" && <MyOrders orders={orderHistory} />}
       {view === "notifications" && (
-        <div className="notifications-view">
+        <div className="notifications-section">
           <h3>🔔 Notifications</h3>
           {notifications.length === 0 ? (
-            <p>No new notifications.</p>
+            <div className="empty-notifications">
+              <img src="/images/bell-icon.png" alt="No Notifications" />
+              <h2>No New Notifications</h2>
+              <p>You're all caught up!</p>
+              <button className="refresh-btn" onClick={() => window.location.reload()}>
+                Refresh
+              </button>
+            </div>
           ) : (
-            <ul>
+            <ul style={{ listStyle: "none", padding: 0 }}>
               {notifications.map((note, index) => (
-                <li key={index} className="notification-item">{note}</li>
+                <li key={index} className="notification-item">
+                  {note}
+                </li>
               ))}
             </ul>
           )}
         </div>
       )}
+
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
         <div className="cart-header">
