@@ -1,15 +1,55 @@
+.app-overlay {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  overflow-x: auto;
+}
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 250, 240, 0.6);
+  backdrop-filter: blur(1.5px);
+  z-index: -1;
+}
+.dashboard-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/umbc-logo.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: 0;
+}
 
-/* Global Reset */
 body, html {
+  height: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fffaf0;
+  background-color: transparent;
+  overflow-x: hidden;
 }
-
+.login-page {
+  background-image: url('/images/umbc-logo.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .student-dashboard {
   padding-bottom: 120px;
-  background-color: #fffaf0;
 }
 
 .dashboard-header {
@@ -74,17 +114,18 @@ body, html {
 }
 
 .restaurant-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease-in-out;
   border-left: 6px solid #f1c40f;
+  backdrop-filter: blur(4px);
 }
 
 .restaurant-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: scale(1.02);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
 .restaurant-content {
@@ -179,7 +220,6 @@ body, html {
   color: #000;
 }
 
-/* Uber-style Cart View */
 .cart-view {
   position: fixed;
   top: 0;
@@ -194,6 +234,7 @@ body, html {
   z-index: 999;
   display: flex;
   flex-direction: column;
+  background: #fff8e1;
 }
 
 .cart-view.show {
@@ -203,7 +244,8 @@ body, html {
 .cart-header {
   padding: 20px;
   position: relative;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #f1c40f;
+  background-color: transparent;
 }
 
 .close-button {
@@ -219,7 +261,8 @@ body, html {
 
 .cart-title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #000;
   margin-bottom: 8px;
 }
 
@@ -361,7 +404,6 @@ body, html {
   background: #d4ac0d;
 }
 
-/* Themed Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -454,7 +496,6 @@ body, html {
   }
 }
 
-/* Receipt Modal Close Button Styling */
 .modal-box button {
   margin-top: 20px;
   background: #f1c40f;
@@ -473,7 +514,6 @@ body, html {
   background-color: #d4ac0d;
 }
 
-/* My Orders Section */
 .orders-view {
   padding: 24px;
 }
@@ -500,7 +540,6 @@ body, html {
 
 }
 
-/* 🔔 Notification Tab Styling */
 .notifications-section {
   padding: 24px;
 }
@@ -534,7 +573,7 @@ body, html {
 
 .empty-cart-modern {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -547,10 +586,10 @@ body, html {
 }
 
 .empty-cart-modern h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #222;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #000;
 }
 
 .empty-cart-modern p {
@@ -561,21 +600,20 @@ body, html {
 }
 
 .start-shopping-btn {
-  background-color: #000;
-  color: #fff;
+  background-color: #f1c40f;
+  color: #000;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 25px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .start-shopping-btn:hover {
-  background-color: #222;
+  background-color: #d4ac0d;
 }
-/* Floating Favorites Button */
 .floating-favorites-button {
   position: fixed;
   bottom: 20px;
@@ -593,14 +631,13 @@ body, html {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Favorites Drawer */
 .favorites-drawer {
   position: fixed;
   top: 0;
   right: 0;
   width: 300px;
   height: 100%;
-  background-color: #fff;
+  background-color: #fffaf0;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   display: flex;
@@ -619,8 +656,11 @@ body, html {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #ff6f61;
-  color: #fff;
+  background-color: #000;
+  color: #f1c40f;
+  font-weight: bold;
+  font-size: 20px;
+  border-bottom: 1px solid #f1c40f;
 }
 
 .drawer-header h3 {
@@ -631,7 +671,7 @@ body, html {
   background: none;
   border: none;
   font-size: 24px;
-  color: #fff;
+  color: #f1c40f;
   cursor: pointer;
 }
 
@@ -721,8 +761,99 @@ body, html {
   margin-left: 8px;
   display: inline-block;
 }
+.empty-notifications {
+  background-color: #fff9db;
+  padding: 60px 30px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  margin: 100px auto;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  font-weight: 600;
+  font-size: 20px;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.empty-notifications img {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 20px;
+}
 
+.empty-notifications h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.empty-notifications p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.refresh-btn {
+  margin-top: 20px;
+  background: #f1c40f;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: #d4ac0d;
+}
+
+.reorder-btn {
+  background-color: #f1c40f;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reorder-btn:hover {
+  background-color: #d4ac0d;
+  transform: scale(1.05);
+}
+
+.reorder-btn:hover {
+  background-color: #d4ac0d;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.empty-favorites {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #222;
+}
+
+.empty-favorites img {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.empty-favorites p {
+  font-size: 16px;
+  font-weight: 500;
+}
 
 
 
