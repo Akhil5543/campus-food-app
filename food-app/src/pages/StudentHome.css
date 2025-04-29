@@ -855,5 +855,84 @@ body, html {
   font-weight: 500;
 }
 
+.save-favorite-btn {
+  margin-bottom: 10px;
+  background-color: gold;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.save-favorite-btn:hover {
+  background-color: #d4ac0d;
+  transform: scale(1.05);
+}
+.favorite-orders-section {
+  padding: 24px;
+}
+
+.favorite-orders-list {
+  list-style: none;
+  padding: 0;
+}
+
+.favorite-order-card {
+  background: #fff;
+  border-left: 6px solid #ff6f61;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.favorite-order-card h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.favorite-order-card ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.favorite-order-card li {
+  font-size: 15px;
+  color: #444;
+}
+
+.favorite-order-card button {
+  margin-top: 8px;
+  background-color: #f1c40f;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.favorite-order-card button:hover {
+  background-color: #d4ac0d;
+}
+.out-of-stock-btn {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  width: auto;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+}
 
 
