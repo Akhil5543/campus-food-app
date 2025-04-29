@@ -22,17 +22,19 @@
   "homepage": ".",
   "description": "",
   "dependencies": {
-    "axios": "^1.8.4",
-    "bootstrap": "^5.3.5",
-    "jwt-decode": "^4.0.0",
-    "react": "^19.1.0",
-    "react-bootstrap": "^2.10.9",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^6.30.0",
-    "react-scripts": "^3.0.1",
-    "socket.io-client": "^4.8.1",
-    "web-vitals": "^4.2.4"
-  },
+  "axios": "^1.8.4",
+  "bootstrap": "^5.3.5",
+  "jwt-decode": "^4.0.0",
+  "react": "^19.1.0",
+  "react-bootstrap": "^2.10.9",
+  "react-dom": "^19.1.0",
+  "react-router-dom": "^6.30.0",
+  "react-scripts": "^3.0.1",
+  "socket.io-client": "^4.8.1",
+  "web-vitals": "^4.2.4",
+  "@stripe/react-stripe-js": "^2.3.0",
+  "@stripe/stripe-js": "^1.63.0"
+},
   "browserslist": {
     "production": [
       ">0.2%",
