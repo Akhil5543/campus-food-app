@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import "./MyOrders.css";
 
 const getVendorLogo = (name) => {
@@ -8,6 +10,42 @@ const getVendorLogo = (name) => {
 };
 
 const MyOrders = ({ orders }) => {
+  const [savedOrders, setSavedOrders] = useState([]);
+
+  // 🔥 Fix: Decode studentId properly
+  const token = localStorage.getItem("token") || "";
+  let studentId = "";
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      studentId = decoded.userId || decoded.id || decoded.sub || "";
+    } catch (err) {
+      console.error("Invalid token:", err);
+    }
+  }
+
+  const saveOrderAsFavorite = async (order) => {
+    try {
+      await axios.post("https://order-service-vgej.onrender.com/favorite-order", {
+        userId: studentId, 
+        vendorId: order.restaurantId,
+        vendorName: order.restaurantName,
+        items: order.items.map((item) => ({
+          itemId: item._id || "",
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      });
+      alert("✅ Order saved as Favorite!");
+      setSavedOrders((prev) => [...prev, order._id]); 
+    } catch (error) {
+      console.error("Error saving favorite:", error);
+      alert("❌ Failed to save favorite.");
+    }
+  };
+
   return (
     <div className="orders-view">
       <h2>Past Orders</h2>
@@ -32,6 +70,7 @@ const MyOrders = ({ orders }) => {
                 </div>
               </div>
             </div>
+
             <ul className="ordered-items">
               {order.items.map((item, idx) => (
                 <li key={idx}>
@@ -39,6 +78,14 @@ const MyOrders = ({ orders }) => {
                 </li>
               ))}
             </ul>
+
+            <button
+              className="favorite-btn"
+              onClick={() => saveOrderAsFavorite(order)}
+              disabled={savedOrders.includes(order._id)}
+            >
+              {savedOrders.includes(order._id) ? "✅ Saved" : "❤️ Save to Favorites"}
+            </button>
           </div>
         ))
       )}
@@ -46,6 +93,4 @@ const MyOrders = ({ orders }) => {
   );
 };
 
-
 export default MyOrders;
-

@@ -29,7 +29,11 @@
   font-size: 1.2rem;
   font-weight: 600;
 }
-
+.favorite-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
 .order-meta {
   font-size: 0.9rem;
   color: #444;
@@ -59,4 +63,22 @@
 
 .item-name {
   font-weight: 500;
+}
+
+.favorite-btn {
+  margin-top: 10px;
+  background-color: gold;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background-color: #ffcc00;
+  transform: scale(1.05);
 }

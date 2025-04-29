@@ -20,8 +20,7 @@ const StudentHome = () => {
   const [lastPayment, setLastPayment] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [favorites, setFavorites] = useState([]);
-  const [favoritesDrawerVisible, setFavoritesDrawerVisible] = useState(false);
+  const [favoriteOrders, setFavoriteOrders] = useState([]);
 
   const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -42,19 +41,6 @@ const StudentHome = () => {
     return `${process.env.PUBLIC_URL}/images/${formatted}.png`;
   };
 
-  // FAVORITES: Load favorites from local storage on mount
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem("favoriteRestaurants");
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites));
-    }
-  }, []);
-
-  // FAVORITES: Save favorites to local storage whenever they change
-  useEffect(() => {
-    localStorage.setItem("favoriteRestaurants", JSON.stringify(favorites));
-  }, [favorites]);
-
   useEffect(() => {
     const savedCart = localStorage.getItem("cartItems");
     if (savedCart) setSelectedItems(JSON.parse(savedCart));
@@ -63,6 +49,16 @@ const StudentHome = () => {
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(selectedItems));
   }, [selectedItems]);
+  useEffect(() => {
+  if (view === "favoriteOrders" && studentId) {
+    axios
+      .get(`https://order-service-vgej.onrender.com/favorite-order/user/${studentId}`)
+      .then((res) => {
+        setFavoriteOrders(res.data.favorites || []);
+      })
+      .catch((err) => console.error("Error fetching favorite orders:", err));
+  }
+}, [view, studentId]);
 
   useEffect(() => {
     axios
@@ -158,21 +154,53 @@ const StudentHome = () => {
       );
     }
   };
+const saveFavoriteOrder = async () => {
+  if (!studentId || selectedItems.length === 0) {
+    alert("No recent order to save!");
+    return;
+  }
+
+  try {
+    const grouped = selectedItems.reduce((acc, item) => {
+      if (!acc[item.vendorId]) {
+        acc[item.vendorId] = {
+          vendorId: item.vendorId,
+          vendorName: item.vendorName,
+          items: [],
+        };
+      }
+      acc[item.vendorId].items.push({
+        itemId: item._id || item.itemId || "",
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      });
+      return acc;
+    }, {});
+
+    // Save each restaurant's order separately
+    const savePromises = Object.values(grouped).map(order =>
+      axios.post("https://order-service-vgej.onrender.com/favorite-order", {
+        userId: studentId,
+        vendorId: order.vendorId,
+        vendorName: order.vendorName,
+        items: order.items,
+      })
+    );
+
+    await Promise.all(savePromises);
+    alert("✅ Order saved to Favorites!");
+    setShowReceiptModal(false); // Close receipt after saving
+  } catch (err) {
+    console.error("Error saving favorite order:", err);
+    alert("Something went wrong while saving favorite order.");
+  }
+};
 
   const subtotal = selectedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
-  // FAVORITES: Toggle favorite for a restaurant (vendor)
-  const toggleFavorite = (restaurant) => {
-    const isFavorite = favorites.some((fav) => fav._id === restaurant._id);
-    if (isFavorite) {
-      setFavorites(favorites.filter((fav) => fav._id !== restaurant._id));
-    } else {
-      setFavorites([...favorites, restaurant]);
-    }
-  };
 
   const placeOrder = () => {
     const grouped = selectedItems.reduce((acc, item) => {
@@ -274,6 +302,9 @@ const StudentHome = () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
+          <button onClick={() => setView("favoriteOrders")}>
+            Favorite Orders 🔁
+          </button>
           <button
             onClick={() => setView("notifications")}
             className="notification-icon-button"
@@ -329,16 +360,6 @@ const StudentHome = () => {
                       </h5>
                       <div className="text-muted">{vendor.address}</div>
                     </div>
-                    {/* FAVORITES: Favorite icon on restaurant cards */}
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(vendor);
-                      }}
-                      style={{ cursor: "pointer", fontSize: "24px", marginLeft: "auto" }}
-                    >
-                      {favorites.some((fav) => fav._id === vendor._id) ? "💖" : "🤍"}
-                    </span>
                   </div>
                   {expandedRestaurantId === vendor._id && (
                     <div className="menu-items mt-3">
@@ -399,6 +420,58 @@ const StudentHome = () => {
       )}
 
       {view === "orders" && <MyOrders orders={orderHistory} />}
+      {view === "favoriteOrders" && (
+        <div className="favorite-orders-section">
+          <h3>❤️ Favorite Orders</h3>
+          {favoriteOrders.length === 0 ? (
+            <p>No favorite orders saved yet.</p>
+          ) : (
+            <ul className="favorite-orders-list">
+              {favoriteOrders.map((fav, idx) => (
+                <li key={idx} className="favorite-order-card">
+                  <h4>{fav.vendorName}</h4>
+                  <ul>
+                    {fav.items.map((item, i) => (
+                      <li key={i}>
+                        {item.name} x {item.quantity} – ${item.price}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => {
+                      const restored = fav.items.map((item) => ({
+                        ...item,
+                        vendorName: fav.vendorName,
+                        vendorId: fav.vendorId,
+                      }));
+                      setSelectedItems(restored);
+                      setCartVisible(true);
+                    }}
+                  >
+                    🔁 Reorder
+                  </button>
+                  <button
+                    style={{ marginTop: "5px", backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px" }}
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this favorite order?")) {
+                        axios.delete(`https://order-service-vgej.onrender.com/favorite-order/${fav._id}`)
+                          .then(() => {
+                            setFavoriteOrders(prev => prev.filter(f => f._id !== fav._id));
+                            alert("Favorite order deleted successfully.");
+                          })
+                          .catch((err) => console.error("Error deleting favorite order:", err));
+                      }
+                    }}
+                 >
+                  🗑️ Delete
+                </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       {view === "notifications" && (
         <div className="notifications-section">
           <h3>🔔 Notifications</h3>
@@ -563,58 +636,17 @@ const StudentHome = () => {
                 : "0.00"}
             </p>
             <p><strong>Status:</strong> {lastPayment?.status}</p>
+            <button 
+              className="save-favorite-btn" 
+              onClick={saveFavoriteOrder}
+              style={{ marginBottom: "10px", backgroundColor: "gold", padding: "8px", borderRadius: "8px", border: "none", fontWeight: "600" }}
+            >
+             ❤️ Save This Order as Favorite
+           </button>
             <button onClick={() => setShowReceiptModal(false)}>Close</button>
           </div>
         </div>
-      )}
-      {/* Floating Favorites Button */}
-      <div 
-        className="floating-favorites-button"
-        onClick={() => setFavoritesDrawerVisible(true)}
-      >
-        <span role="img" aria-label="Favorites">💖</span>
-      </div>
-      {/* Favorites Drawer */}
-      {favoritesDrawerVisible && (
-        <div className="favorites-drawer">
-          <div className="drawer-header">
-            <h3>My Favorites</h3>
-            <button onClick={() => setFavoritesDrawerVisible(false)}>×</button>
-          </div>
-          <div className="drawer-content">
-            {favorites.length === 0 ? (
-              <div className="empty-favorites">
-              <img src="/images/broken-heart.png" alt="No favorites" />
-              <p>No favorites yet.</p>
-              </div>
-            ) : (
-              favorites.map((fav) => (
-                <div key={fav._id} className="drawer-item">
-                  <img 
-                    src={getVendorLogo(fav.name)} 
-                    alt={fav.name} 
-                    className="drawer-image" 
-                  />
-                  <div className="drawer-info">
-                    <h4>{fav.name}</h4>
-                    <p>{fav.address}</p>
-                    <button className="reorder-btn" onClick={() => navigate(`/restaurant/${fav._id}`)}>
-                    🔁 Reorder
-                    </button>
-
-                  </div>
-                  <span
-                    className="drawer-remove"
-                    onClick={() => toggleFavorite(fav)}
-                  >
-                    Remove
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+      )}           
     </div>
     </div>
     </>
