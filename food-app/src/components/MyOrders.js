@@ -45,6 +45,28 @@ const MyOrders = ({ orders }) => {
       alert("❌ Failed to save favorite.");
     }
   };
+  const reorderItems = () => {
+  if (!selectedOrder) return;
+
+  // Get existing cart from localStorage (or empty array)
+  const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Add all items from the selected order
+  const updatedCart = [
+    ...existingCart,
+    ...selectedOrder.items.map(item => ({
+      ...item,
+      quantity: item.quantity,
+    })),
+  ];
+
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+  
+  alert("✅ Items added to your cart!");
+
+  // Optional: Redirect to cart page after reorder
+  // navigate("/cart");
+};
 
   const calculateSubtotal = (items) => {
     return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -117,8 +139,8 @@ const MyOrders = ({ orders }) => {
               <p>Tax: ${(calculateSubtotal(selectedOrder.items) * 0.08).toFixed(2)}</p>
               <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
             </div>
+            <button className="reorder-btn" onClick={reorderItems}>🔁 Reorder</button>
 
-            <button className="reorder-btn">🔁 Reorder</button>
           </div>
         </div>
       )}
