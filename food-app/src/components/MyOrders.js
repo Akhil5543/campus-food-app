@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // ✅ Added navigate for redirect
 import "./MyOrders.css";
 
 const getVendorLogo = (name) => {
@@ -11,8 +12,9 @@ const getVendorLogo = (name) => {
 
 const MyOrders = ({ orders }) => {
   const [savedOrders, setSavedOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate(); // ✅ initialize navigate
 
-  // 🔥 Fix: Decode studentId properly
   const token = localStorage.getItem("token") || "";
   let studentId = "";
 
@@ -28,7 +30,7 @@ const MyOrders = ({ orders }) => {
   const saveOrderAsFavorite = async (order) => {
     try {
       await axios.post("https://order-service-vgej.onrender.com/favorite-order", {
-        userId: studentId, 
+        userId: studentId,
         vendorId: order.restaurantId,
         vendorName: order.restaurantName,
         items: order.items.map((item) => ({
@@ -39,11 +41,47 @@ const MyOrders = ({ orders }) => {
         })),
       });
       alert("✅ Order saved as Favorite!");
-      setSavedOrders((prev) => [...prev, order._id]); 
+      setSavedOrders((prev) => [...prev, order._id]);
     } catch (error) {
       console.error("Error saving favorite:", error);
       alert("❌ Failed to save favorite.");
     }
+  };
+
+  // ✅ Corrected Reorder Items
+  const reorderItems = () => {
+    if (!selectedOrder) return;
+
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const updatedCart = [
+      ...existingCart,
+      ...selectedOrder.items.map(item => ({
+        restaurantId: selectedOrder.restaurantId,
+        restaurantName: selectedOrder.restaurantName,
+        itemId: item.itemId || item._id || "",
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    ];
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    alert("✅ Items added to your cart!");
+    navigate("/cart"); // ✅ After reorder, move user to Cart page
+  };
+
+  const calculateSubtotal = (items) => {
+    return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  };
+
+  const openOrderDetails = (order) => {
+    setSelectedOrder(order);
+  };
+
+  const closeOrderDetails = () => {
+    setSelectedOrder(null);
   };
 
   return (
@@ -53,7 +91,7 @@ const MyOrders = ({ orders }) => {
         <p>No past orders found.</p>
       ) : (
         orders.map((order, index) => (
-          <div key={index} className="order-card">
+          <div key={index} className="order-card" onClick={() => openOrderDetails(order)}>
             <div className="restaurant-info">
               <img
                 src={getVendorLogo(order.restaurantName)}
@@ -64,30 +102,51 @@ const MyOrders = ({ orders }) => {
               <div>
                 <strong>{order.restaurantName}</strong>
                 <div className="order-meta">
-                  {order.items.length} item{order.items.length > 1 ? "s" : ""} for $
-                  {order.totalAmount.toFixed(2)} ·{" "}
+                  {order.items.length} item{order.items.length > 1 ? "s" : ""} • $
+                  {order.totalAmount.toFixed(2)} •{" "}
                   {new Date(order.createdAt).toLocaleString()}
                 </div>
               </div>
             </div>
 
-            <ul className="ordered-items">
-              {order.items.map((item, idx) => (
-                <li key={idx}>
-                  {item.quantity} × {item.name}
-                </li>
-              ))}
-            </ul>
-
             <button
               className="favorite-btn"
-              onClick={() => saveOrderAsFavorite(order)}
+              onClick={(e) => {
+                e.stopPropagation();
+                saveOrderAsFavorite(order);
+              }}
               disabled={savedOrders.includes(order._id)}
             >
               {savedOrders.includes(order._id) ? "✅ Saved" : "❤️ Save to Favorites"}
             </button>
           </div>
         ))
+      )}
+
+      {selectedOrder && (
+        <div className="order-modal">
+          <div className="order-modal-content">
+            <button className="close-btn" onClick={closeOrderDetails}>✖️ Close</button>
+            <h2>{selectedOrder.restaurantName}</h2>
+            <p>{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+
+            <div className="modal-items">
+              {selectedOrder.items.map((item, idx) => (
+                <div key={idx} className="modal-item">
+                  {item.name} × {item.quantity} — ${item.price.toFixed(2)}
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-summary">
+              <p>Subtotal: ${calculateSubtotal(selectedOrder.items).toFixed(2)}</p>
+              <p>Tax: ${(calculateSubtotal(selectedOrder.items) * 0.08).toFixed(2)}</p>
+              <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
+            </div>
+
+            <button className="reorder-btn" onClick={reorderItems}>🔁 Reorder</button>
+          </div>
+        </div>
       )}
     </div>
   );
