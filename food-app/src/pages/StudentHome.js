@@ -404,7 +404,7 @@ const StudentHome = () => {
           <h3>🔔 Notifications</h3>
           {notifications.length === 0 ? (
             <div className="empty-notifications">
-              <img src="/images/bell-icon.png" alt="No Notifications" />
+              <img src="/images/yellow-bell.png" alt="No Notifications" />
               <h2>No New Notifications</h2>
               <p>You're all caught up!</p>
               <button 
