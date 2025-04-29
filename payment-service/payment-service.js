@@ -21,7 +21,9 @@ app.use(cors({
   },
   credentials: true,
 }));
+app.options("*", cors()); 
 app.use(express.json());
+
 
 // ✅ PostgreSQL connection for Render (SSL required)
 const pool = new Pool({
