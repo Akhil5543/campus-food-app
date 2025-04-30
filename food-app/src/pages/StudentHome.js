@@ -6,9 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import Checkout from "./Checkout";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -58,20 +55,21 @@ const StudentHome = () => {
       "https://auth-service-fgt8.onrender.com/update-profile",
       { newName, newEmail },
       authHeaders
-    );    
-    toast.success("✅ " + res.data.message);
+    );
+    alert("✅ " + res.data.message);
     if (newName) setName(newName);
     if (newEmail) setEmail(newEmail);
     setNewName("");
     setNewEmail("");
   } catch (err) {
-    toast.error("❌ " + (err.response?.data?.message || "Failed to update profile."));
+    alert("❌ " + (err.response?.data?.message || "Failed to update profile."));
   }
 };
 
+
   const handlePasswordChange = async () => {
   if (newPassword !== confirmPassword) {
-    toast.error("❌ New passwords do not match.");
+    alert("❌ New passwords do not match.");
     return;
   }
 
@@ -80,15 +78,16 @@ const StudentHome = () => {
       "https://auth-service-fgt8.onrender.com/update-password",
       { currentPassword, newPassword },
       authHeaders
-    );    
-    toast.success("✅ " + res.data.message);
+    );
+    alert("✅ " + res.data.message);
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
   } catch (err) {
-    toast.error("❌ " + (err.response?.data?.message || "Failed to update password."));
+    alert("❌ " + (err.response?.data?.message || "Failed to update password."));
   }
 };
+
 
 const handleDeleteAccount = async () => {
   if (!window.confirm("Are you sure you want to permanently delete your account?")) return;
@@ -98,9 +97,10 @@ const handleDeleteAccount = async () => {
     localStorage.removeItem("token");
     window.location.href = "/login";
   } catch (err) {
-    toast.error("❌ " + (err.response?.data?.message || "Failed to delete account."));
+    alert("❌ " + (err.response?.data?.message || "Failed to delete account."));
   }
 };
+
   
   const getVendorLogo = (name) => {
     const formatted = name.toLowerCase().replace(/\s+/g, "-");
@@ -650,7 +650,6 @@ const saveFavoriteOrder = async () => {
       <button onClick={handleDeleteAccount}>Delete Account</button>
     </div>
 
-    <ToastContainer position="bottom-center" autoClose={3000} />
   </div>
 )}
 
