@@ -5,7 +5,6 @@ import "./UserSettings.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const UserSettings = () => {
   const token = localStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : {};
@@ -17,7 +16,6 @@ const UserSettings = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [notifications, setNotifications] = useState(true);
-  const [message, setMessage] = useState("");
 
   const authHeaders = {
     headers: { Authorization: `Bearer ${token}` }
@@ -25,7 +23,7 @@ const UserSettings = () => {
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
-      setMessage("❌ New passwords do not match.");
+      toast.error("❌ New passwords do not match.");
       return;
     }
 
@@ -35,9 +33,12 @@ const UserSettings = () => {
         { currentPassword, newPassword },
         authHeaders
       );
-      setMessage("✅ " + res.data.message);
+      toast.success("✅ " + res.data.message);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (err) {
-      setMessage("❌ " + err.response?.data?.message || "Failed to update password.");
+      toast.error("❌ " + (err.response?.data?.message || "Failed to update password."));
     }
   };
 
@@ -48,13 +49,13 @@ const UserSettings = () => {
         { newName, newEmail },
         authHeaders
       );
-      setMessage("✅ " + res.data.message);
+      toast.success("✅ " + res.data.message);
       if (newName) setName(newName);
       if (newEmail) setEmail(newEmail);
       setNewName("");
       setNewEmail("");
     } catch (err) {
-      setMessage("❌ " + err.response?.data?.message || "Failed to update profile.");
+      toast.error("❌ " + (err.response?.data?.message || "Failed to update profile."));
     }
   };
 
@@ -64,9 +65,9 @@ const UserSettings = () => {
     try {
       await axios.delete("http://localhost:4006/delete-account", authHeaders);
       localStorage.removeItem("token");
-      window.location.href = "/login"; // redirect to login
+      window.location.href = "/login";
     } catch (err) {
-      setMessage("❌ " + err.response?.data?.message || "Failed to delete account.");
+      toast.error("❌ " + (err.response?.data?.message || "Failed to delete account."));
     }
   };
 
@@ -133,7 +134,7 @@ const UserSettings = () => {
         <button onClick={handleDeleteAccount}>Delete Account</button>
       </div>
 
-      {message && <p className="message">{message}</p>}
+      <ToastContainer position="bottom-center" autoClose={3000} />
     </div>
   );
 };
