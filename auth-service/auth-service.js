@@ -41,6 +41,24 @@ const sendVerificationEmail = async (email, code) => {
     throw new Error("Failed to send verification email.");
   }
 };
+// 🔐 JWT Middleware
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Authorization token missing" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // attach user info to req
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid or expired token" });
+  }
+};
 
 // 📝 Signup Route
 app.post("/signup", async (req, res) => {
@@ -195,6 +213,88 @@ app.post("/reset-password", async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+// ✅ Update Password (Settings tab)
+app.patch("/update-password", verifyToken, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(403).json({ message: "Current password is incorrect" });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await pool.query("UPDATE users SET password = $1 WHERE id = $2", [hashedNewPassword, userId]);
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error("Update password error:", err);
+    res.status(500).json({ message: "Failed to update password" });
+  }
+});
+
+// ✅ Update Profile Info (name or email)
+app.patch("/update-profile", verifyToken, async (req, res) => {
+  const { newName, newEmail } = req.body;
+  const userId = req.user.id;
+
+  if (!userId || (!newName && !newEmail)) {
+    return res.status(400).json({ message: "Missing data to update." });
+  }
+
+  try {
+    const updates = [];
+    const values = [];
+
+    if (newName) {
+      updates.push("name = $" + (values.length + 1));
+      values.push(newName);
+    }
+
+    if (newEmail) {
+      updates.push("email = $" + (values.length + 1));
+      values.push(newEmail);
+    }
+
+    values.push(userId);
+    const updateQuery = `UPDATE users SET ${updates.join(", ")} WHERE id = $${values.length}`;
+
+    await pool.query(updateQuery, values);
+
+    res.status(200).json({ message: "Profile updated successfully." });
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).json({ message: "Failed to update profile." });
+  }
+});
+
+// ❌ Delete Account
+app.delete("/delete-account", verifyToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query("DELETE FROM users WHERE id = $1", [userId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found or already deleted" });
+    }
+
+    res.status(200).json({ message: "Account deleted successfully." });
+  } catch (err) {
+    console.error("Delete account error:", err);
+    res.status(500).json({ message: "Failed to delete account." });
+  }
+});
+
 
 // 🚀 Start Server — LAST LINE!
 app.listen(PORT, () => {
