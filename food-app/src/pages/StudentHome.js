@@ -6,6 +6,8 @@ import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import Checkout from "./Checkout";
+import UserSettings from "../components/UserSettings";
+
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -303,6 +305,7 @@ const saveFavoriteOrder = async () => {
         <div className="header-buttons">
           <button onClick={() => setView("restaurants")}>Restaurants</button>
           <button onClick={() => setView("orders")}>My Orders</button>
+          <button onClick={() => setView("settings")}>Settings ⚙️</button>
           <button onClick={() => setView("favoriteOrders")}>
             Favorite Orders 🔁
           </button>
@@ -520,6 +523,8 @@ const saveFavoriteOrder = async () => {
           )}
         </div>
       )}
+
+    {view === "settings" && <UserSettings />}
 
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
