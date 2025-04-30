@@ -7,7 +7,8 @@ import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import Checkout from "./Checkout";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import ReactToastify from "react-toastify";
+const { toast, ToastContainer } = ReactToastify;
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
