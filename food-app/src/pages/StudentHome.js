@@ -8,7 +8,7 @@ import "./StudentHome.css";
 import Checkout from "./Checkout";
 import UserSettings from "../components/UserSettings";
 
-
+#test
 const StudentHome = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
