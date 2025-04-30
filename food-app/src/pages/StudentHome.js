@@ -6,8 +6,22 @@ import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import Checkout from "./Checkout";
-import UserSettings from "../components/UserSettings";
 
+const token = localStorage.getItem("token") || "";
+  let studentName = "Student";
+  let studentId = "";
+  let decoded = null;
+
+  if (token) {
+    try {
+      decoded = jwtDecode(token);
+      studentName = decoded.name || "Student";
+      studentId = decoded.userId || decoded.id || decoded.sub || "";
+    } catch (err) {
+      console.error("Invalid token:", err);
+    }
+  }
+  
 const StudentHome = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
@@ -23,21 +37,72 @@ const StudentHome = () => {
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [favoriteOrders, setFavoriteOrders] = useState([]);
+  const [name, setName] = useState(studentName);
+  const [email, setEmail] = useState(decoded?.email || "");
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [notificationPrefs, setNotificationPrefs] = useState(true);
 
-  const token = localStorage.getItem("token") || "";
-  let studentName = "Student";
-  let studentId = "";
+  const authHeaders = {
+   headers: { Authorization: `Bearer ${token}` },
+  };
 
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      studentName = decoded.name || "Student";
-      studentId = decoded.userId || decoded.id || decoded.sub || "";
-    } catch (err) {
-      console.error("Invalid token:", err);
-    }
+  const handleProfileUpdate = async () => {
+  try {
+    const res = await axios.patch(
+      "https://auth-service-fgt8.onrender.com/update-profile",
+      { newName, newEmail },
+      authHeaders
+    );
+    alert("✅ " + res.data.message);
+    if (newName) setName(newName);
+    if (newEmail) setEmail(newEmail);
+    setNewName("");
+    setNewEmail("");
+  } catch (err) {
+    alert("❌ " + (err.response?.data?.message || "Failed to update profile."));
+  }
+};
+
+
+  const handlePasswordChange = async () => {
+  if (newPassword !== confirmPassword) {
+    alert("❌ New passwords do not match.");
+    return;
   }
 
+  try {
+    const res = await axios.patch(
+      "https://auth-service-fgt8.onrender.com/update-password",
+      { currentPassword, newPassword },
+      authHeaders
+    );
+    alert("✅ " + res.data.message);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  } catch (err) {
+    alert("❌ " + (err.response?.data?.message || "Failed to update password."));
+  }
+};
+
+
+const handleDeleteAccount = async () => {
+  if (!window.confirm("Are you sure you want to permanently delete your account?")) return;
+
+  try {
+    await axios.delete("https://auth-service-fgt8.onrender.com/delete-account", authHeaders);
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  } catch (err) {
+    alert("❌ " + (err.response?.data?.message || "Failed to delete account."));
+  }
+};
+
+  
   const getVendorLogo = (name) => {
     const formatted = name.toLowerCase().replace(/\s+/g, "-");
     return `${process.env.PUBLIC_URL}/images/${formatted}.png`;
@@ -529,7 +594,72 @@ const saveFavoriteOrder = async () => {
         </div>
       )}
 
-    {view === "settings" && <UserSettings />}
+{view === "settings" && (
+  <div className="settings-container">
+    <h2>⚙️ Account Settings</h2>
+
+    <div className="settings-section">
+      <h3>👤 Profile</h3>
+      <p><strong>Current Name:</strong> {name}</p>
+      <p><strong>Current Email:</strong> {email}</p>
+      <input
+        type="text"
+        placeholder="New Name"
+        value={newName}
+        onChange={(e) => setNewName(e.target.value)}
+      />
+      <input
+        type="email"
+        placeholder="New Email"
+        value={newEmail}
+        onChange={(e) => setNewEmail(e.target.value)}
+      />
+      <button onClick={handleProfileUpdate}>Update Profile</button>
+    </div>
+
+    <div className="settings-section">
+      <h3>🔒 Change Password</h3>
+      <input
+        type="password"
+        placeholder="Current Password"
+        value={currentPassword}
+        onChange={(e) => setCurrentPassword(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="New Password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Confirm New Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+      <button onClick={handlePasswordChange}>Update Password</button>
+    </div>
+
+    <div className="settings-section">
+      <h3>🔔 Notifications</h3>
+      <label>
+        <input
+          type="checkbox"
+          checked={notificationPrefs}
+          onChange={() => setNotificationPrefs(!notificationPrefs)}
+        />
+        Enable Order Updates
+      </label>
+    </div>
+
+    <div className="settings-section danger-zone">
+      <h3>🗑️ Danger Zone</h3>
+      <button onClick={handleDeleteAccount}>Delete Account</button>
+    </div>
+
+  </div>
+)}
+
 
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
