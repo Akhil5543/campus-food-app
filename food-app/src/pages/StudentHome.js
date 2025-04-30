@@ -357,7 +357,13 @@ const saveFavoriteOrder = async () => {
 
   return (
     <>
-    <div className="dashboard-background"></div>
+    <div
+      className="dashboard-background"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/images/umbc-logo.png)`
+      }}
+   ></div>
+
     <div className="background-overlay"></div>
     <div className="app-overlay">
     <div className="student-dashboard">
