@@ -10,10 +10,11 @@ import Checkout from "./Checkout";
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
   let studentId = "";
+  let decoded = null;
 
   if (token) {
     try {
-      const decoded = jwtDecode(token);
+      decoded = jwtDecode(token);
       studentName = decoded.name || "Student";
       studentId = decoded.userId || decoded.id || decoded.sub || "";
     } catch (err) {
