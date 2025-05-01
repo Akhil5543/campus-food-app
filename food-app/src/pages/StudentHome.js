@@ -12,6 +12,7 @@ import EditEmailView from "../components/EditEmailView";
 import EditPasswordView from "../components/EditPasswordView";
 import EditDobView from "../components/EditDobView";
 import EditPhoneView from "../components/EditPhoneView";
+import Sidebar from "../components/Sidebar";
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -51,6 +52,7 @@ const StudentHome = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [dob, setDob] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   
   const authHeaders = {
@@ -430,8 +432,6 @@ const saveFavoriteOrder = async () => {
           Campus Food – Welcome, {studentName} 👋
         </div>
         <div className="header-buttons">
-          <button onClick={() => setView("restaurants")}>Restaurants</button>
-          <button onClick={() => setView("orders")}>My Orders</button>
           <button onClick={() => setView("settings")}>Settings ⚙️</button>
           <button onClick={() => setView("favoriteOrders")}>
             Favorite Orders 🔁
@@ -448,9 +448,6 @@ const saveFavoriteOrder = async () => {
 
           <button onClick={toggleCart}>
             Cart 🛒 {selectedItems.reduce((sum, i) => sum + i.quantity, 0)}
-          </button>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
           </button>
         </div>
       </div>
