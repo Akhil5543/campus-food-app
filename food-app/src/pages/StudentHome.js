@@ -12,7 +12,6 @@ import ChangePassword from "./pages/ChangePassword";
 import NotificationSettings from "./pages/NotificationSettings";
 import DeleteAccount from "./pages/DeleteAccount";
 
-
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
   let studentId = "";
