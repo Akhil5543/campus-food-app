@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
+const Feedback = require("./models/feedback.model");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -175,6 +176,59 @@ app.delete("/favorite-order/:id", async (req, res) => {
   } catch (err) {
     console.error("❌ Failed to delete favorite order:", err.message);
     res.status(500).json({ message: "Failed to delete favorite order", error: err.message });
+  }
+});
+
+// ✅ Submit feedback for an order
+app.post("/feedback", async (req, res) => {
+  try {
+    const { orderId, vendorId, userId, rating, comment } = req.body;
+
+    // Optional: prevent duplicate feedback per order+user
+    const existing = await Feedback.findOne({ orderId, userId });
+    if (existing) {
+      return res.status(400).json({ message: "Feedback already submitted." });
+    }
+
+    const feedback = new Feedback({
+      orderId,
+      vendorId,
+      userId,
+      rating,
+      comment,
+    });
+
+    await feedback.save();
+    res.status(200).json({ message: "Feedback submitted successfully." });
+  } catch (err) {
+    console.error("❌ Feedback submission error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+// ✅ Get average rating for a vendor
+app.get("/vendor/:vendorId/average-rating", async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    const result = await Feedback.aggregate([
+      { $match: { vendorId } },
+      {
+        $group: {
+          _id: "$vendorId",
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+        },
+      },
+    ]);
+
+    if (result.length === 0) {
+      return res.json({ averageRating: 0, totalReviews: 0 });
+    }
+
+    res.json(result[0]);
+  } catch (err) {
+    console.error("❌ Avg rating fetch error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
