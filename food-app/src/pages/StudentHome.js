@@ -452,7 +452,6 @@ const saveFavoriteOrder = async () => {
         </div>
         </div>
         <div className="header-buttons">
-          <button onClick={() => setView("settings")}>Settings ⚙️</button>
           <button
             onClick={() => setView("notifications")}
             className="notification-icon-button"
