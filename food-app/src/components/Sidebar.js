@@ -2,34 +2,67 @@ import React from "react";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, setView, handleLogout }) => {
-  console.log("setView received in Sidebar:", typeof setView);
+  const handleViewChange = (viewName) => {
+    console.log(`✅ Sidebar clicked: ${viewName}`);
+    setView(viewName);
+    onClose();
+  };
 
   return (
-    <>
-      <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        <button className="menu-item" onClick={() => { setView("restaurants"); onClose(); }}>
-          📋 <span>Restaurants</span>
-        </button>
-
-        <button className="menu-item" onClick={() => { console.log("Sidebar clicked: My Orders"); setView("orders"); onClose(); }}>
-          📦 <span>My Orders</span>
-        </button>
-
-        <button className="menu-item" onClick={() => { setView("favoriteOrders"); onClose(); }}>
-          ❤️ <span>Favorite Orders</span>
-        </button>
-
-        <button className="menu-item" onClick={() => { setView("notifications"); onClose(); }}>
-          🔔 <span>Notifications</span>
-        </button>
-
-        <button className="menu-item" onClick={() => { handleLogout(); onClose(); }}>
-          🔓 <span>Logout</span>
+    <div className={`sidebar ${isOpen ? "open" : ""}`}>
+      <div className="sidebar-header">
+        <button
+          type="button"
+          className="close-btn"
+          onClick={onClose}
+          aria-label="Close sidebar"
+        >
+          ✕
         </button>
       </div>
 
-      {isOpen && <div className="overlay" onClick={onClose}></div>}
-    </>
+      <div className="sidebar-menu">
+        <button
+          type="button"
+          className="menu-item"
+          onClick={() => handleViewChange("restaurants")}
+        >
+          🍽️ <span>Restaurants</span>
+        </button>
+
+        <button
+          type="button"
+          className="menu-item"
+          onClick={() => handleViewChange("orders")}
+        >
+          📦 <span>My Orders</span>
+        </button>
+
+        <button
+          type="button"
+          className="menu-item"
+          onClick={() => handleViewChange("favoriteOrders")}
+        >
+          ❤️ <span>Favorite Orders</span>
+        </button>
+
+        <button
+          type="button"
+          className="menu-item"
+          onClick={() => handleViewChange("notifications")}
+        >
+          🔔 <span>Notifications</span>
+        </button>
+
+        <button
+          type="button"
+          className="menu-item"
+          onClick={handleLogout}
+        >
+          🔒 <span>Logout</span>
+        </button>
+      </div>
+    </div>
   );
 };
 
