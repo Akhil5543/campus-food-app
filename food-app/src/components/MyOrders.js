@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import "./MyOrders.css";
+import FeedbackModal from "./FeedbackModal";
 
 const getVendorLogo = (name) => {
   if (!name) return "/images/default-logo.png";
@@ -12,6 +13,8 @@ const getVendorLogo = (name) => {
 const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
   const [savedOrders, setSavedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedOrderToRate, setSelectedOrderToRate] = useState(null);
 
   // Decode token to get studentId
   const token = localStorage.getItem("token") || "";
@@ -157,6 +160,18 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
               <p><strong>Total: ${(calculateSubtotal(selectedOrder.items) * 1.08).toFixed(2)}</strong></p>
             </div>
 
+            {selectedOrder.status === "Delivered" && (
+              <button
+                className="rate-btn"
+                onClick={() => {
+                  setSelectedOrderToRate(selectedOrder);
+                  setShowFeedbackModal(true);
+                }}
+              >
+                ⭐ Rate Order
+              </button>
+             )}
+
             {/* Reorder Button inside Modal */}
             <button
               className="reorder-btn"
@@ -166,6 +181,17 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
             </button>
           </div>
         </div>
+      )}
+      {showFeedbackModal && selectedOrderToRate && (
+        <FeedbackModal
+          order={selectedOrderToRate}
+          onClose={() => setShowFeedbackModal(false)}
+          onSubmitSuccess={(ratedOrderId) => {
+            setShowFeedbackModal(false);
+            setSelectedOrderToRate(null);
+            alert("✅ Thanks for your feedback!");
+          }}
+        />
       )}
     </div>
   );

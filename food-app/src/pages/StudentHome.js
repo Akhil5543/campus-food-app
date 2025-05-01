@@ -193,20 +193,36 @@ const handleDeleteAccount = async () => {
 }, [view, studentId]);
 
   useEffect(() => {
-    axios
-      .get("https://vendor-service-wnkw.onrender.com/vendors")
-      .then((res) => setVendors(res.data))
-      .catch((err) => console.error("Error fetching vendors:", err));
-
-    if (studentId) {
-      axios
-        .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setOrderHistory(res.data.orders))
-        .catch((err) => console.error("Error fetching order history:", err));
-    }
-  }, [studentId, token]);
+    const fetchVendorsWithRatings = async () => {
+      try {
+        const vendorRes = await axios.get("https://vendor-service-wnkw.onrender.com/vendors");
+        const vendorsData = vendorRes.data;
+  
+        const updated = await Promise.all(
+          vendorsData.map(async (vendor) => {
+            try {
+              const res = await axios.get(
+                `https://order-service-vgej.onrender.com/vendor/${vendor._id}/average-rating`
+              );
+              return {
+                ...vendor,
+                averageRating: res.data?.averageRating?.toFixed(1) || "0.0",
+              };
+            } catch (err) {
+              return { ...vendor, averageRating: "0.0" };
+            }
+          })
+        );
+  
+        setVendors(updated);
+      } catch (err) {
+        console.error("Failed to fetch vendors with ratings", err);
+      }
+    };
+  
+    fetchVendorsWithRatings();
+  }, []);
+  
  
   useEffect(() => {
   const socket = io("https://order-service-vgej.onrender.com");
@@ -498,9 +514,9 @@ const saveFavoriteOrder = async () => {
                       alt={vendor.name}
                     />
                     <div>
-                      <h5 className="restaurant-name">
-                        {vendor.name}
-                        <span className="rating-badge">4.7</span>
+                    <h5 className="restaurant-name">
+                      {vendor.name}
+                      <span className="rating-badge">⭐ {vendor.averageRating || "0.0"}</span>
                       </h5>
                       <div className="text-muted">{vendor.address}</div>
                     </div>
