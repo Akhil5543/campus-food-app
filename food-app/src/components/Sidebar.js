@@ -57,6 +57,14 @@ const Sidebar = ({ isOpen, onClose, setView, handleLogout }) => {
         <button
           type="button"
           className="menu-item"
+          onClick={() => handleViewChange("settings")}
+        >
+          ⚙️ <span>Settings</span>
+        </button>
+
+        <button
+          type="button"
+          className="menu-item"
           onClick={handleLogout}
         >
           🔒 <span>Logout</span>
