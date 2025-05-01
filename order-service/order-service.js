@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
-const Feedback = require("./models/feedback.model");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -96,6 +95,20 @@ const favoriteOrderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const FavoriteOrder = mongoose.model("FavoriteOrder", favoriteOrderSchema, "favorite_orders");
+
+const feedbackSchema = new mongoose.Schema({
+  orderId: String,
+  vendorId: String,
+  userId: String,
+  rating: Number,
+  comment: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const Feedback = mongoose.model("Feedback", feedbackSchema, "feedbacks");
 
 // ✅ PLACE NEW ORDER
 app.post("/orders", async (req, res) => {
