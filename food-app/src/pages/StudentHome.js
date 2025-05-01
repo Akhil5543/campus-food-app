@@ -12,6 +12,7 @@ import EditEmailView from "../components/EditEmailView";
 import EditPasswordView from "../components/EditPasswordView";
 import EditDobView from "../components/EditDobView";
 import EditPhoneView from "../components/EditPhoneView";
+import Sidebar from "../components/Sidebar"; 
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -424,18 +425,32 @@ const saveFavoriteOrder = async () => {
     <div className="dashboard-background"></div>
     <div className="background-overlay"></div>
     <div className="app-overlay">
+    <Sidebar
+  isOpen={sidebarOpen}
+  onClose={() => setSidebarOpen(false)}
+  setView={setView}
+  handleLogout={handleLogout}
+/>
     <div className="student-dashboard">
       <div className="dashboard-header">
+        <div className="header-left">
+            <button
+              className="hamburger-icon"
+              onClick={() => setSidebarOpen(true)}
+              style={{ marginRight: "16px",
+                fontSize: "20px",
+                background: "none",
+                border: "none",
+                color: "#f1c40f",
+                cursor: "pointer",}}
+            >
+              ☰
+            </button>
         <div className="header-title">
           Campus Food – Welcome, {studentName} 👋
         </div>
         <div className="header-buttons">
-          <button onClick={() => setView("restaurants")}>Restaurants</button>
-          <button onClick={() => setView("orders")}>My Orders</button>
           <button onClick={() => setView("settings")}>Settings ⚙️</button>
-          <button onClick={() => setView("favoriteOrders")}>
-            Favorite Orders 🔁
-          </button>
           <button
             onClick={() => setView("notifications")}
             className="notification-icon-button"
