@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import "./MyOrders.css";
@@ -15,6 +15,36 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedOrderToRate, setSelectedOrderToRate] = useState(null);
+  const [vendorRatings, setVendorRatings] = useState({});
+
+  // ✅ Fetch average rating per vendor
+  useEffect(() => {
+    const fetchVendorRatings = async () => {
+      const vendorIds = [...new Set(orders.map(order => order.restaurantId))];
+
+      const ratingPromises = vendorIds.map(async (vendorId) => {
+        try {
+          const res = await axios.get(
+            `https://order-service-vgej.onrender.com/vendor/${vendorId}/average-rating`
+          );
+          return { vendorId, rating: res.data?.averageRating?.toFixed(1) || "0.0" };
+        } catch {
+          return { vendorId, rating: "0.0" };
+        }
+      });
+
+      const results = await Promise.all(ratingPromises);
+      const ratingsMap = {};
+      results.forEach(({ vendorId, rating }) => {
+        ratingsMap[vendorId] = rating;
+      });
+      setVendorRatings(ratingsMap);
+    };
+
+    if (orders.length > 0) {
+      fetchVendorRatings();
+    }
+  }, [orders]);
 
   // Decode token to get studentId
   const token = localStorage.getItem("token") || "";
@@ -70,27 +100,20 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
     localStorage.setItem("cartItems", JSON.stringify(updatedCart));
     alert("✅ Items added to your cart!");
 
-    // ✅ Open cart sidebar
-    if (typeof setCartVisible === "function") {
-      setCartVisible(true);
-    }
-    if (typeof updateSelectedItems === "function") {
-  updateSelectedItems(updatedCart);
-}
+    if (typeof setCartVisible === "function") setCartVisible(true);
+    if (typeof updateSelectedItems === "function") updateSelectedItems(updatedCart);
+
     setSelectedOrder(null);
   };
 
-  // Calculate subtotal
   const calculateSubtotal = (items) => {
     return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
-  // Open modal
   const openOrderDetails = (order) => {
     setSelectedOrder(order);
   };
 
-  // Close modal
   const closeOrderDetails = () => {
     setSelectedOrder(null);
   };
@@ -120,6 +143,8 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
                   {order.items.length} item{order.items.length > 1 ? "s" : ""} • $
                   {order.totalAmount.toFixed(2)} •{" "}
                   {new Date(order.createdAt).toLocaleString()}
+                  <br />
+                  ⭐ Avg Rating: {vendorRatings[order.restaurantId] || "0.0"}
                 </div>
               </div>
             </div>
@@ -127,7 +152,7 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
             <button
               className="favorite-btn"
               onClick={(e) => {
-                e.stopPropagation(); // prevent opening modal when clicking save button
+                e.stopPropagation();
                 saveOrderAsFavorite(order);
               }}
               disabled={savedOrders.includes(order._id)}
@@ -138,7 +163,6 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
         ))
       )}
 
-      {/* Modal for viewing a single past order details */}
       {selectedOrder && (
         <div className="order-modal">
           <div className="order-modal-content">
@@ -170,9 +194,8 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
               >
                 ⭐ Rate Order
               </button>
-             )}
+            )}
 
-            {/* Reorder Button inside Modal */}
             <button
               className="reorder-btn"
               onClick={() => reorderItems(selectedOrder)}
@@ -182,11 +205,12 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
           </div>
         </div>
       )}
+
       {showFeedbackModal && selectedOrderToRate && (
         <FeedbackModal
           order={selectedOrderToRate}
           onClose={() => setShowFeedbackModal(false)}
-          onSubmitSuccess={(ratedOrderId) => {
+          onSubmitSuccess={() => {
             setShowFeedbackModal(false);
             setSelectedOrderToRate(null);
             alert("✅ Thanks for your feedback!");
