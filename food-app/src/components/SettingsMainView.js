@@ -1,21 +1,20 @@
-// SettingsMainView.js
 import React from "react";
 import "./Settings.css";
 
-const SettingsMainView = ({ onNavigate }) => {
+const SettingsMainView = ({ onNavigate, currentName, currentEmail, dob, phoneNumber }) => {
   return (
     <div className="settings-container">
       <h2 className="settings-title">Account Settings</h2>
 
       <div className="settings-row" onClick={() => onNavigate("edit-name")}> 
         <div className="settings-label">Name</div>
-        <div className="settings-value">Mounika Dasari</div>
+        <div className="settings-value">{currentName}</div>
         <div className="settings-arrow">➔</div>
       </div>
 
       <div className="settings-row" onClick={() => onNavigate("edit-email")}> 
         <div className="settings-label">Email</div>
-        <div className="settings-value">mounikayadav2526@gmail.com</div>
+        <div className="settings-value">{currentEmail}</div>
         <div className="settings-arrow">➔</div>
       </div>
 
@@ -23,6 +22,16 @@ const SettingsMainView = ({ onNavigate }) => {
         <div className="settings-label">Password</div>
         <div className="settings-value">********</div>
         <div className="settings-arrow">➔</div>
+      </div>
+
+      <div className="settings-row disabled"> 
+        <div className="settings-label">Date of Birth</div>
+        <div className="settings-value">{dob || "Not set"}</div>
+      </div>
+
+      <div className="settings-row disabled"> 
+        <div className="settings-label">Phone Number</div>
+        <div className="settings-value">{phoneNumber || "Not set"}</div>
       </div>
 
       <div className="settings-row danger" onClick={() => onNavigate("delete-account")}> 

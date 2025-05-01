@@ -80,4 +80,38 @@
     cursor: pointer;
     margin-bottom: 16px;
   }
+
+  .settings-error {
+    color: red;
+    font-size: 14px;
+    margin-top: -12px;
+    margin-bottom: 12px;
+  }
+  
+  .edit-view {
+    padding: 32px;
+    max-width: 500px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .edit-view button {
+    margin-right: 10px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .edit-view button:last-child {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #ccc;
+  }
+  
+  .settings-row:hover {
+    background-color: #fafafa;
+  }
+  
   

@@ -11,7 +11,10 @@ const Signup = () => {
     email: "",
     password: "",
     role: "student",
+    dob: "",
+    phone_number: "",
   });
+
   const [error, setError] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [emailSent, setEmailSent] = useState(false);
@@ -84,6 +87,22 @@ const Signup = () => {
             type="password"
             placeholder="Password"
             value={formData.password}
+            onChange={handleChange}
+            className="auth-input"
+          />
+          <input
+            name="dob"
+            type="date"
+            placeholder="Date of Birth"
+            value={formData.dob}
+            onChange={handleChange}
+            className="auth-input"
+          />
+          <input
+            name="phone_number"
+            type="tel"
+            placeholder="Phone Number"
+            value={formData.phone_number}
             onChange={handleChange}
             className="auth-input"
           />
