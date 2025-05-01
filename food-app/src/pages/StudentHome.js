@@ -29,6 +29,7 @@ const token = localStorage.getItem("token") || "";
   }
   
 const StudentHome = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
