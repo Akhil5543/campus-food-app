@@ -62,7 +62,7 @@ const verifyToken = (req, res, next) => {
 
 // 📝 Signup Route
 app.post("/signup", async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, dob, phone_number } = req.body;
 
   if (!name || !email || !password || !role) {
     return res.status(400).json({ message: "All fields are required." });
@@ -79,10 +79,10 @@ app.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO users (name, email, password, role, verification_code, is_verified)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role`,
-      [name, email, hashedPassword, role, verificationCode, false]
-    );
+      `INSERT INTO users (name, email, password, role, verification_code, is_verified, dob, phone_number)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, email, role`,
+      [name, email, hashedPassword, role, verificationCode, false, dob || null, phone_number || null]
+    );    
 
     await sendVerificationEmail(email, verificationCode);
 

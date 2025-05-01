@@ -10,6 +10,8 @@ import SettingsMainView from "../components/SettingsMainView";
 import EditNameView from "../components/EditNameView";
 import EditEmailView from "../components/EditEmailView";
 import EditPasswordView from "../components/EditPasswordView";
+import EditDobView from "../components/EditDobView";
+import EditPhoneView from "../components/EditPhoneView";
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -44,34 +46,34 @@ const StudentHome = () => {
   const [favoriteOrders, setFavoriteOrders] = useState([]);
   const [name, setName] = useState(studentName);
   const [email, setEmail] = useState(decoded?.email || "");
-  const [newName, setNewName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [dob, setDob] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   
   const authHeaders = {
    headers: { Authorization: `Bearer ${token}` },
   };
 
-  const handleProfileUpdate = async () => {
-  try {
-    const res = await axios.patch(
-      "https://auth-service-fgt8.onrender.com/update-profile",
-      { newName, newEmail },
-      authHeaders
-    );
-    alert("✅ " + res.data.message);
-    if (newName) setName(newName);
-    if (newEmail) setEmail(newEmail);
-    setNewName("");
-    setNewEmail("");
-  } catch (err) {
-    alert("❌ " + (err.response?.data?.message || "Failed to update profile."));
-  }
-};
-  
+  useEffect(() => {
+    if (token) {
+      axios
+        .get("https://auth-service-fgt8.onrender.com/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const user = res.data.user;
+          if (user.dob) setDob(user.dob);
+          if (user.phone_number) setPhoneNumber(user.phone_number);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch user profile:", err);
+        });
+    }
+  }, []);
+ 
 const handleUpdateName = async (fullName) => {
   try {
     const res = await axios.patch(
@@ -83,6 +85,34 @@ const handleUpdateName = async (fullName) => {
     setName(fullName);
   } catch (err) {
     alert("❌ " + (err.response?.data?.message || "Failed to update name."));
+  }
+};
+
+const handleUpdateDob = async (updatedDob) => {
+  try {
+    const res = await axios.patch(
+      "https://auth-service-fgt8.onrender.com/update-profile",
+      { dob: updatedDob },
+      authHeaders
+    );
+    alert("✅ " + res.data.message);
+    setDob(updatedDob);
+  } catch (err) {
+    alert("❌ " + (err.response?.data?.message || "Failed to update DOB."));
+  }
+};
+
+const handleUpdatePhone = async (updatedPhone) => {
+  try {
+    const res = await axios.patch(
+      "https://auth-service-fgt8.onrender.com/update-profile",
+      { phone_number: updatedPhone },
+      authHeaders
+    );
+    alert("✅ " + res.data.message);
+    setPhoneNumber(updatedPhone);
+  } catch (err) {
+    alert("❌ " + (err.response?.data?.message || "Failed to update phone number."));
   }
 };
 
@@ -624,7 +654,13 @@ const saveFavoriteOrder = async () => {
       {view === "settings" && (
         <>
           {settingsView === "main" && (
-            <SettingsMainView onNavigate={setSettingsView} />
+            <SettingsMainView
+            onNavigate={setSettingsView}
+            currentName={name}
+            currentEmail={email}
+            dob={dob}
+            phoneNumber={phoneNumber}
+          />          
           )}
 
        {settingsView === "edit-name" && (
@@ -634,6 +670,22 @@ const saveFavoriteOrder = async () => {
            onUpdateName={handleUpdateName}
         />
       )}
+      {settingsView === "edit-dob" && (
+        <EditDobView
+          onBack={() => setSettingsView("main")}
+          currentDob={dob}
+          onUpdateDob={handleUpdateDob}
+        />
+      )}
+
+       {settingsView === "edit-phone" && (
+         <EditPhoneView
+           onBack={() => setSettingsView("main")}
+           currentPhone={phoneNumber}
+          onUpdatePhone={handleUpdatePhone}
+         />
+       )}
+
        {settingsView === "edit-email" && (
         <EditEmailView
           onBack={() => setSettingsView("main")}
