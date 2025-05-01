@@ -6,6 +6,12 @@ import { jwtDecode } from "jwt-decode";
 import MyOrders from "../components/MyOrders";
 import "./StudentHome.css";
 import Checkout from "./Checkout";
+import SettingsView from "./pages/SettingsView";
+import UpdateProfile from "./pages/UpdateProfile";
+import ChangePassword from "./pages/ChangePassword";
+import NotificationSettings from "./pages/NotificationSettings";
+import DeleteAccount from "./pages/DeleteAccount";
+
 
 const token = localStorage.getItem("token") || "";
   let studentName = "Student";
@@ -588,73 +594,28 @@ const saveFavoriteOrder = async () => {
         </div>
       )}
 
-{view === "settings" && (
-  <div className="settings-container">
-    <h2>⚙️ Account Settings</h2>
-
-    <div className="settings-section">
-      <h3>👤 Profile</h3>
-      <p><strong>Current Name:</strong> {name}</p>
-      <p><strong>Current Email:</strong> {email}</p>
-      <input
-        type="text"
-        placeholder="New Name"
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-      />
-      <input
-        type="email"
-        placeholder="New Email"
-        value={newEmail}
-        onChange={(e) => setNewEmail(e.target.value)}
-      />
-      <button onClick={handleProfileUpdate}>Update Profile</button>
-    </div>
-
-    <div className="settings-section">
-      <h3>🔒 Change Password</h3>
-      <input
-        type="password"
-        placeholder="Current Password"
-        value={currentPassword}
-        onChange={(e) => setCurrentPassword(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="New Password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Confirm New Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-      <button onClick={handlePasswordChange}>Update Password</button>
-    </div>
-
-    <div className="settings-section">
-      <h3>🔔 Notifications</h3>
-      <label>
-        <input
-          type="checkbox"
-          checked={notificationPrefs}
-          onChange={() => setNotificationPrefs(!notificationPrefs)}
-        />
-        Enable Order Updates
-      </label>
-    </div>
-
-    <div className="settings-section danger-zone">
-      <h3>🗑️ Danger Zone</h3>
-      <button onClick={handleDeleteAccount}>Delete Account</button>
-    </div>
-
-  </div>
+{view === "settings" && <SettingsView setView={setView} />}
+{view === "update-profile" && (
+  <UpdateProfile
+    name={name}
+    email={email}
+    token={token}
+    setView={setView}
+    setName={setName}
+    setEmail={setEmail}
+  />
 )}
-
-
+{view === "change-password" && (
+  <ChangePassword token={token} setView={setView} />
+)}
+{view === "notification-settings" && (
+  <NotificationSettings
+    notificationPrefs={notificationPrefs}
+    setNotificationPrefs={setNotificationPrefs}
+    setView={setView}
+  />
+)}
+{view === "delete-account" && <DeleteAccount token={token} />}
 
       <div className={`cart-view ${cartVisible ? "show" : ""}`}>
         <div className="cart-header">
