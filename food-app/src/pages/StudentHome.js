@@ -428,6 +428,19 @@ const saveFavoriteOrder = async () => {
     <div className="app-overlay">
     <div className="student-dashboard">
       <div className="dashboard-header">
+      <div className="header-left">
+            <button
+              className="hamburger-icon"
+              onClick={() => setSidebarOpen(true)}
+              style={{ marginRight: "16px",
+                fontSize: "20px",
+                background: "none",
+                border: "none",
+                color: "#f1c40f",
+                cursor: "pointer",}}
+            >
+              ☰
+            </button>
         <div className="header-title">
           Campus Food – Welcome, {studentName} 👋
         </div>
