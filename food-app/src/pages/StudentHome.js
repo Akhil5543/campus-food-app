@@ -451,6 +451,7 @@ const saveFavoriteOrder = async () => {
         <div className="header-title">
           Campus Food – Welcome, {studentName} 👋
         </div>
+        </div>  
         <div className="header-buttons">
           <button onClick={() => setView("settings")}>Settings ⚙️</button>
           <button
