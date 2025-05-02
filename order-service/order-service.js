@@ -12,12 +12,15 @@ const PORT = process.env.PORT;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://campus-food-app.vercel.app",
-      "https://campus-food-app-git-main-mounikas-projects-5dc51961.vercel.app"
-    ],
+    origin: (origin, callback) => {
+      if (!origin || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("❌ Not allowed by Socket.IO CORS: " + origin));
+      }
+    },
     methods: ["GET", "POST", "PATCH"],
-    credentials: true
+    credentials: true,
   }
 });
 
