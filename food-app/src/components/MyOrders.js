@@ -209,13 +209,15 @@ const MyOrders = ({ orders, setCartVisible, updateSelectedItems }) => {
       {showFeedbackModal && selectedOrderToRate && (
         <FeedbackModal
           order={selectedOrderToRate}
+          userId={studentId}
           onClose={() => setShowFeedbackModal(false)}
           onSubmitSuccess={() => {
-            setShowFeedbackModal(false);
-            setSelectedOrderToRate(null);
-            alert("✅ Thanks for your feedback!");
-          }}
-        />
+          setShowFeedbackModal(false);
+          setSelectedOrderToRate(null);
+          alert("✅ Thanks for your feedback!");
+        }}
+       />
+
       )}
     </div>
   );

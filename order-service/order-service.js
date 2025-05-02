@@ -1,3 +1,4 @@
+// TOP SETUP
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,7 +9,6 @@ const { Server } = require("socket.io");
 
 const app = express();
 const PORT = process.env.PORT;
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -31,7 +31,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    console.log("\uD83C\uDF10 Incoming Origin:", origin);
+    console.log("🌐 Incoming Origin:", origin);
     if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
       callback(null, true);
     } else {
@@ -40,18 +40,16 @@ app.use(cors({
   },
   credentials: true,
 }));
-
 app.options("*", cors());
-console.log("\uD83D\uDEA8 CORS middleware is running...");
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-  .then(() => console.log("✅ Connected to MongoDB Atlas (Order Service)"))
+}).then(() => console.log("✅ Connected to MongoDB Atlas (Order Service)"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
+// SCHEMAS
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   restaurantId: String,
@@ -75,7 +73,7 @@ const feedbackSchema = new mongoose.Schema({
   vendorId: String,
   userId: String,
   rating: Number,
-  comment: String,
+  feedback: String,
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -83,11 +81,11 @@ const Order = mongoose.model("Order", orderSchema, "orders");
 const FavoriteOrder = mongoose.model("FavoriteOrder", favoriteOrderSchema, "favorite_orders");
 const Feedback = mongoose.model("Feedback", feedbackSchema, "feedbacks");
 
+// ROUTES
 app.post("/orders", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Missing token" });
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id?.toString();
 
@@ -103,7 +101,6 @@ app.post("/orders", async (req, res) => {
 
     const savedOrder = await newOrder.save();
     console.log("✅ Order Saved:", savedOrder);
-
     res.status(201).json({ message: "Order placed successfully", order: savedOrder });
   } catch (err) {
     console.error("❌ Failed to place order:", err.message);
@@ -197,14 +194,23 @@ app.delete("/favorite-order/:id", async (req, res) => {
   }
 });
 
+// ✅ POST /feedback - Submit a rating and feedback
 app.post("/feedback", async (req, res) => {
   try {
-    const { orderId, vendorId, userId, rating, comment } = req.body;
+    const { orderId, vendorId, userId, rating, feedback } = req.body;
     const existing = await Feedback.findOne({ orderId, userId });
     if (existing) return res.status(400).json({ message: "Feedback already submitted." });
 
-    const feedback = new Feedback({ orderId, vendorId, userId, rating, comment });
-    await feedback.save();
+    const newFeedback = new Feedback({ orderId, vendorId, userId, rating, feedback });
+    await newFeedback.save();
+
+    // 🟡 Update average rating in vendors collection
+    const feedbacks = await Feedback.find({ vendorId });
+    const avg = feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length;
+
+    await mongoose.connection
+      .collection("vendors")
+      .updateOne({ _id: new mongoose.Types.ObjectId(vendorId) }, { $set: { avgRating: avg.toFixed(1) } });
 
     res.status(200).json({ message: "Feedback submitted successfully." });
   } catch (err) {
@@ -212,6 +218,7 @@ app.post("/feedback", async (req, res) => {
   }
 });
 
+// ✅ GET /vendor/:vendorId/average-rating
 app.get("/vendor/:vendorId/average-rating", async (req, res) => {
   try {
     const { vendorId } = req.params;
@@ -226,6 +233,7 @@ app.get("/vendor/:vendorId/average-rating", async (req, res) => {
   }
 });
 
+// SOCKET
 io.on("connection", (socket) => {
   socket.on("newOrderPlaced", () => {
     io.emit("refreshVendorOrders");
