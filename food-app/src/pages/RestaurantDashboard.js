@@ -28,11 +28,14 @@ const RestaurantDashboard = () => {
 
   try {
     const decoded = jwtDecode(token);
-    ownerId = decoded.ownerId;
-  } catch (err) {
+    console.log("Decoded token:", decoded);
+    ownerId = decoded.ownerId || decoded.id || decoded.sub;
+    console.log("Resolved ownerId:", ownerId);
+   } catch (err) {
     console.error("Invalid token");
     navigate("/login");
   }
+
 
   const fetchVendor = async () => {
     try {
