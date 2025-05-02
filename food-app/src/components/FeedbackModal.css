@@ -75,3 +75,6 @@ button:hover {
 }
 
 .cancel-rating-btn {
+  background-color: #ddd;
+  color: #333;
+}
