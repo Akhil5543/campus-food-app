@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./FeedbackModal.css";
 
-const FeedbackModal = ({ order, onClose, onSubmitSuccess }) => {
+const FeedbackModal = ({ order, userId, onClose, onSubmitSuccess }) => {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,6 +15,7 @@ const FeedbackModal = ({ order, onClose, onSubmitSuccess }) => {
        await axios.post("https://order-service-vgej.onrender.com/feedback", {
         orderId: order._id,
         vendorId: order.restaurantId,
+        userId,
         rating,
         feedback,
       });
