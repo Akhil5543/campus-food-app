@@ -12,7 +12,7 @@ const FeedbackModal = ({ order, onClose, onSubmitSuccess }) => {
 
     try {
       setSubmitting(true);
-      await axios.post("https://order-service-vgej.onrender.com/submit-rating", {
+       await axios.post("https://order-service-vgej.onrender.com/feedback", {
         orderId: order._id,
         vendorId: order.restaurantId,
         rating,
