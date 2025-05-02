@@ -319,6 +319,7 @@ const toggleExpandOrder = (orderId) => {
               className="status-filter-input"
             >
               <option value="All">All Orders</option>
+              <option value="Received">Received</option>
               <option value="Preparing">Preparing</option>
               <option value="Delivered">Delivered</option>
            </select>
@@ -355,7 +356,8 @@ const toggleExpandOrder = (orderId) => {
                           order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
                         const matchesStatus =
-                          selectedStatus === "All" || order.status === selectedStatus;
+                          selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+
                         return matchesDate && matchesSearch && matchesStatus;
                   })
                   .reduce((grouped, order) => {
