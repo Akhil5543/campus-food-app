@@ -223,7 +223,20 @@ const handleDeleteAccount = async () => {
     fetchVendorsWithRatings();
   }, []);
   
- 
+  // 🔁 Fetch past orders when studentId is ready
+  useEffect(() => {
+    if (studentId) {
+      axios
+        .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          })
+        .then((res) => setOrderHistory(res.data.orders))
+       .catch((err) => {
+        console.error("❌ Failed to fetch past orders:", err);
+      });
+  }
+}, [studentId]);
+
   useEffect(() => {
   const socket = io("https://order-service-vgej.onrender.com");
 
