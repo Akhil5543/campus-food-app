@@ -139,7 +139,7 @@ app.post("/login", async (req, res) => {
         id: user.id,
         role: user.role,
         name: user.name,
-        ownerId: user.owner_id || null,
+        ownerId: user.role === "restaurant" ? user.owner_id : null,
       },
       JWT_SECRET,
       { expiresIn: "1d" }
