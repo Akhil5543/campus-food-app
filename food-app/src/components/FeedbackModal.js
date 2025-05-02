@@ -4,6 +4,7 @@ import "./FeedbackModal.css";
 
 const FeedbackModal = ({ order, userId, onClose, onSubmitSuccess }) => {
   const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,18 +38,22 @@ const FeedbackModal = ({ order, userId, onClose, onSubmitSuccess }) => {
         <div className="stars">
           {[1, 2, 3, 4, 5].map((star) => (
             <span
-              key={star}
-              onClick={() => setRating(star)}
-              style={{
-                fontSize: "30px",
-                cursor: "pointer",
-                color: star <= rating ? "gold" : "gray",
-              }}
-            >
-              ⭐
-            </span>
-          ))}
-        </div>
+             key={star}
+             onClick={() => setRating(star)}
+             onMouseEnter={() => setHover(star)}
+             onMouseLeave={() => setHover(0)}
+             style={{
+              fontSize: "30px",
+              cursor: "pointer",
+              color: (hover || rating) >= star ? "gold" : "gray",
+              transition: "color 0.2s",
+            }}
+          >
+        ⭐
+      </span>
+     ))}
+   </div>
+
 
         <textarea
           placeholder="Optional feedback..."
