@@ -472,7 +472,8 @@ const saveFavoriteOrder = async () => {
                 background: "none",
                 border: "none",
                 color: "#f1c40f",
-                cursor: "pointer",}}
+                cursor: "pointer",
+                zIndex: 9999}}
             >
               ☰
             </button>
