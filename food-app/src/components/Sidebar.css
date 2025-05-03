@@ -1,55 +1,67 @@
 /* Sidebar container */
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 240px;
-  height: 100%;
-  background-color: #000;
-  color: #f1c40f;
-  padding: 20px 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-  z-index: 1001;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
-}
-
-/* When sidebar is open */
-.sidebar.open {
-  transform: translateX(0);
-}
-
-/* Each menu item button */
-.menu-item {
-  background: none;
-  border: none;
-  color: #f1c40f;
-  font-size: 18px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background 0.2s ease-in-out;
-}
-
-.menu-item:hover {
-  background-color: #f1c40f;
-  color: #000;
-}
-
-/* Dark screen overlay when sidebar is open */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100%;
+    background-color: #000;
+    color: #f1c40f;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1001;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* When sidebar is open */
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Close (X) button in sidebar */
+  .close-btn {
+    background: none;
+    border: none;
+    color: #f1c40f;
+    font-size: 24px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    align-self: flex-end;
+  }
+  
+  /* Each menu item button */
+  .menu-item {
+    background: none;
+    border: none;
+    color: #f1c40f;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .menu-item:hover {
+    background-color: #f1c40f;
+    color: #000;
+  }
+  
+  /* Dark transparent overlay behind sidebar */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* must be less than sidebar z-index */
+  }
+  
