@@ -3,24 +3,12 @@ import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, setView, handleLogout }) => {
   const handleViewChange = (viewName) => {
-    console.log(`✅ Sidebar clicked: ${viewName}`);
     setView(viewName);
     onClose();
   };
 
   return (
     <div className={`sidebar ${isOpen ? "open" : ""}`}>
-      <div className="sidebar-header">
-        <button
-          type="button"
-          className="close-btn"
-          onClick={onClose}
-          aria-label="Close sidebar"
-        >
-          ✕
-        </button>
-      </div>
-
       <div className="sidebar-menu">
         <button
           type="button"
