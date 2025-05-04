@@ -56,8 +56,6 @@ const StudentHome = () => {
   const [repeatableVendors, setRepeatableVendors] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [suggestedVendor, setSuggestedVendor] = useState(null);
-
-
   
   const authHeaders = {
    headers: { Authorization: `Bearer ${token}` },
@@ -562,33 +560,6 @@ const saveFavoriteOrder = async () => {
           </button>
         </div>
       </div>
-
-      {repeatableVendors.length > 0 && view === "restaurants" && (
-        <div className="repeat-reminder-banner">
-          <strong>🔁 Order again?</strong> You’ve previously ordered from:
-          <ul>
-            {repeatableVendors.map((vendor, idx) => (
-              <li key={idx}>
-                <button
-                  className="repeat-order-btn"
-                  onClick={() => {
-                    const restored = vendor.items.map((item) => ({
-                      ...item,
-                      vendorName: vendor.vendorName,
-                      vendorId: vendor.vendorId,
-                    }));
-                    setSelectedItems(restored);
-                    setCartVisible(true);
-                  }}
-                >
-                  {vendor.vendorName}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       {view === "restaurants" && (
         <>
           <div className="search-bar">
