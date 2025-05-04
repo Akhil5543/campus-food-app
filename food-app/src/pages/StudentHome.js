@@ -302,8 +302,12 @@ const handleDeleteAccount = async () => {
   useEffect(() => {
   if (showToast) {
     const timer = setTimeout(() => {
-      setShowToast(false);
-    }, 7000); // Auto-close after 7 seconds
+      const toastEl = document.querySelector(".suggested-toast");
+      if (toastEl) toastEl.classList.add("fade-out");
+      
+      setTimeout(() => setShowToast(false), 500); 
+
+    }, 7000); 
 
     return () => clearTimeout(timer); 
   }
