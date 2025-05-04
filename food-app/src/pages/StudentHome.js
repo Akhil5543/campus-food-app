@@ -54,6 +54,9 @@ const StudentHome = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [repeatableVendors, setRepeatableVendors] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  const [suggestedVendor, setSuggestedVendor] = useState(null);
+
 
   
   const authHeaders = {
@@ -254,6 +257,14 @@ const handleDeleteAccount = async () => {
           });
   
           setRepeatableVendors(Object.values(recentVendors));
+          const repeatable = Object.values(recentVendors);
+          setRepeatableVendors(repeatable);
+          
+          if (repeatable.length > 0 && !sessionStorage.getItem("toastShown")) {
+            setSuggestedVendor(repeatable[0]); 
+            setShowToast(true);
+            sessionStorage.setItem("toastShown", "true");
+          }
         })
         .catch((err) => {
           console.error("❌ Failed to fetch past orders:", err);
@@ -493,6 +504,29 @@ const saveFavoriteOrder = async () => {
   handleLogout={handleLogout}
   />
     <div className="student-dashboard">
+      {showToast && suggestedVendor && (
+        <div className="toast-popup">
+          <strong>🍽️ Suggested for you:</strong>
+          <div className="toast-buttons">
+            <button
+              onClick={() => {
+                const restored = suggestedVendor.items.map((item) => ({
+                ...item,
+                vendorName: suggestedVendor.vendorName,
+                vendorId: suggestedVendor.vendorId,
+              }));
+              setSelectedItems(restored);
+              setCartVisible(true);
+              setShowToast(false);
+            }}
+           >
+            {suggestedVendor.vendorName} ▸
+          </button>
+          <button onClick={() => setShowToast(false)}>✕</button>
+        </div>
+      </div>
+    )}
+
       <div className="dashboard-header">
        <div className="header-left">
             <button
