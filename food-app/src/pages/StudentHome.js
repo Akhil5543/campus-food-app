@@ -503,28 +503,39 @@ const saveFavoriteOrder = async () => {
   />
     <div className="student-dashboard">
       {showToast && suggestedVendor && (
-        <div className="toast-popup">
-          <strong>🍽️ Suggested for you:</strong>
-          <div className="toast-buttons">
-            <button
-              onClick={() => {
-                const restored = suggestedVendor.items.map((item) => ({
-                ...item,
-                vendorName: suggestedVendor.vendorName,
-                vendorId: suggestedVendor.vendorId,
-              }));
-              setSelectedItems(restored);
-              setCartVisible(true);
-              setShowToast(false);
-            }}
-           >
-            {suggestedVendor.vendorName} ▸
-          </button>
-          <button onClick={() => setShowToast(false)}>✕</button>
-        </div>
+        <div className="suggested-toast">
+          <div className="toast-text">
+            <div className="suggested-label">Suggested for you</div>
+            <div className="vendor-row">
+              <img
+                src={getVendorLogo(suggestedVendor.vendorName)}
+                alt={suggestedVendor.vendorName}
+                className="toast-logo"
+              />
+              <div className="vendor-info">
+                <strong>{suggestedVendor.vendorName}</strong>
+                <span className="days-ago">Ordered 5+ days ago</span>
+              </div>
+            </div>
+          </div>
+          <button
+            className="reorder-toast-btn"
+            onClick={() => {
+              const restored = suggestedVendor.items.map((item) => ({
+              ...item,
+              vendorName: suggestedVendor.vendorName,
+              vendorId: suggestedVendor.vendorId,
+            }));
+            setSelectedItems(restored);
+            setCartVisible(true);
+            setShowToast(false);
+          }}
+        >
+          Reorder →
+        </button>
       </div>
     )}
-
+ 
       <div className="dashboard-header">
        <div className="header-left">
             <button
