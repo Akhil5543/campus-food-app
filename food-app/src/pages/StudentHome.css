@@ -963,3 +963,56 @@ body, html {
 .hamburger-icon:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+.repeat-icon {
+  margin-left: 8px;
+  font-size: 18px;
+  color: #f39c12;
+  animation: bounce 0.8s infinite alternate;
+  display: inline-block;
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2px);
+  }
+}
+.repeat-reminder-banner {
+  background-color: #fff9db;
+  padding: 16px 24px;
+  margin: 20px;
+  border-left: 6px solid #f1c40f;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #444;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.repeat-reminder-banner ul {
+  list-style: none;
+  padding-left: 10px;
+  margin-top: 10px;
+}
+
+.repeat-reminder-banner li {
+  margin-bottom: 6px;
+}
+
+.repeat-order-btn {
+  background-color: #f1c40f;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.repeat-order-btn:hover {
+  background-color: #d4ac0d;
+}

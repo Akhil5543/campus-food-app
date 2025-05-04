@@ -53,6 +53,7 @@ const StudentHome = () => {
   const [dob, setDob] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [repeatableVendors, setRepeatableVendors] = useState([]);
 
   
   const authHeaders = {
@@ -229,13 +230,37 @@ const handleDeleteAccount = async () => {
       axios
         .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
-          })
-        .then((res) => setOrderHistory(res.data.orders))
-       .catch((err) => {
-        console.error("❌ Failed to fetch past orders:", err);
-      });
-  }
-}, [studentId]);
+        })
+        .then((res) => {
+          setOrderHistory(res.data.orders); // ✅ now inside
+          const now = new Date();
+          const recentVendors = {};
+  
+          res.data.orders.forEach((order) => {
+            const daysAgo = (now - new Date(order.createdAt)) / (1000 * 60 * 60 * 24);
+            if (daysAgo >= 5) {
+              if (
+                !recentVendors[order.restaurantId] ||
+                new Date(order.createdAt) > new Date(recentVendors[order.restaurantId].createdAt)
+              ) {
+                recentVendors[order.restaurantId] = {
+                  vendorId: order.restaurantId,
+                  vendorName: order.restaurantName,
+                  items: order.items,
+                  createdAt: order.createdAt,
+                };
+              }
+            }
+          });
+  
+          setRepeatableVendors(Object.values(recentVendors));
+        })
+        .catch((err) => {
+          console.error("❌ Failed to fetch past orders:", err);
+        });
+    }
+  }, [studentId]);
+  
 
   useEffect(() => {
   const socket = io("https://order-service-vgej.onrender.com");
@@ -504,7 +529,32 @@ const saveFavoriteOrder = async () => {
         </div>
       </div>
 
-      {/* Restaurants view */}
+      {repeatableVendors.length > 0 && view === "restaurants" && (
+        <div className="repeat-reminder-banner">
+          <strong>🔁 Order again?</strong> You’ve previously ordered from:
+          <ul>
+            {repeatableVendors.map((vendor, idx) => (
+              <li key={idx}>
+                <button
+                  className="repeat-order-btn"
+                  onClick={() => {
+                    const restored = vendor.items.map((item) => ({
+                      ...item,
+                      vendorName: vendor.vendorName,
+                      vendorId: vendor.vendorId,
+                    }));
+                    setSelectedItems(restored);
+                    setCartVisible(true);
+                  }}
+                >
+                  {vendor.vendorName}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {view === "restaurants" && (
         <>
           <div className="search-bar">
