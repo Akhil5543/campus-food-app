@@ -229,50 +229,16 @@ const toggleExpandOrder = (orderId) => {
         🔔 New Order Received: {newOrderInfo.items.map(item => item.name).join(", ")} (${newOrderInfo.totalAmount})
       </div>
     )}
-    {!sidebarOpen && (
-  <div className="hamburger-icon" onClick={() => setSidebarOpen(true)}>☰</div>
-)}
-
-    <div className={`sidebar ${sidebarOpen ? "open" : ""}`} ref={sidebarRef}>
-  <div className="sidebar-links">
-    <button
-      className={activeTab === "menu" ? "active" : ""}
-      onClick={() => {
-        setActiveTab("menu");
-        setSidebarOpen(false);
-      }}
-    >
-      🍔 Menu
-    </button>
-    <button
-      className={activeTab === "orders" ? "active" : ""}
-      onClick={() => {
-        setActiveTab("orders");
-        setSidebarOpen(false);
-      }}
-    >
-      📦 Orders
-    </button>
-    <button
-      className={activeTab === "sales" ? "active" : ""}
-      onClick={() => {
-        setActiveTab("sales");
-        setSidebarOpen(false);
-      }}
-    >
-      📈 Sales
-    </button>
-    <button
-      onClick={() => {
-        setSidebarOpen(false);
-        handleLogout();
-      }}
-    >
-      🔓 Logout
-    </button>
-  </div>
-</div>
-
+    <div className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</div>
+  
+    <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
+      <div className="sidebar-links">
+        <button className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>🍔 Menu</button>
+        <button className={activeTab === "orders" ? "active" : ""} onClick={() => setActiveTab("orders")}>📦 Orders</button>
+        <button className={activeTab === "sales" ? "active" : ""} onClick={() => setActiveTab("sales")}>📈 Sales</button>
+        <button onClick={handleLogout}>🔓 Logout</button>
+      </div>
+    </div>
      
       <div className={`main-content ${sidebarOpen ? "shifted" : ""}`}>
         <div className="header">
