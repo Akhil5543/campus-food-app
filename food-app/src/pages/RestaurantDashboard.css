@@ -259,7 +259,7 @@
   transition: margin-left 0.3s ease;
 }
 
-.hamburger {
+.hamburger-icon {
   position: fixed;
   top: 20px;
   left: 20px;
@@ -272,6 +272,11 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
+.hamburger-icon:hover {
+  background-color: #333;
+}
+
 
 /* Responsive Hamburger for smaller screens */
 @media (max-width: 768px) {
@@ -495,5 +500,4 @@
   height: 100%;
   z-index: -1;
 }
-
 
