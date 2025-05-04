@@ -261,6 +261,7 @@ const handleDeleteAccount = async () => {
           if (repeatable.length > 0 && !sessionStorage.getItem("toastShown")) {
             setSuggestedVendor(repeatable[0]); 
             setShowToast(true);
+
             sessionStorage.setItem("toastShown", "true");
           }
         })
@@ -298,7 +299,15 @@ const handleDeleteAccount = async () => {
     socket.disconnect();
   };
 }, [orderHistory]);
+  useEffect(() => {
+  if (showToast) {
+    const timer = setTimeout(() => {
+      setShowToast(false);
+    }, 7000); // Auto-close after 7 seconds
 
+    return () => clearTimeout(timer); 
+  }
+}, [showToast]);
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -533,8 +542,15 @@ const saveFavoriteOrder = async () => {
         >
           Reorder →
         </button>
-      </div>
-    )}
+              
+        <button
+          className="toast-close-btn"
+          onClick={() => setShowToast(false)}
+        >
+         ✕
+       </button>
+     </div>
+  )}
  
       <div className="dashboard-header">
        <div className="header-left">
