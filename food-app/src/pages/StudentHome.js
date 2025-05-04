@@ -540,7 +540,7 @@ const saveFavoriteOrder = async () => {
               vendorId: suggestedVendor.vendorId,
             }));
             setSelectedItems(restored);
-            setCartVisible(true);
+            setExpandedRestaurantId(suggestedVendor.vendorId);
             setShowToast(false);
           }}
         >
