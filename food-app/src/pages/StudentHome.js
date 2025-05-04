@@ -53,7 +53,9 @@ const StudentHome = () => {
   const [dob, setDob] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [repeatableVendors, setRepeatableVendors] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  const [suggestedVendor, setSuggestedVendor] = useState(null);
   
   const authHeaders = {
    headers: { Authorization: `Bearer ${token}` },
@@ -229,13 +231,46 @@ const handleDeleteAccount = async () => {
       axios
         .get(`https://order-service-vgej.onrender.com/orders/user/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
-          })
-        .then((res) => setOrderHistory(res.data.orders))
-       .catch((err) => {
-        console.error("❌ Failed to fetch past orders:", err);
-      });
-  }
-}, [studentId]);
+        })
+        .then((res) => {
+          setOrderHistory(res.data.orders); // ✅ now inside
+          const now = new Date();
+          const recentVendors = {};
+  
+          res.data.orders.forEach((order) => {
+            const daysAgo = (now - new Date(order.createdAt)) / (1000 * 60 * 60 * 24);
+            if (daysAgo >= 5) {
+              if (
+                !recentVendors[order.restaurantId] ||
+                new Date(order.createdAt) > new Date(recentVendors[order.restaurantId].createdAt)
+              ) {
+                recentVendors[order.restaurantId] = {
+                  vendorId: order.restaurantId,
+                  vendorName: order.restaurantName,
+                  items: order.items,
+                  createdAt: order.createdAt,
+                };
+              }
+            }
+          });
+  
+          setRepeatableVendors(Object.values(recentVendors));
+          const repeatable = Object.values(recentVendors);
+          setRepeatableVendors(repeatable);
+          
+          if (repeatable.length > 0 && !sessionStorage.getItem("toastShown")) {
+            setSuggestedVendor(repeatable[0]); 
+            setShowToast(true);
+
+            sessionStorage.setItem("toastShown", "true");
+          }
+        })
+        .catch((err) => {
+          console.error("❌ Failed to fetch past orders:", err);
+        });
+    }
+  }, [studentId]);
+  
 
   useEffect(() => {
   const socket = io("https://order-service-vgej.onrender.com");
@@ -264,7 +299,19 @@ const handleDeleteAccount = async () => {
     socket.disconnect();
   };
 }, [orderHistory]);
+  useEffect(() => {
+  if (showToast) {
+    const timer = setTimeout(() => {
+      const toastEl = document.querySelector(".suggested-toast");
+      if (toastEl) toastEl.classList.add("fade-out");
+      
+      setTimeout(() => setShowToast(false), 500); 
 
+    }, 7000); 
+
+    return () => clearTimeout(timer); 
+  }
+}, [showToast]);
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -468,6 +515,47 @@ const saveFavoriteOrder = async () => {
   handleLogout={handleLogout}
   />
     <div className="student-dashboard">
+      {showToast && suggestedVendor && (
+        <div className="suggested-toast">
+          <div className="toast-text">
+            <div className="suggested-label">Suggested for you</div>
+            <div className="vendor-row">
+              <img
+                src={getVendorLogo(suggestedVendor.vendorName)}
+                alt={suggestedVendor.vendorName}
+                className="toast-logo"
+              />
+              <div className="vendor-info">
+                <strong>{suggestedVendor.vendorName}</strong>
+                <span className="days-ago">Ordered 5+ days ago</span>
+              </div>
+            </div>
+          </div>
+          <button
+            className="reorder-toast-btn"
+            onClick={() => {
+              const restored = suggestedVendor.items.map((item) => ({
+              ...item,
+              vendorName: suggestedVendor.vendorName,
+              vendorId: suggestedVendor.vendorId,
+            }));
+            setSelectedItems(restored);
+            setExpandedRestaurantId(suggestedVendor.vendorId);
+            setShowToast(false);
+          }}
+        >
+          Reorder →
+        </button>
+              
+        <button
+          className="toast-close-btn"
+          onClick={() => setShowToast(false)}
+        >
+         ✕
+       </button>
+     </div>
+  )}
+ 
       <div className="dashboard-header">
        <div className="header-left">
             <button
@@ -503,8 +591,6 @@ const saveFavoriteOrder = async () => {
           </button>
         </div>
       </div>
-
-      {/* Restaurants view */}
       {view === "restaurants" && (
         <>
           <div className="search-bar">
