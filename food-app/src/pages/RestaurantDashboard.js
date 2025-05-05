@@ -103,7 +103,35 @@ const RestaurantDashboard = () => {
       console.error("Error adding item:", err);
     }
   };
+
+  const handleRemoveItem = async () => {
+    if (!newItem.name) {
+      alert("Please enter the item name to remove.");
+      return;
+    }
   
+    try {
+      const itemToDelete = vendor.menu.find(
+        (item) => item.name.toLowerCase() === newItem.name.toLowerCase()
+      );
+  
+      if (!itemToDelete) {
+        alert("Item not found.");
+        return;
+      }
+  
+      await axios.delete(
+        `https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu/${itemToDelete._id}`
+      );
+  
+      alert("Item removed successfully!");
+      setNewItem({ name: "", price: "", description: "" });
+      fetchVendor();
+    } catch (err) {
+      console.error("Error removing item:", err);
+      alert("Failed to remove item.");
+    }
+  }; 
 const calculateEarnings = () => {
   const today = new Date();
   const todayDate = today.toISOString().split('T')[0];
@@ -325,7 +353,8 @@ const toggleExpandOrder = (orderId) => {
                 value={newItem.description}
                 onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
               />
-              <button onClick={handleAddItem}>Add Item</button>
+              <button className="add-btn" onClick={handleAddItem}>Add Item</button>
+              <button className="remove-btn" onClick={handleRemoveItem}>Remove Item</button>
             </div>
           </>
         )}
