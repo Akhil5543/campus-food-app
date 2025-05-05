@@ -56,7 +56,10 @@ const StudentHome = () => {
   const [repeatableVendors, setRepeatableVendors] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [suggestedVendor, setSuggestedVendor] = useState(null);
-  
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterRating, setFilterRating] = useState("All");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const authHeaders = {
    headers: { Authorization: `Bearer ${token}` },
   };
@@ -591,99 +594,202 @@ const saveFavoriteOrder = async () => {
           </button>
         </div>
       </div>
+
       {view === "restaurants" && (
-        <>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search restaurants..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+  <>
+    <div className="search-filter-container">
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search restaurants..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <button
+        className="filter-toggle-btn"
+        onClick={() => setIsFilterOpen(true)}
+        title="Filter"
+      >
+        ⚙️
+      </button>
+    </div>
 
-          <div className="popular-restaurants">
-            {vendors
-              .filter((vendor) =>
-                vendor.name.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((vendor) => (
-                <div
-                  key={vendor._id}
-                  className="restaurant-card"
-                  onClick={(e) => toggleMenu(e, vendor._id)}
-                >
-                  <div className="restaurant-content">
-                    <img
-                      className="restaurant-image"
-                      src={getVendorLogo(vendor.name)}
-                      alt={vendor.name}
-                    />
-                    <div>
-                    <h5 className="restaurant-name">
-                      {vendor.name}
-                      <span className="rating-badge">⭐ {vendor.averageRating || "0.0"}</span>
+    {isFilterOpen && (
+      <div className="filter-backdrop" onClick={() => setIsFilterOpen(false)}>
+        <div className="filter-modal-box" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => setIsFilterOpen(false)}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "14px",
+              background: "none",
+              border: "none",
+              fontSize: "20px",
+              fontWeight: "bold",
+              cursor: "pointer",
+              color: "#555",
+            }}
+            aria-label="Close Filter"
+          >
+            ×
+          </button>
+          <h3>Filter Options</h3>
+          <label>
+            <span>Category:</span>
+            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+              <option value="All">All</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Burgers">Burgers</option>
+              <option value="Appetizers">Appetizers</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Snacks">Snacks</option>
+            </select>
+          </label>
+          <label>
+            <span>Rating:</span>
+            <select value={filterRating} onChange={(e) => setFilterRating(e.target.value)}>
+              <option value="All">All Ratings</option>
+              <option value="4">4+</option>
+              <option value="3">3+</option>
+              <option value="2">2+</option>
+            </select>
+          </label>
+          <div className="filter-buttons">
+            <button
+              onClick={() => {
+                setFilterCategory("All");
+                setFilterRating("All");
+                setIsFilterOpen(false);
+              }}
+            >
+              Reset
+            </button>
+            <button onClick={() => setIsFilterOpen(false)}>Apply</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <div className="popular-restaurants">
+      {vendors
+        .filter(
+          (vendor) =>
+            vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (filterRating === "All" || parseFloat(vendor.averageRating) >= parseFloat(filterRating)) &&
+            (filterCategory === "All" || vendor.menu.some((item) => item.category === filterCategory))
+        )
+        .map((vendor) => (
+          <div
+            key={vendor._id}
+            className="restaurant-card"
+            onClick={(e) => toggleMenu(e, vendor._id)}
+          >
+            <div className="restaurant-content">
+              <img
+                className="restaurant-image"
+                src={getVendorLogo(vendor.name)}
+                alt={vendor.name}
+              />
+              <div>
+                <h5 className="restaurant-name">
+                  {vendor.name}
+                  <span className="rating-badge">⭐ {vendor.averageRating || "0.0"}</span>
+                </h5>
+                <div className="text-muted">{vendor.address}</div>
+              </div>
+            </div>
+
+            {expandedRestaurantId === vendor._id && (
+              <div className="menu-items mt-3">
+                {Object.entries(
+                  vendor.menu.reduce((acc, item) => {
+                    if (filterCategory !== "All" && item.category !== filterCategory) return acc;
+                    if (!acc[item.category]) acc[item.category] = [];
+                    acc[item.category].push(item);
+                    return acc;
+                  }, {})
+                ).map(([category, items]) => (
+                  <div key={category} className="menu-category-group">
+                    <h5 className="category-heading">
+                      {category === "Appetizers" && "🧆 "}
+                      {category === "Pizza" && "🍕 "}
+                      {category === "Burgers" && "🍔 "}
+                      {category === "Drinks" && "🥤 "}
+                      {category === "Snacks" && "🍟 "}
+                      {category === "Desserts" && "🍰 "}
+                      {category}
                       </h5>
-                      <div className="text-muted">{vendor.address}</div>
-                    </div>
-                  </div>
-                  {expandedRestaurantId === vendor._id && (
-                    <div className="menu-items mt-3">
-                      {vendor.menu.map((item) => {
-                        const existing = selectedItems.find(
-                          (i) =>
-                            i.name === item.name &&
-                            i.vendorName === vendor.name
-                        );
-                        return (
-                          <div key={item.name} className="menu-item">
-                            <div className="item-info">
-                              <div className="item-name">
-                                {item.name}
-                                {item.todaysSpecial && (
-                                  <span className="special-badge"> ⭐ Special</span>
-                                )}
-                             </div>
-                              <div className="item-price">${item.price}</div>
+                      {items
+                      .sort((a, b) => {
+                        if (a.todaysSpecial && !b.todaysSpecial) return -1;
+                        if (!a.todaysSpecial && b.todaysSpecial) return 1;
+                        return a.name.localeCompare(b.name);
+                      })
+                    .map((item) => {
+                      const existing = selectedItems.find(
+                        (i) => i.name === item.name && i.vendorName === vendor.name
+                      );
+                      return (
+                        <div key={item.name} className="menu-item">
+                          <div className="item-info">
+                            <div className="item-name">
+                              {item.name}
+                              {item.todaysSpecial && (
+                                <span className="special-badge"> ⭐ Special</span>
+                              )}
                             </div>
-                            {item.outOfStock ? (
-                              <button disabled style={{
-                                backgroundColor: '#ccc',
-                                color: '#666',
-                                cursor: 'not-allowed',
-                                width: 'auto',
-                                padding: '8px 12px',
-                                borderRadius: '8px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                border: 'none'
-                              }}>
-                                Out of Stock
-                              </button>
-                            ) : existing ? (
-                              <div className="cart-controls">
-                                <button onClick={(e) => removeItem(e, { ...item, vendorName: vendor.name })}>
-                                  −
-                                </button>
-                                <span>{existing.quantity}</span>
-                                <button onClick={(e) => addItem(e, item, vendor.name)}>
-                                  +
-                                </button>
-                                </div>
-                            ) : (
-                                <button onClick={(e) => addItem(e, item, vendor.name)}>+</button>
-                            )}
-
+                            <div className="item-price">${item.price}</div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              ))}
+                          {item.outOfStock ? (
+                            <button
+                              disabled
+                              style={{
+                                backgroundColor: "#ccc",
+                                color: "#666",
+                                cursor: "not-allowed",
+                                width: "auto",
+                                padding: "8px 12px",
+                                borderRadius: "8px",
+                                fontSize: "14px",
+                                fontWeight: "600",
+                                border: "none",
+                              }}
+                            >
+                              Out of Stock
+                            </button>
+                          ) : existing ? (
+                            <div className="cart-controls">
+                              <button
+                                onClick={(e) =>
+                                  removeItem(e, { ...item, vendorName: vendor.name })
+                                }
+                              >
+                                −
+                              </button>
+                              <span>{existing.quantity}</span>
+                              <button
+                                onClick={(e) => addItem(e, item, vendor.name)}
+                              >
+                                +
+                              </button>
+                            </div>
+                          ) : (
+                            <button onClick={(e) => addItem(e, item, vendor.name)}>+</button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </>
-      )}
+        ))}
+    </div>
+  </>
+)}
+
 
       {view === "orders" && (
         <MyOrders
