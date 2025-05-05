@@ -56,6 +56,25 @@ app.get("/vendor/owner/:ownerId", async (req, res) => {
     res.status(500).json({ message: "Error fetching vendor", error: err });
   }
 });
+// DELETE /vendor/:id/menu/:itemId - Remove a menu item by ID
+app.delete("/vendor/:id/menu/:itemId", async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id);
+    if (!vendor) return res.status(404).json({ message: "Vendor not found" });
+
+    const itemIndex = vendor.menu.findIndex(item => item._id.toString() === req.params.itemId);
+    if (itemIndex === -1) return res.status(404).json({ message: "Menu item not found" });
+
+    // Remove the item from the menu array
+    vendor.menu.splice(itemIndex, 1);
+    vendor.markModified("menu");
+    await vendor.save();
+
+    res.status(200).json({ message: "✅ Menu item deleted", menu: vendor.menu });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting menu item", error: err });
+  }
+});
 
 // POST /vendor/:id/menu - Add menu item
 app.post("/vendor/:id/menu", async (req, res) => {
