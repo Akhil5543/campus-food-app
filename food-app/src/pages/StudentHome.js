@@ -707,7 +707,7 @@ const saveFavoriteOrder = async () => {
             </div>
 
             {expandedRestaurantId === vendor._id && (
-              <div className="menu-items mt-3">
+              <div className="menu-items mt-3" onClick={(e) => e.stopPropagation()}>
                 {Object.entries(
                   vendor.menu.reduce((acc, item) => {
                     if (filterCategory !== "All" && item.category !== filterCategory) return acc;
