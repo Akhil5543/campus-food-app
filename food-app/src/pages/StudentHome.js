@@ -14,23 +14,30 @@ import EditDobView from "../components/EditDobView";
 import EditPhoneView from "../components/EditPhoneView";
 import Sidebar from "../components/Sidebar"; 
 
-const token = localStorage.getItem("token") || "";
-  let studentName = "Student";
-  let studentId = "";
-  let decoded = null;
-
-  if (token) {
-    try {
-      decoded = jwtDecode(token);
-      studentName = decoded.name || "Student";
-      studentId = decoded.userId || decoded.id || decoded.sub || "";
-    } catch (err) {
-      console.error("Invalid token:", err);
-    }
-  }
   
 const StudentHome = () => {
   const navigate = useNavigate();
+  const [token, setToken] = useState("");
+  const [studentName, setStudentName] = useState("Student");
+  const [studentId, setStudentId] = useState("");
+  const [email, setEmail] = useState("");
+  
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token") || "";
+    setToken(storedToken);
+
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        setStudentName(decoded.name || "Student");
+        setStudentId(decoded.userId || decoded.id || decoded.sub || "");
+        setEmail(decoded.email || "");
+      } catch (err) {
+        console.error("Invalid token:", err);
+      }
+    }
+ }, []);
+
   const [vendors, setVendors] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [expandedRestaurantId, setExpandedRestaurantId] = useState(null);
@@ -46,7 +53,6 @@ const StudentHome = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [favoriteOrders, setFavoriteOrders] = useState([]);
   const [name, setName] = useState(studentName);
-  const [email, setEmail] = useState(decoded?.email || "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -701,7 +707,7 @@ const saveFavoriteOrder = async () => {
             </div>
 
             {expandedRestaurantId === vendor._id && (
-              <div className="menu-items mt-3">
+              <div className="menu-items mt-3" onClick={(e) => e.stopPropagation()}>
                 {Object.entries(
                   vendor.menu.reduce((acc, item) => {
                     if (filterCategory !== "All" && item.category !== filterCategory) return acc;
