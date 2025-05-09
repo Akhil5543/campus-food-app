@@ -96,7 +96,13 @@ const RestaurantDashboard = () => {
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
     try {
-      await axios.post(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu`, newItem);
+      const cleanedCategory = newItem.category
+        ? newItem.category.trim().charAt(0).toUpperCase() + newItem.category.trim().slice(1).toLowerCase()
+        : "Uncategorized";
+      await axios.post(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu`, {
+        ...newItem,
+        category: cleanedCategory,
+      });
       setNewItem({ name: "", price: "", description: "", category: "" });
       fetchVendor();
     } catch (err) {
@@ -111,9 +117,16 @@ const RestaurantDashboard = () => {
     }
   
     try {
+      const normalizedName = newItem.name.trim().toLowerCase();
+      const normalizedCategory = newItem.category
+        ? newItem.category.trim().charAt(0).toUpperCase() + newItem.category.trim().slice(1).toLowerCase()
+        : "";
       const itemToDelete = vendor.menu.find(
-        (item) => item.name.toLowerCase() === newItem.name.toLowerCase()
+        (item) =>
+          item.name.trim().toLowerCase() === normalizedName &&
+          (!normalizedCategory || item.category === normalizedCategory)
       );
+
   
       if (!itemToDelete) {
         alert("Item not found.");
