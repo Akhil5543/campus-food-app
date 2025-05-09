@@ -78,6 +78,7 @@ const StudentHome = () => {
         })
         .then((res) => {
           const user = res.data;
+          console.log("Fetched user:", user);
           if (user.dob) setDob(user.dob);
           if (user.phone_number) setPhoneNumber(user.phone_number);
         })
