@@ -527,3 +527,20 @@
 .item-form .remove-btn:hover {
   background-color: #c62828;
 }
+.item-form select {
+  padding: 8px;
+  border: 2px solid #facc15;
+  background-color: #fff8dc; 
+  border-radius: 8px;
+  font-weight: bold;
+  color: #000;
+  margin-right: 8px;
+  margin-bottom: 10px;
+}
+
+.item-form select:focus {
+  outline: none;
+  border-color: #fbbf24;
+  background-color: #fff;
+}
+
