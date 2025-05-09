@@ -712,11 +712,15 @@ const saveFavoriteOrder = async () => {
               <div className="menu-items mt-3" onClick={(e) => e.stopPropagation()}>
                 {Object.entries(
                   vendor.menu.reduce((acc, item) => {
-                    if (filterCategory !== "All" && item.category !== filterCategory) return acc;
-                    if (!acc[item.category]) acc[item.category] = [];
-                    acc[item.category].push(item);
+                    const normalizedCategory = (item.category || "Uncategorized").trim().toLowerCase();
+                    const displayCategory = normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1);
+                    if (filterCategory !== "All" && displayCategory !== filterCategory) return acc;
+                    
+                    if (!acc[displayCategory]) acc[displayCategory] = [];
+                    acc[displayCategory].push(item);
                     return acc;
                   }, {})
+
                 ).map(([category, items]) => (
                   <div key={category} className="menu-category-group">
                     <h5 className="category-heading">
