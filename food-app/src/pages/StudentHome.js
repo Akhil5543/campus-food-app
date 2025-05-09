@@ -72,12 +72,14 @@ const StudentHome = () => {
 
   useEffect(() => {
     if (token) {
+      console.log("Using token:", token);
       axios
         .get("https://auth-service-fgt8.onrender.com/me", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          const user = res.data.user;
+          const user = res.data;
+          console.log("Fetched user:", user);
           if (user.dob) setDob(user.dob);
           if (user.phone_number) setPhoneNumber(user.phone_number);
         })
