@@ -11,7 +11,7 @@ const RestaurantDashboard = () => {
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [newItem, setNewItem] = useState({ name: "", price: "", description: "" });
+  const [newItem, setNewItem] = useState({ name: "", price: "", description: "", category: "" });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("menu");
   const [selectedDate, setSelectedDate] = useState('');
@@ -97,7 +97,7 @@ const RestaurantDashboard = () => {
     if (!newItem.name || !newItem.price || !newItem.description) return;
     try {
       await axios.post(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu`, newItem);
-      setNewItem({ name: "", price: "", description: "" });
+      setNewItem({ name: "", price: "", description: "", category: "" });
       fetchVendor();
     } catch (err) {
       console.error("Error adding item:", err);
@@ -125,7 +125,7 @@ const RestaurantDashboard = () => {
       );
   
       alert("Item removed successfully!");
-      setNewItem({ name: "", price: "", description: "" });
+      setNewItem({ name: "", price: "", description: "", category: "" });
       fetchVendor();
     } catch (err) {
       console.error("Error removing item:", err);
@@ -353,6 +353,17 @@ const toggleExpandOrder = (orderId) => {
                 value={newItem.description}
                 onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
               />
+              <select
+                value={newItem.category}
+                onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+              >
+                <option value="">Select Category</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Burgers">Burgers</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Snacks">Snacks</option>
+              </select>
+
               <button className="add-btn" onClick={handleAddItem}>Add Item</button>
               <button className="remove-btn" onClick={handleRemoveItem}>Remove Item</button>
             </div>
