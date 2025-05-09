@@ -77,7 +77,7 @@ const StudentHome = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          const user = res.data.user;
+          const user = res.data;
           if (user.dob) setDob(user.dob);
           if (user.phone_number) setPhoneNumber(user.phone_number);
         })
