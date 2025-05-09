@@ -72,6 +72,7 @@ const StudentHome = () => {
 
   useEffect(() => {
     if (token) {
+      console.log("Using token:", token);
       axios
         .get("https://auth-service-fgt8.onrender.com/me", {
           headers: { Authorization: `Bearer ${token}` },
