@@ -244,11 +244,11 @@ app.patch("/update-password", verifyToken, async (req, res) => {
 
 // ✅ Update Profile Info (name or email)
 app.patch("/update-profile", verifyToken, async (req, res) => {
-  const { newName, newEmail } = req.body;
+  const { newName, newEmail, dob, phone_number } = req.body;
   const userId = req.user.id;
 
-  if (!userId || (!newName && !newEmail)) {
-    return res.status(400).json({ message: "Missing data to update." });
+  if (!userId || (!newName && !newEmail && !dob && !phone_number)) {
+    return res.status(400).json({ message: "No data to update." });
   }
 
   try {
@@ -263,6 +263,14 @@ app.patch("/update-profile", verifyToken, async (req, res) => {
     if (newEmail) {
       updates.push("email = $" + (values.length + 1));
       values.push(newEmail);
+    }
+    if (dob) {
+      updates.push("dob = $" + (values.length + 1));
+      values.push(dob);
+    }
+    if (phone_number) {
+      updates.push("phone_number = $" + (values.length + 1));
+      values.push(phone_number);
     }
 
     values.push(userId);
