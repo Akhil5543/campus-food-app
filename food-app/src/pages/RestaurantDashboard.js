@@ -428,14 +428,14 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
+  const localCreatedDate = new Date(new Date(order.createdAt).getTime() - new Date(order.createdAt).getTimezoneOffset() * 60000);
+  const createdDateStr = localCreatedDate.toISOString().split("T")[0]; // YYYY-MM-DD
 
-  const createdDate = new Date(order.createdAt).toLocaleDateString("en-CA"); // "YYYY-MM-DD"
-
-  const selectedFormatted = selectedDate
-    ? new Date(selectedDate).toLocaleDateString("en-CA")
+  const selectedDateStr = selectedDate
+    ? new Date(new Date(selectedDate).getTime() - new Date(selectedDate).getTimezoneOffset() * 60000).toISOString().split("T")[0]
     : "";
 
-  const matchesDate = !selectedDate || createdDate === selectedFormatted;
+  const matchesDate = !selectedDate || createdDateStr === selectedDateStr;
 
   const matchesSearch =
     order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -446,8 +446,6 @@ const toggleExpandOrder = (orderId) => {
 
   return matchesDate && matchesSearch && matchesStatus;
 })
-
-
 
 
                   .reduce((grouped, order) => {
