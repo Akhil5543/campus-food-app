@@ -428,10 +428,9 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
-  // Format created date to match input date
+
   const createdDate = new Date(order.createdAt).toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
-  // Format selectedDate (from input) to same format
   const selectedFormatted = selectedDate
     ? new Date(selectedDate).toLocaleDateString("en-CA")
     : "";
@@ -452,7 +451,10 @@ const toggleExpandOrder = (orderId) => {
 
 
                   .reduce((grouped, order) => {
-                    const localDateString = new Date(order.createdAt).toLocaleDateString("en-CA");
+                    const localDate = new Date(order.createdAt);
+                    const adjustedDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+                    const localDateString = adjustedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
