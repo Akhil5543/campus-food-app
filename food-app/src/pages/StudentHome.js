@@ -1066,8 +1066,6 @@ const saveFavoriteOrder = async () => {
            <h4>Pay with Card</h4>
            <Checkout
              amount={subtotal}
-             userId={studentId} 
-             orderId={"temp"} 
              onSuccess={(paymentIntent) => {
                setShowPaymentModal(false);
                placeOrder();
