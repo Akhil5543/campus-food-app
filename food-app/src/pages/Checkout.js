@@ -7,11 +7,10 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import axios from "axios";
-import "./Checkout.css"; // if you added the CSS there
+import "./Checkout.css";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
-// ✅ 🔽 Add this component ABOVE CheckoutForm
 const SuccessModal = ({ onClose }) => {
   return (
     <div className="success-modal">
@@ -24,7 +23,7 @@ const SuccessModal = ({ onClose }) => {
   );
 };
 
-const CheckoutForm = ({ amount, onSuccess }) => {
+const CheckoutForm = ({ amount, orderId, userId, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -35,11 +34,18 @@ const CheckoutForm = ({ amount, onSuccess }) => {
     setLoading(true);
 
     try {
+      // Step 1: Create Stripe Payment Intent
       const { data } = await axios.post(
         "https://campus-food-app.onrender.com/create-payment-intent",
-        { amount }
+        { amount },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
+      // Step 2: Confirm card payment
       const result = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -47,8 +53,17 @@ const CheckoutForm = ({ amount, onSuccess }) => {
       });
 
       if (result.paymentIntent && result.paymentIntent.status === "succeeded") {
-        setShowSuccess(true); // ✅ Show modal
+        setShowSuccess(true);
         onSuccess(result.paymentIntent);
+
+        // Step 3: Record payment in DB
+        await axios.post("https://campus-food-app.onrender.com/payments", {
+          user_id: userId,
+          order_id: orderId,
+          amount: amount,
+          method: "card",
+          status: "succeeded",
+        });
       } else {
         alert("❌ Payment failed");
       }
@@ -70,15 +85,14 @@ const CheckoutForm = ({ amount, onSuccess }) => {
           {loading ? "Processing..." : "Pay"}
         </button>
       </form>
-
       {showSuccess && <SuccessModal onClose={() => setShowSuccess(false)} />}
     </>
   );
 };
 
-const Checkout = ({ amount, onSuccess }) => (
+const Checkout = ({ amount, orderId, userId, onSuccess }) => (
   <Elements stripe={stripePromise}>
-    <CheckoutForm amount={amount} onSuccess={onSuccess} />
+    <CheckoutForm amount={amount} orderId={orderId} userId={userId} onSuccess={onSuccess} />
   </Elements>
 );
 
