@@ -429,7 +429,7 @@ const toggleExpandOrder = (orderId) => {
                 orders
                   .filter(order => {
                         const date = new Date(order.createdAt);
-                        const localDateString = date.toISOString().split('T')[0];
+                        const localDateString = date.toLocaleDateString("en-CA");
                         const matchesDate = !selectedDate || localDateString === selectedDate;
                         const matchesSearch =
                           order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -441,7 +441,7 @@ const toggleExpandOrder = (orderId) => {
                   })
                   .reduce((grouped, order) => {
                     const date = new Date(order.createdAt);
-                    const localDateString = date.toISOString().split('T')[0];
+                    const localDateString = date.toLocaleDateString("en-CA");
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
