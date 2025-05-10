@@ -78,10 +78,10 @@ app.delete("/vendor/:id/menu/:itemId", async (req, res) => {
 
 // POST /vendor/:id/menu - Add menu item
 app.post("/vendor/:id/menu", async (req, res) => {
-  const { name, price, description } = req.body;
+  const { name, price, description, category, available, todaysSpecial } = req.body;
 
-  if (!name || !price) {
-    return res.status(400).json({ message: "Item name and price are required." });
+  if (!name || !price || !category) {
+    return res.status(400).json({ message: "Item name, price, and category are required." });
   }
 
   try {
@@ -90,14 +90,17 @@ app.post("/vendor/:id/menu", async (req, res) => {
 
     if (!vendor.menu) vendor.menu = [];
 
-    vendor.menu.push({ 
-       _id: new mongoose.Types.ObjectId(),   
-       name,
-       price,
-       description,
-       outOfStock: false,                    
-       todaysSpecial: false
+    vendor.menu.push({
+      _id: new mongoose.Types.ObjectId(),
+      name,
+      price,
+      description,
+      category,
+      available: available ?? true,
+      outOfStock: false,
+      todaysSpecial: todaysSpecial ?? false,
     });
+
     vendor.markModified("menu");
     await vendor.save();
 
