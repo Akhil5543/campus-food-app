@@ -428,20 +428,33 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
-                        const date = new Date(order.createdAt);
-                        const localDateString = date.toISOString().split('T')[0];
-                        const matchesDate = !selectedDate || localDateString === selectedDate;
-                        const matchesSearch =
-                          order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                        const matchesStatus =
-                          selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+  const createdAt = new Date(order.createdAt);
+  const createdDate = createdAt.toLocaleDateString("en-CA"); // → 'YYYY-MM-DD'
 
-                        return matchesDate && matchesSearch && matchesStatus;
-                  })
+  let matchesDate = true;
+
+  if (selectedDate) {
+    const selectedDateFormatted = new Date(selectedDate).toLocaleDateString("en-CA");
+    matchesDate = createdDate === selectedDateFormatted;
+  }
+
+  const matchesSearch =
+    order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const matchesStatus =
+    selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+
+  return matchesDate && matchesSearch && matchesStatus;
+})
+
+
+
                   .reduce((grouped, order) => {
-                    const date = new Date(order.createdAt);
-                    const localDateString = date.toISOString().split('T')[0];
+                    const utcDate = new Date(order.createdAt);
+                    const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+                    const localDateString = localDate.toISOString().split('T')[0]; // Gives YYYY-MM-DD
+
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
