@@ -1,13 +1,14 @@
 const express = require("express");
 const { Pool } = require("pg");
 const cors = require("cors");
-const Stripe = require("stripe");
+//const Stripe = require("stripe");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 4005;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // ✅ Stripe initialized
+//const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // ✅ Stripe initialized
 
 // ✅ Define CORS Options
 const allowedOrigins = [
