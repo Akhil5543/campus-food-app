@@ -358,10 +358,12 @@ const toggleExpandOrder = (orderId) => {
                 onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
               >
                 <option value="">Select Category</option>
+                <option value="Appetizers">Appetizers</option>
                 <option value="Pizza">Pizza</option>
                 <option value="Burgers">Burgers</option>
                 <option value="Drinks">Drinks</option>
                 <option value="Snacks">Snacks</option>
+                <option value="Beverages">Beverages</option>
               </select>
 
               <button className="add-btn" onClick={handleAddItem}>Add Item</button>
