@@ -462,8 +462,15 @@ const toggleExpandOrder = (orderId) => {
               .map(([date, ordersOnDate]) => (
                 <div key={date}>
                   <h4 style={{ marginTop: "24px", marginBottom: "10px", color: "#444" }}>
-                    {new Date(date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-                  </h4>
+                   {new Date(new Date(date).getTime() + new Date().getTimezoneOffset() * 60000)
+                     .toLocaleDateString('en-US', {
+                       weekday: 'short',
+                       year: 'numeric',
+                       month: 'short',
+                       day: 'numeric',
+                       })}
+                   </h4>
+
                   {ordersOnDate.map((order, index) => (
                     <div key={order._id} className="order-card">
                       <input
