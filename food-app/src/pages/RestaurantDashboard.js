@@ -430,28 +430,28 @@ const toggleExpandOrder = (orderId) => {
                   .filter(order => {
                     const createdAt = new Date(order.createdAt);
                     const createdLocal = new Date(createdAt.getTime() - createdAt.getTimezoneOffset() * 60000);
-                    const createdDate = createdLocal.toISOString().split("T")[0];
+                    const createdDate = createdLocal.toLocaleDateString("en-CA"); // ✅ local ISO format
                     
                     let matchesDate = true;
                     
                     if (selectedDate) {
                       const parsedSelected = new Date(selectedDate);
-                      
-                      if (!isNaN(parsedSelected)) {
-                        const selectedDateOnly = parsedSelected.toISOString().split("T")[0];
-                        matchesDate = createdDate === selectedDateOnly;
-                      }
-                    }
-                    
-                    const matchesSearch =
-                      order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                    
-                    const matchesStatus =
-                      selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
-                    
-                    return matchesDate && matchesSearch && matchesStatus;
-                  })
+    if (!isNaN(parsedSelected)) {
+      const selectedDateOnly = parsedSelected.toLocaleDateString("en-CA"); // ✅ same local format
+      matchesDate = createdDate === selectedDateOnly;
+    }
+  }
+
+  const matchesSearch =
+    order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const matchesStatus =
+    selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+
+  return matchesDate && matchesSearch && matchesStatus;
+})
+
 
                   .reduce((grouped, order) => {
                     const utcDate = new Date(order.createdAt);
