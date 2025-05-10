@@ -452,10 +452,7 @@ const toggleExpandOrder = (orderId) => {
 
 
                   .reduce((grouped, order) => {
-                    const utcDate = new Date(order.createdAt);
-                    const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-                    const localDateString = localDate.toISOString().split('T')[0]; // Gives YYYY-MM-DD
-
+                    const localDateString = new Date(order.createdAt).toLocaleDateString("en-CA");
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
