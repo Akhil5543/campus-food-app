@@ -428,18 +428,22 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
-                        const utcDate = new Date(order.createdAt);
-                        const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-                        const localDateString = localDate.toISOString().split('T')[0];
-
-                        const matchesDate = !selectedDate || localDateString === selectedDate;
-                        const matchesSearch =
-                          order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                        const matchesStatus =
-                          selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
-
-                        return matchesDate && matchesSearch && matchesStatus;
+                    const createdAt = new Date(order.createdAt);
+                    const createdLocal = new Date(createdAt.getTime() - createdAt.getTimezoneOffset() * 60000);
+                    const createdDate = createdLocal.toISOString().split("T")[0];
+                    
+                    const selectedLocal = new Date(selectedDate);
+                    const selectedOnly = new Date(selectedLocal.getTime() - selectedLocal.getTimezoneOffset() * 60000);
+                    const selectedDateOnly = selectedOnly.toISOString().split("T")[0];
+                    
+                    const matchesDate = !selectedDate || createdDate === selectedDateOnly;
+                    const matchesSearch =
+                      order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesStatus =
+                      selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+                    
+                    return matchesDate && matchesSearch && matchesStatus;
                   })
                   .reduce((grouped, order) => {
                     const utcDate = new Date(order.createdAt);
