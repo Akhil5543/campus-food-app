@@ -11,19 +11,17 @@ import "./Checkout.css";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
-const SuccessModal = ({ onClose }) => {
-  return (
-    <div className="success-modal">
-      <div className="success-modal-content">
-        <h2>✅ Payment Successful!</h2>
-        <p>Thank you! Your order has been placed.</p>
-        <button onClick={onClose}>Close</button>
-      </div>
+const SuccessModal = ({ onClose }) => (
+  <div className="success-modal">
+    <div className="success-modal-content">
+      <h2>✅ Payment Successful!</h2>
+      <p>Thank you! Your order has been placed.</p>
+      <button onClick={onClose}>Close</button>
     </div>
-  );
-};
+  </div>
+);
 
-const CheckoutForm = ({ amount, orderId, userId, onSuccess }) => {
+const CheckoutForm = ({ amount, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -54,25 +52,8 @@ const CheckoutForm = ({ amount, orderId, userId, onSuccess }) => {
 
       if (result.paymentIntent && result.paymentIntent.status === "succeeded") {
         setShowSuccess(true);
+        // 👉 Pass result to parent (StudentHome.js)
         onSuccess(result.paymentIntent);
-
-        // ✅ ADD THIS BELOW
-  console.log("📦 Sending payment payload:", {
-    user_id: userId,
-    order_id: orderId,
-    amount,
-    method: "card",
-    status: "succeeded",
-  });
-
-        // Step 3: Record payment in DB
-        await axios.post("https://campus-food-app.onrender.com/payments", {
-          user_id: userId,
-          order_id: orderId,
-          amount: amount,
-          method: "card",
-          status: "succeeded",
-        });
       } else {
         alert("❌ Payment failed");
       }
@@ -99,9 +80,9 @@ const CheckoutForm = ({ amount, orderId, userId, onSuccess }) => {
   );
 };
 
-const Checkout = ({ amount, orderId, userId, onSuccess }) => (
+const Checkout = ({ amount, onSuccess }) => (
   <Elements stripe={stripePromise}>
-    <CheckoutForm amount={amount} orderId={orderId} userId={userId} onSuccess={onSuccess} />
+    <CheckoutForm amount={amount} onSuccess={onSuccess} />
   </Elements>
 );
 
