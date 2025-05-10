@@ -56,6 +56,15 @@ const CheckoutForm = ({ amount, orderId, userId, onSuccess }) => {
         setShowSuccess(true);
         onSuccess(result.paymentIntent);
 
+        // ✅ ADD THIS BELOW
+  console.log("📦 Sending payment payload:", {
+    user_id: userId,
+    order_id: orderId,
+    amount,
+    method: "card",
+    status: "succeeded",
+  });
+
         // Step 3: Record payment in DB
         await axios.post("https://campus-food-app.onrender.com/payments", {
           user_id: userId,
