@@ -428,18 +428,14 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
-                    const createdAt = new Date(order.createdAt);
-                    const createdLocal = new Date(createdAt.getTime() - createdAt.getTimezoneOffset() * 60000);
-                    const createdDate = createdLocal.toLocaleDateString("en-CA"); // ✅ local ISO format
-                    
-                    let matchesDate = true;
-                    
-                    if (selectedDate) {
-                      const parsedSelected = new Date(selectedDate);
-    if (!isNaN(parsedSelected)) {
-      const selectedDateOnly = parsedSelected.toLocaleDateString("en-CA"); // ✅ same local format
-      matchesDate = createdDate === selectedDateOnly;
-    }
+  const createdAt = new Date(order.createdAt);
+  const createdDate = createdAt.toLocaleDateString("en-CA"); // → 'YYYY-MM-DD'
+
+  let matchesDate = true;
+
+  if (selectedDate) {
+    const selectedDateFormatted = new Date(selectedDate).toLocaleDateString("en-CA");
+    matchesDate = createdDate === selectedDateFormatted;
   }
 
   const matchesSearch =
@@ -451,6 +447,7 @@ const toggleExpandOrder = (orderId) => {
 
   return matchesDate && matchesSearch && matchesStatus;
 })
+
 
 
                   .reduce((grouped, order) => {
