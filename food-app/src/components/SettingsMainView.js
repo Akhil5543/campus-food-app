@@ -24,14 +24,18 @@ const SettingsMainView = ({ onNavigate, currentName, currentEmail, dob, phoneNum
         <div className="settings-arrow">➔</div>
       </div>
 
-      <div className="settings-row disabled"> 
+      <div className="settings-row" onClick={() => onNavigate("edit-dob")}> 
         <div className="settings-label">Date of Birth</div>
-        <div className="settings-value">{dob || "Not set"}</div>
+        <div className="settings-value">
+          {dob ? new Date(dob).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "Not set"}
+        </div>
+        <div className="settings-arrow">➔</div>
       </div>
 
-      <div className="settings-row disabled"> 
+      <div className="settings-row" onClick={() => onNavigate("edit-phone")}> 
         <div className="settings-label">Phone Number</div>
         <div className="settings-value">{phoneNumber || "Not set"}</div>
+        <div className="settings-arrow">➔</div>
       </div>
 
       <div className="settings-row danger" onClick={() => onNavigate("delete-account")}> 

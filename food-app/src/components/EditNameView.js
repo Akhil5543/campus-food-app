@@ -1,17 +1,20 @@
-// EditNameView.js
 import React, { useState } from "react";
 import "./Settings.css";
 
 const EditNameView = ({ onBack, currentName, onUpdateName }) => {
-    const [firstName, setFirstName] = useState(currentName.split(" ")[0] || "");
-    const [lastName, setLastName] = useState(currentName.split(" ")[1] || "");    
+  const nameParts = currentName.trim().split(" ");
+  const [firstName, setFirstName] = useState(nameParts[0] || "");
+  const [lastName, setLastName] = useState(nameParts.slice(1).join(" ") || "");
 
-    const handleUpdate = async () => {
-        const fullName = `${firstName} ${lastName}`.trim();
-        await onUpdateName(fullName);
-        onBack();
-      };
-      
+  const handleUpdate = async () => {
+    if (!firstName.trim()) {
+      alert("First name cannot be empty.");
+      return;
+    }
+    const fullName = `${firstName} ${lastName}`.trim();
+    await onUpdateName(fullName);
+    onBack();
+  };
 
   return (
     <div className="settings-edit-container">
