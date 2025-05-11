@@ -4,6 +4,11 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./RestaurantDashboard.css";
+import VendorSettingsMainView from "../components/VendorSettingsMainView";
+import EditVendorNameView from "../components/EditVendorNameView";
+import EditVendorEmailView from "../components/EditVendorEmailView";
+import EditVendorPasswordView from "../components/EditVendorPasswordView";
+import DeleteVendorAccountView from "../components/DeleteVendorAccountView";
 
 const socket = io("https://order-service-vgej.onrender.com");
 
@@ -21,6 +26,7 @@ const RestaurantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [expandedOrders, setExpandedOrders] = useState([]);
+  const [settingsView, setSettingsView] = useState("main");
   const sidebarRef = useRef();
 
   const token = localStorage.getItem("token");
@@ -304,6 +310,15 @@ const toggleExpandOrder = (orderId) => {
       📈 Sales
     </button>
     <button
+    className={activeTab === "settings" ? "active" : ""}
+    onClick={() => {
+      setActiveTab("settings");
+      setSidebarOpen(false);
+      }}
+    >
+      ⚙️ Settings
+    </button>
+    <button
       onClick={() => {
         setSidebarOpen(false);
         handleLogout();
@@ -525,6 +540,45 @@ const toggleExpandOrder = (orderId) => {
             )}
           </>
         )}
+        {activeTab === "settings" && (
+          <>
+            {settingsView === "main" && (
+              <VendorSettingsMainView
+                vendor={vendor}
+                setSettingsView={setSettingsView}
+              />
+            )}
+            {settingsView === "edit-name" && (
+              <EditVendorNameView
+                vendor={vendor}
+                token={token}
+                setSettingsView={setSettingsView}
+                setVendor={setVendor}
+              />
+            )}
+            {settingsView === "edit-email" && (
+              <EditVendorEmailView
+                vendor={vendor}
+                token={token}
+                setSettingsView={setSettingsView}
+              />
+            )}
+            {settingsView === "edit-password" && (
+              <EditVendorPasswordView
+                token={token}
+                setSettingsView={setSettingsView}
+              />
+            )}
+            {settingsView === "delete-account" && (
+              <DeleteVendorAccountView
+                token={token}
+                navigate={navigate}
+              />
+            )}
+        </>
+      )}
+
+
        {activeTab === "sales" && (
        <>
     <h3>📈 Sales Dashboard</h3>

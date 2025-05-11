@@ -1,0 +1,59 @@
+/* Make settings panel full-width and natural */
+.settings-container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 20px 30px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Back button styling */
+.back-btn {
+  display: inline-block;
+  color: #f1b800;
+  font-weight: bold;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+/* Heading */
+.settings-container h2 {
+  font-size: 24px;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+/* Input fields for forms */
+.settings-container input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+/* Common button style */
+.settings-container .btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Black action button */
+.settings-container .btn.black {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Red danger button */
+.settings-container .btn.danger {
+  background-color: #e53935;
+  color: #fff;
+}
