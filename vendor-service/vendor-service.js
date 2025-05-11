@@ -49,8 +49,8 @@ app.get("/vendor/:id", async (req, res) => {
 // ✅ GET vendor by ownerId (for restaurant login)
 app.get("/vendor/owner/:ownerId", async (req, res) => {
   try {
-    const ownerId = parseInt(req.params.ownerId); // 🔧 convert to number
-    const vendor = await Vendor.findOne({ ownerId }); // ✅ use number
+   const ownerId = req.params.ownerId; // ✅ leave it as string
+   const vendor = await Vendor.findOne({ ownerId }); // ✅ match as string
     if (!vendor) return res.status(404).json({ message: "Vendor not found" });
     res.json(vendor);
   } catch (err) {
