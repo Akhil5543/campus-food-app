@@ -1,42 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./Settings.css";
 
 const EditPhoneView = ({ onBack, currentPhone, onUpdatePhone }) => {
-  const [newPhone, setNewPhone] = useState(currentPhone || "");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
 
-  const validatePhone = (phone) => /^\d{10}$/.test(phone);
+  useEffect(() => {
+    if (currentPhone) setPhone(currentPhone);
+  }, [currentPhone]);
+
+  const validatePhone = (num) => /^[0-9]{10}$/.test(num); // basic 10-digit check
 
   const handleSubmit = () => {
-    if (!validatePhone(newPhone)) {
-      setError("Please enter a valid 10-digit phone number.");
+    if (!phone) {
+      setError("Phone number cannot be empty.");
       return;
     }
-    if (newPhone === currentPhone) {
-      setError("Phone number is unchanged.");
+
+    if (!validatePhone(phone)) {
+      setError("Please enter a valid 10-digit number.");
       return;
     }
-    onUpdatePhone(newPhone);
+
+    if (phone === currentPhone) {
+      setError("No changes made.");
+      return;
+    }
+
+    onUpdatePhone(phone);
     onBack();
   };
 
   return (
-    <div className="edit-view">
-      <h3>Edit Phone Number</h3>
+    <div className="settings-edit-container">
+      <button className="back-button" onClick={onBack}>← Back</button>
+      <h2 className="settings-title">Update Phone Number</h2>
+      <p className="settings-subtext">Enter a valid 10-digit number.</p>
+
       <input
+        className="settings-input"
         type="tel"
-        pattern="[0-9]{10}"
-        value={newPhone}
+        value={phone}
         onChange={(e) => {
-          setNewPhone(e.target.value);
+          setPhone(e.target.value);
           setError("");
         }}
-        placeholder="Enter new phone number"
+        maxLength={10}
+        placeholder="9876543210"
       />
-      {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
-      <div className="edit-actions">
-        <button onClick={handleSubmit}>Update Phone</button>
-        <button onClick={onBack}>Cancel</button>
-      </div>
+
+      {error && <p className="error-message">{error}</p>}
+
+      <button className="update-button" onClick={handleSubmit}>Update</button>
     </div>
   );
 };

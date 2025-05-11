@@ -12,7 +12,8 @@ import EditEmailView from "../components/EditEmailView";
 import EditPasswordView from "../components/EditPasswordView";
 import EditDobView from "../components/EditDobView";
 import EditPhoneView from "../components/EditPhoneView";
-import Sidebar from "../components/Sidebar"; 
+import Sidebar from "../components/Sidebar";
+import DeleteAccountView from "../components/DeleteAccountView";
 
   
 const StudentHome = () => {
@@ -29,13 +30,29 @@ const StudentHome = () => {
     if (storedToken) {
       try {
         const decoded = jwtDecode(storedToken);
-        setStudentName(decoded.name || "Student");
         setStudentId(decoded.userId || decoded.id || decoded.sub || "");
-        setEmail(decoded.email || "");
+        setToken(storedToken);
+    
+        // ✅ fetch fresh profile from DB
+        axios.get("https://auth-service-fgt8.onrender.com/me", {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        })
+        .then((res) => {
+          const user = res.data;
+          setStudentName(user.name || "Student");
+          setEmail(user.email || "");
+          setDob(user.dob || "");
+          setPhoneNumber(user.phone_number || "");
+        })
+        .catch((err) => {
+          console.error("❌ Failed to fetch profile on load:", err);
+        });
+    
       } catch (err) {
         console.error("Invalid token:", err);
       }
     }
+    
  }, []);
 
   const [vendors, setVendors] = useState([]);
@@ -191,6 +208,26 @@ const handleDeleteAccount = async () => {
     if (savedCart) setSelectedItems(JSON.parse(savedCart));
   }, []);
 
+  useEffect(() => {
+    if (view === "settings" && token) {
+      axios
+        .get("https://auth-service-fgt8.onrender.com/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const user = res.data;
+          setStudentName(user.name || "");
+          setName(user.name || "");
+          setEmail(user.email || "");
+          setDob(user.dob || "");
+          setPhoneNumber(user.phone_number || "");
+        })
+        .catch((err) => {
+          console.error("❌ Failed to fetch latest profile for settings:", err);
+        });
+    }
+  }, [view, token]);
+  
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(selectedItems));
   }, [selectedItems]);
@@ -948,7 +985,12 @@ const saveFavoriteOrder = async () => {
           onChangePassword={handlePasswordChange}
          />
        )}
-
+       {settingsView === "delete-account" && (
+        <DeleteAccountView
+        onBack={() => setSettingsView("main")}
+        onDelete={handleDeleteAccount}
+        />
+        )}
         </>
       )}
 
