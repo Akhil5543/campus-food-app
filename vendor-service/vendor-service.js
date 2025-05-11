@@ -170,11 +170,6 @@ app.put("/vendor/:id/menu/:itemId/todays-special", async (req, res) => {
   }
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`🚀 Vendor service running at http://localhost:${port}`);
-});
-
 // ✅ POST /vendor/create - Automatically create vendor profile on signup
 app.post("/vendor/create", async (req, res) => {
   try {
@@ -205,5 +200,11 @@ app.post("/vendor/create", async (req, res) => {
     console.error("❌ Error creating vendor:", err);
     res.status(500).json({ message: "Error creating vendor", error: err.message });
   }
+});
+
+
+// Start server
+app.listen(port, () => {
+  console.log(`🚀 Vendor service running at http://localhost:${port}`);
 });
 
