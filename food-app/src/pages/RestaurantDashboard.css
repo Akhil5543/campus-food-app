@@ -551,3 +551,33 @@
   outline: none;
   box-shadow: 0 0 5px #e6b800;
 }
+
+.settings-container {
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.settings-list {
+  list-style: none;
+  padding: 0;
+}
+
+.settings-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.settings-list li:hover {
+  background: #f8f8f8;
+}
+
+.settings-list li.danger {
+  color: red;
+  font-weight: bold;
+}
