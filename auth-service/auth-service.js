@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const sgMail = require("@sendgrid/mail");
+const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
@@ -84,6 +85,23 @@ app.post("/signup", async (req, res) => {
       [name, email, hashedPassword, role, verificationCode, false, dob || null, phone_number || null]
     );    
 
+
+    // ✅ If the user is a restaurant, create vendor profile in MongoDB
+if (role === "restaurant") {
+  try {
+    await axios.post("https://vendor-service-wnkw.onrender.com/vendor/create", {
+      ownerId: result.rows[0].id,
+      name,
+      address: "Default Block",
+      hours: "09:00 AM – 09:00 PM"
+    });
+  } catch (vendorErr) {
+    console.error("Vendor profile creation failed:", vendorErr.message);
+    // optional: return error or continue depending on desired flow
+  }
+}
+
+    
     await sendVerificationEmail(email, verificationCode);
 
     res.status(201).json({
