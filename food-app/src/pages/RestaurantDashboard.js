@@ -428,28 +428,31 @@ const toggleExpandOrder = (orderId) => {
               Object.entries(
                 orders
                   .filter(order => {
-  const localCreatedDate = new Date(new Date(order.createdAt).getTime() - new Date(order.createdAt).getTimezoneOffset() * 60000);
-  const createdDateStr = localCreatedDate.toISOString().split("T")[0]; // YYYY-MM-DD
-
-  const selectedDateStr = selectedDate
-    ? new Date(new Date(selectedDate).getTime() - new Date(selectedDate).getTimezoneOffset() * 60000).toISOString().split("T")[0]
-    : "";
-
-  const matchesDate = !selectedDate || createdDateStr === selectedDateStr;
-
-  const matchesSearch =
-    order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
-  const matchesStatus =
-    selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
-
-  return matchesDate && matchesSearch && matchesStatus;
-})
+                    const localCreatedDate = new Date(new Date(order.createdAt).getTime() - new Date(order.createdAt).getTimezoneOffset() * 60000);
+                    const createdDateStr = localCreatedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+                    
+                    const selectedDateStr = selectedDate
+                      ? new Date(selectedDate).toISOString().split("T")[0]
+                      : "";
+                    
+                    const matchesDate = !selectedDate || createdDateStr === selectedDateStr;
+                    
+                    const matchesSearch =
+                      order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                    
+                    const matchesStatus =
+                      selectedStatus === "All" || order.status?.toLowerCase() === selectedStatus.toLowerCase();
+                    
+                    return matchesDate && matchesSearch && matchesStatus;
+                  })
 
 
                   .reduce((grouped, order) => {
-                    const localDateString = new Date(order.createdAt).toLocaleDateString("en-CA");
+                    const localDate = new Date(order.createdAt);
+                    const adjustedDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+                    const localDateString = adjustedDate.toISOString().split("T")[0];
+
                     
                     if (!grouped[localDateString]) grouped[localDateString] = [];
                     grouped[localDateString].push(order);
