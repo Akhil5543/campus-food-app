@@ -256,10 +256,7 @@ const toggleExpandOrder = (orderId) => {
   );
 };
 
-// 🚨 Add this check just before the return (
-if (!vendor) {
-  return <div className="loading-message">Loading vendor data...</div>;
-}
+
   
   return (
     <>
