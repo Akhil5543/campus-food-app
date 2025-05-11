@@ -94,6 +94,12 @@ const RestaurantDashboard = () => {
 
 
   const handleAddItem = async () => {
+
+    if (!vendor || !vendor._id) {
+    alert("Vendor is still loading. Please wait a moment.");
+    return;
+  }
+    
     if (!newItem.name || !newItem.price || !newItem.description) return;
     try {
       await axios.post(`https://vendor-service-wnkw.onrender.com/vendor/${vendor._id}/menu`, newItem);
@@ -105,6 +111,12 @@ const RestaurantDashboard = () => {
   };
 
   const handleRemoveItem = async () => {
+
+    if (!vendor || !vendor._id) {
+    alert("Vendor is still loading. Please wait a moment.");
+    return;
+  }
+    
     if (!newItem.name) {
       alert("Please enter the item name to remove.");
       return;
@@ -245,6 +257,7 @@ const toggleExpandOrder = (orderId) => {
 };
 
 
+  
   return (
     <>
     <div className="dashboard-background"></div>
