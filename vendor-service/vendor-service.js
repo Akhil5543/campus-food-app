@@ -50,6 +50,7 @@ app.get("/vendor/:id", async (req, res) => {
 app.get("/vendor/owner/:ownerId", async (req, res) => {
   try {
    const ownerId = req.params.ownerId; // ✅ leave it as string
+   console.log(`Searching for vendor with ownerId: ${ownerId}`);
    const vendor = await Vendor.findOne({ ownerId }); // ✅ match as string
     if (!vendor) return res.status(404).json({ message: "Vendor not found" });
     res.json(vendor);
